@@ -1,0 +1,61 @@
+/********************************************************************************************************************
+
+                                                  ComputerPlayer.cpp
+
+                                            Copyright 2004, John J. Bolton
+    --------------------------------------------------------------------------------------------------------------
+
+    $Header: //depot/Chess/ComputerPlayer.cpp#9 $
+
+    $NoKeywords: $
+
+********************************************************************************************************************/
+
+#include "ComputerPlayer.h"
+
+#include "GameState/Board.h"
+#include "GameState/GameState.h"
+#include "GameTree.h"
+#include "StaticEvaluator/StaticEvaluator.h"
+#include "TranspositionTable.h"
+
+//#include <mmsystem.h>
+
+ComputerPlayer::ComputerPlayer(Color color, int maxDepth)
+    : Player(color),
+    maxDepth_(maxDepth)
+{
+    transpositionTable_ = new TranspositionTable;
+}
+
+ComputerPlayer::~ComputerPlayer()
+{
+    delete transpositionTable_;
+}
+
+GameState ComputerPlayer::myTurn(GameState const & s0)
+{
+//	CWaitCursor wait_cursor;
+
+//    uint32_t start_time = timeGetTime();
+
+    // Calculate the best move from here
+
+    GameTree game_tree(transpositionTable_, maxDepth_);
+    GameState new_state = game_tree.myBestMove(s0, m_MyColor);
+    transpositionTable_->age();
+
+//    uint32_t elapsed_time = timeGetTime() - start_time;
+
+#if defined(PLAYER_ANALYSIS_ENABLED)
+
+    // Update analysis data
+
+    m_analysisData.time = 0;// elapsed_time;
+    m_analysisData.value = new_state.value_;
+    m_analysisData.gameTreeAnalysisData = game_tree.analysisData_;
+
+#endif // defined( PLAYER_ANALYSIS_ENABLED )
+
+    return new_state;
+}
