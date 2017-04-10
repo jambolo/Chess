@@ -42,7 +42,7 @@ GameState ComputerPlayer::myTurn(GameState const & s0)
     // Calculate the best move from here
 
     GameTree game_tree(transpositionTable_, maxDepth_);
-    GameState new_state = game_tree.myBestMove(s0, m_MyColor);
+    GameState new_state = game_tree.myBestMove(s0, myColor_);
     transpositionTable_->age();
 
 //    uint32_t elapsed_time = timeGetTime() - start_time;
@@ -51,9 +51,9 @@ GameState ComputerPlayer::myTurn(GameState const & s0)
 
     // Update analysis data
 
-    m_analysisData.time = 0;// elapsed_time;
-    m_analysisData.value = new_state.value_;
-    m_analysisData.gameTreeAnalysisData = game_tree.analysisData_;
+    analysisData_.time = 0;// elapsed_time;
+    analysisData_.value = new_state.value_;
+    analysisData_.gameTreeAnalysisData = game_tree.analysisData_;
 
 #endif // defined( PLAYER_ANALYSIS_ENABLED )
 

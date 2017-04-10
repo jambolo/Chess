@@ -1,16 +1,3 @@
-/** @file *//********************************************************************************************************
-
-                                                     GameState.h
-
-                                            Copyright 2004, John J. Bolton
-    --------------------------------------------------------------------------------------------------------------
-
-    $Header: //depot/Chess/GameState.h#13 $
-
-    $NoKeywords: $
-
-********************************************************************************************************************/
-
 #pragma once
 
 #include "Board.h"
@@ -50,8 +37,7 @@ public:
     GameState(GameState const & old_state, Color color, Move const & move);
 #endif // defined( GAME_STATE_ANALYSIS_ENABLED )
     GameState(Board const & board, Move const & move, int value, CastleStatus castleStatus);
-
-//	virtual ~GameState();
+    explicit GameState(char const * fen);
 
     // Resets the game
     void initialize(PieceList const & white_pieces, PieceList const & black_pieces);
@@ -70,6 +56,9 @@ public:
 
     // Returns the hash code for the state
     ZHash zhash() const;
+
+    // Returns the FEN string for the state
+    std::string fen() const;
 
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
 

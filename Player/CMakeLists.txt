@@ -1,15 +1,10 @@
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.4)
 
 set(SOURCES
     ComputerPlayer.cpp
     ComputerPlayer.h
     GameTree.cpp
     GameTree.h
-    HumanPlayer.cpp
-    HumanPlayer.h
-    Player.cpp
-    Player.h
-    Player.inl
     Sequence.h
     Sequence.inl
     TranspositionTable.cpp

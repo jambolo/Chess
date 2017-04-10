@@ -11,25 +11,12 @@
 
  ********************************************************************************************************************/
 
-#include "StdAfx.h"
-
 #include "TranspositionTable.h"
 
-#include "GameState.h"
+#include "GameState/GameState.h"
 
 #include "Misc/Etc.h"
-#include "Misc/Types.h"
-
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#endif
-
-
-/********************************************************************************************************************/
-/*																													*/
-/********************************************************************************************************************/
+#include <cassert>
 
 TranspositionTable::TranspositionTable()
 {
@@ -41,10 +28,6 @@ TranspositionTable::TranspositionTable()
 	}
 }
 
-/********************************************************************************************************************/
-/*																													*/
-/********************************************************************************************************************/
-
 bool TranspositionTable::check( GameState const & state, int * pReturnedValue, int8_t * pReturnedQuality ) const
 {
 #if defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
@@ -52,12 +35,12 @@ bool TranspositionTable::check( GameState const & state, int * pReturnedValue, i
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
 	ZHash 				hashCode		= state.zhash();
-	uint32				upperHashCode	= (uint32)( hashCode >> 32 );
-	uint32				lowerHashCode	= (uint32)( hashCode & 0xffffffff );
+	uint32_t				upperHashCode	= (uint32_t)( hashCode >> 32 );
+	uint32_t				lowerHashCode	= (uint32_t)( hashCode & 0xffffffff );
 	int					index			= lowerHashCode % SIZE;
 	TableEntry const &	entry			= table_[ index ];
 
-	ASSERT( upperHashCode != TableEntry::UNUSED_ENTRY );
+	assert( upperHashCode != TableEntry::UNUSED_ENTRY );
 
 	// A hit occurs if the states are the same.
 
@@ -88,10 +71,6 @@ bool TranspositionTable::check( GameState const & state, int * pReturnedValue, i
 }
 
 
-/********************************************************************************************************************/
-/*																													*/
-/********************************************************************************************************************/
-
 bool TranspositionTable::check( GameState const & state, int minQ, int * pReturnedValue ) const
 {
 #if defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
@@ -99,12 +78,12 @@ bool TranspositionTable::check( GameState const & state, int minQ, int * pReturn
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
 	ZHash 				hashCode		= state.zhash();
-	uint32				upperHashCode	= (uint32)( hashCode >> 32 );
-	uint32				lowerHashCode	= (uint32)( hashCode & 0xffffffff );
+	uint32_t				upperHashCode	= (uint32_t)( hashCode >> 32 );
+	uint32_t				lowerHashCode	= (uint32_t)( hashCode & 0xffffffff );
 	int					index			= lowerHashCode % SIZE;
 	TableEntry const &	entry			= table_[ index ];
 
-	ASSERT( upperHashCode != TableEntry::UNUSED_ENTRY );
+	assert( upperHashCode != TableEntry::UNUSED_ENTRY );
 
 	// A hit occurs if the states are the same, and the minimum quality is <= the quality of the stored state. The
 	// reason for the quality check is that if the stored quality is less, then we aren't going to want the value
@@ -151,12 +130,12 @@ void TranspositionTable::forceUpdate( GameState const & state )
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
 	ZHash 			hashCode		= state.zhash();
-	uint32			upperHashCode	= (uint32)( hashCode >> 32 );
-	uint32			lowerHashCode	= (uint32)( hashCode & 0xffffffff );
+	uint32_t			upperHashCode	= (uint32_t)( hashCode >> 32 );
+	uint32_t			lowerHashCode	= (uint32_t)( hashCode & 0xffffffff );
 	int				index			= lowerHashCode % SIZE;
 	TableEntry &	entry			= table_[ index ];
 
-	ASSERT( upperHashCode != TableEntry::UNUSED_ENTRY );
+	assert( upperHashCode != TableEntry::UNUSED_ENTRY );
 
 	// If the entry is unused or if the new quality >= the stored quality, then store the new state. It is better
 	// to replace values of equal quality in order to dispose of old entries that may no longer be relevant.
@@ -182,7 +161,7 @@ void TranspositionTable::forceUpdate( GameState const & state )
 
 	// Store the state, value and quality
 
-	ASSERT( state.quality_ < 256 );
+	assert( state.quality_ < 256 );
 	entry.hashCode_	= upperHashCode;
 	entry.value_		= state.value_;
 	entry.q_			= state.quality_;
@@ -201,12 +180,12 @@ void TranspositionTable::update( GameState const & state )
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
 	ZHash 			hashCode		= state.zhash();
-	uint32			upperHashCode	= (uint32)( hashCode >> 32 );
-	uint32			lowerHashCode	= (uint32)( hashCode & 0xffffffff );
+	uint32_t			upperHashCode	= (uint32_t)( hashCode >> 32 );
+	uint32_t			lowerHashCode	= (uint32_t)( hashCode & 0xffffffff );
 	int				index			= lowerHashCode % SIZE;
 	TableEntry &	entry			= table_[ index ];
 
-	ASSERT( upperHashCode != TableEntry::UNUSED_ENTRY );
+	assert( upperHashCode != TableEntry::UNUSED_ENTRY );
 
 	bool	isUnused	= ( entry.hashCode_ == TableEntry::UNUSED_ENTRY );
 

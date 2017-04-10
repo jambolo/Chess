@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.4)
 project(Chess CXX)
 
 find_package(Doxygen)
@@ -18,27 +18,11 @@ option(BUILD_SHARED_LIBS "Build libraries as DLLs" FALSE)
 #configure_file("${PROJECT_SOURCE_DIR}/Version.h.in" "${PROJECT_BINARY_DIR}/Version.h")
 
 set(SOURCES
-    AboutDialog.cpp
-    AboutDialog.h
     Chess.cpp
     Chess.h
-    Chess.rc
-    ChessDoc.cpp
-    ChessDoc.h
-    ChessView.cpp
-    ChessView.h
-    CMakeLists.txt
-    GameRecordEntry.cpp
-    GameRecordEntry.h
-    MainFrm.cpp
-    MainFrm.h
-    NewGameDialog.cpp
-    NewGameDialog.h
-    resource.h
-    StdAfx.cpp
-    StdAfx.h
-    YourTurnDialog.cpp
-    YourTurnDialog.h
+    Player.cpp
+    Player.h
+    Player.inl
 )
 
 add_executable(chess ${SOURCES})
