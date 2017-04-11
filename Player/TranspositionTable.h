@@ -1,17 +1,7 @@
-/********************************************************************************************************************
-
-                                                 TranspositionTable.h
-
-                                            Copyright 2004, John J. Bolton
-    --------------------------------------------------------------------------------------------------------------
-
-    $Header: //depot/Chess/TranspositionTable.h#10 $
-
-    $NoKeywords: $
-
-********************************************************************************************************************/
-
 #pragma once
+
+#if !defined(TranspositionTable_h__)
+#define TranspositionTable_h__
 
 #include "ZHash/ZHash.h"
 
@@ -36,8 +26,8 @@ class TranspositionTable
 public:
 
     static int const INDEX_SIZE = 19;
-    static int const SIZE       = 1 << INDEX_SIZE;          // Number of entries in the table
-    static int const MAX_AGE    = 1;                        // Entries not referenced in this many turns are removed
+    static int const SIZE       = 1 << INDEX_SIZE; // Number of entries in the table
+    static int const MAX_AGE    = 1;               // Entries not referenced in this many turns are removed
 
     TranspositionTable();
 
@@ -90,13 +80,15 @@ private:
 
         static uint32_t const UNUSED_ENTRY = (uint32_t)(ZHash::INVALID >> 32);
 
-        void clear()    { hashCode_ = UNUSED_ENTRY; }
+        void clear() { hashCode_ = UNUSED_ENTRY; }
 
-        uint32_t hashCode_;         // The state's hash code (actually just the upper half)
-        int value_;                 // The state's value
-        int8_t q_;                  // The quality of the value
-        mutable int8_t age_;        // The number of turns since the entry has been referenced
+        uint32_t hashCode_;  // The state's hash code (actually just the upper half)
+        int value_;          // The state's value
+        int8_t q_;           // The quality of the value
+        mutable int8_t age_; // The number of turns since the entry has been referenced
     };
 
     TableEntry table_[SIZE];
 };
+
+#endif // !defined(TranspositionTable_h__)

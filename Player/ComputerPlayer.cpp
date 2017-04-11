@@ -1,16 +1,3 @@
-/********************************************************************************************************************
-
-                                                  ComputerPlayer.cpp
-
-                                            Copyright 2004, John J. Bolton
-    --------------------------------------------------------------------------------------------------------------
-
-    $Header: //depot/Chess/ComputerPlayer.cpp#9 $
-
-    $NoKeywords: $
-
-********************************************************************************************************************/
-
 #include "ComputerPlayer.h"
 
 #include "GameState/Board.h"
@@ -51,7 +38,7 @@ GameState ComputerPlayer::myTurn(GameState const & s0)
 
     // Update analysis data
 
-    analysisData_.time = 0;// elapsed_time;
+    analysisData_.time = 0; // elapsed_time;
     analysisData_.value = new_state.value_;
     analysisData_.gameTreeAnalysisData = game_tree.analysisData_;
 

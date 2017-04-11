@@ -1,17 +1,7 @@
-/** @file *//********************************************************************************************************
-
-                                                      Board.inl
-
-                                            Copyright 2004, John J. Bolton
-    --------------------------------------------------------------------------------------------------------------
-
-    $Header: //depot/Chess/Board.inl#7 $
-
-    $NoKeywords: $
-
-********************************************************************************************************************/
-
 #pragma once
+
+#if !defined(Board_inl__)
+#define Board_inl__
 
 #include "Board.h"
 
@@ -25,15 +15,15 @@ inline void Board::clear()
 
 inline bool Board::isValidPosition(Position const & p)
 {
-    return p.m_Row >= 0 &&
-           p.m_Row < SIZE &&
-           p.m_Column >= 0 &&
-           p.m_Column < SIZE;
+    return p.row >= 0 &&
+           p.row < SIZE &&
+           p.column >= 0 &&
+           p.column < SIZE;
 }
 
 inline Board::PieceId Board::pieceIdAt(Position const & p) const
 {
-    return pieceIdAt(p.m_Row, p.m_Column);
+    return pieceIdAt(p.row, p.column);
 }
 
 inline Board::PieceId Board::pieceIdAt(int r, int c) const
@@ -54,7 +44,7 @@ inline Piece const * Board::pieceAt(int r, int c) const
 inline void Board::putPiece(PieceId id, Position const & p)
 {
     // Place the piece
-    board_[p.m_Row][p.m_Column] = id;
+    board_[p.row][p.column] = id;
 }
 
 inline void Board::putPiece(Piece const * piece, Position const & p)
@@ -66,17 +56,17 @@ inline void Board::putPiece(Piece const * piece, Position const & p)
 inline void Board::removePiece(Position const & p)
 {
     // Remove the piece
-    board_[p.m_Row][p.m_Column] = EMPTY_SQUARE;
+    board_[p.row][p.column] = EMPTY_SQUARE;
 }
 
 inline void Board::movePiece(Position const & from, Position const & to)
 {
     // Move the piece
-    board_[to.m_Row][to.m_Column]     = board_[from.m_Row][from.m_Column];
-    board_[from.m_Row][from.m_Column] = EMPTY_SQUARE;
+    board_[to.row][to.column]     = board_[from.row][from.column];
+    board_[from.row][from.column] = EMPTY_SQUARE;
 }
 
-inline bool operator ==(Board const & x, Board const & y)
+inline bool operator == (Board const & x, Board const & y)
 {
     return memcmp(x.board_, y.board_, sizeof x.board_) == 0;
 }
@@ -90,3 +80,5 @@ inline Piece const * Board::piece(PieceId piece)
 {
     return pieces_[piece];
 }
+
+#endif // !defined(Board_inl__)

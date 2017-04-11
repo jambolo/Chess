@@ -1,16 +1,3 @@
-/** @file *//********************************************************************************************************
-
-                                                 StaticEvaluator.cpp
-
-                                            Copyright 2004, John J. Bolton
-    --------------------------------------------------------------------------------------------------------------
-
-    $Header: //depot/Chess/StaticEvaluationFunction.cpp#12 $
-
-    $NoKeywords: $
-
-********************************************************************************************************************/
-
 #include "StaticEvaluator.h"
 
 #include "GameState/GameState.h"
@@ -24,9 +11,9 @@ namespace
 
 struct PieceValues
 {
-    int property;           // Values are the standard values times 1000
-    int mobility;           // Values are the average number moves on an empty board times 1000
-    int position;           // Values are the standard values times 1000
+    int property; // Values are the standard values times 1000
+    int mobility; // Values are the average number moves on an empty board times 1000
+    int position; // Values are the standard values times 1000
 };
 
 // Values of each square for each color
@@ -62,32 +49,32 @@ PieceValues const s_PieceValues[NUMBER_OF_COLORS][NUMBER_OF_PIECE_TYPES] =
 {
     // White
     {
-        { 4000,  6560,   4000,    }, //	PieceTypeId::KING
-        { 9000,  22750,  9000,    }, //	PieceTypeId::QUEEN
-        { 3000,  8750,   3000,    }, //	PieceTypeId::BISHOP
-        { 3000,  5250,   3000,    }, //	PieceTypeId::KNIGHT
-        { 5000,  14000,  5000,    }, //	PieceTypeId::ROOK
-        { 1000,  1667,   1000,    } //	PieceTypeId::PAWN
+        { 4000, 6560, 4000, },  //	PieceTypeId::KING
+        { 9000, 22750, 9000, }, //	PieceTypeId::QUEEN
+        { 3000, 8750, 3000, },  //	PieceTypeId::BISHOP
+        { 3000, 5250, 3000, },  //	PieceTypeId::KNIGHT
+        { 5000, 14000, 5000, }, //	PieceTypeId::ROOK
+        { 1000, 1667, 1000, } //	PieceTypeId::PAWN
     },
 
     // Black
     {
-        { -4000, -6560,  -4000,   }, //	PieceTypeId::KING
-        { -9000, -22750, -9000,   }, //	PieceTypeId::QUEEN
-        { -3000, -8750,  -3000,   }, //	PieceTypeId::BISHOP
-        { -3000, -5250,  -3000,   }, //	PieceTypeId::KNIGHT
-        { -5000, -14000, -5000,   }, //	PieceTypeId::ROOK
-        { -1000, -1667,  -1000,   } //	PieceTypeId::PAWN
+        { -4000, -6560, -4000, },  //	PieceTypeId::KING
+        { -9000, -22750, -9000, }, //	PieceTypeId::QUEEN
+        { -3000, -8750, -3000, },  //	PieceTypeId::BISHOP
+        { -3000, -5250, -3000, },  //	PieceTypeId::KNIGHT
+        { -5000, -14000, -5000, }, //	PieceTypeId::ROOK
+        { -1000, -1667, -1000, } //	PieceTypeId::PAWN
     }
 };
 
-int const PROPERTY_FACTOR = 1;      // The property factor is the reference. All other factors are relative to it.
-int const CASTLE_FACTOR   = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property * 3 / 4 / 3;       // Max is 3, which is worth
-                                                                                                    // about 3/4 a pawn
-int const MOBILITY_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::QUEEN].property / 144;        // Maximum is about 144 which is
-                                                                                                // worth a queen
-int const POSITION_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property / 100;     // Reasonable maximum is 100,000 which
-                                                                                            // is worth a pawn
+int const PROPERTY_FACTOR = 1;                                                                // The property factor is the reference. All other factors are relative to it.
+int const CASTLE_FACTOR   = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property * 3 / 4 / 3; // Max is 3, which is worth
+                                                                                              // about 3/4 a pawn
+int const MOBILITY_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::QUEEN].property / 144;      // Maximum is about 144 which is
+                                                                                              // worth a queen
+int const POSITION_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property / 100;       // Reasonable maximum is 100,000 which
+                                                                                              // is worth a pawn
 int const THREAT_FACTOR   = 0;
 
 int _Evaluate(GameState::CastleStatus castleStatus)
@@ -95,22 +82,14 @@ int _Evaluate(GameState::CastleStatus castleStatus)
     // A bonus is given for having castled. Likewise, a penalty is given for losing the ability to castle.
 
     int value = 0;
-    int const BLACK_CASTLE_MASK = (int)CastleId::BLACK_QUEENSIDE | (int)CastleId::BLACK_KINGSIDE;
-    if (castleStatus.castled & BLACK_CASTLE_MASK)
-    {
+    if (castleStatus & BLACK_CASTLE) {
         value += -2;
-    }
-    else if ((castleStatus.unavailable & BLACK_CASTLE_MASK) == BLACK_CASTLE_MASK)
-    {
+    } else if ((castleStatus & BLACK_CASTLE_UNAVAILABLE) == BLACK_CASTLE_UNAVAILABLE)   {
         value -= -1;
     }
-    int const WHITE_CASTLE_MASK = (int)CastleId::WHITE_QUEENSIDE | (int)CastleId::WHITE_KINGSIDE;
-    if (castleStatus.castled & WHITE_CASTLE_MASK)
-    {
+    if (castleStatus & WHITE_CASTLE) {
         value += 2;
-    }
-    else if ((castleStatus.unavailable & WHITE_CASTLE_MASK) == WHITE_CASTLE_MASK)
-    {
+    } else if ((castleStatus & WHITE_CASTLE_UNAVAILABLE) == WHITE_CASTLE_UNAVAILABLE) {
         value -= 1;
     }
 
@@ -140,22 +119,18 @@ int StaticEvaluator::evaluate(GameState const & state)
 //	// The value of threats is not currently computed.
 //	int		threat_value	= 0;
 
-    for (int row = 0; row < Board::SIZE; ++row)
-    {
-        for (int column = 0; column < Board::SIZE; ++column)
-        {
+    for (int row = 0; row < Board::SIZE; ++row) {
+        for (int column = 0; column < Board::SIZE; ++column) {
             Board::PieceId const id = state.board_.pieceIdAt(row, column);
 
-            if (id != Board::EMPTY_SQUARE)
-            {
+            if (id != Board::EMPTY_SQUARE) {
                 Piece const * pPiece = Board::piece(id);
                 Color color          = pPiece->color();
                 PieceTypeId type     = pPiece->type();
 
                 // Compute the checkmate value
 
-                if (id == (int)PieceTypeId::KING)
-                {
+                if (id == (int)PieceTypeId::KING) {
                     checkmate_value += (color == Color::WHITE) ? CHECKMATE_VALUE : -CHECKMATE_VALUE;
                 }
 
@@ -193,12 +168,9 @@ int StaticEvaluator::evaluate(GameState const & state)
 
     int value;
 
-    if (checkmate_value != 0)
-    {
+    if (checkmate_value != 0) {
         value = checkmate_value;
-    }
-    else
-    {
+    } else {
         value =   property_value * PROPERTY_FACTOR
                 + position_value * POSITION_FACTOR / 1000
                 + castleStatusValue * CASTLE_FACTOR
@@ -221,26 +193,24 @@ int StaticEvaluator::evaluate(GameState const & state)
 
 // This function returns the change in the value of the board *** BY COLOR ***.
 
-int StaticEvaluator::incremental(Move const &            move,
+int StaticEvaluator::incremental(Move const & move,
                                  GameState::CastleStatus castleStatus,
-                                 Piece const *           pMoved /* = 0*/,
-                                 Position const *        pRemovedPosition /* = 0*/,
-                                 Piece const *           pRemoved /* = 0*/,
-                                 Piece const *           pAdded /* = 0*/)
+                                 Piece const * pMoved /* = 0*/,
+                                 Position const * pRemovedPosition /* = 0*/,
+                                 Piece const * pRemoved /* = 0*/,
+                                 Piece const * pAdded /* = 0*/)
 {
     assert(pMoved);
 
     // These special moves don't do anything
 
-    if (move.isResignation() || move.isUndo() || move.isStartingPosition())
-    {
+    if (move.isResignation() || move.isUndo() || move.isStartingPosition()) {
         return 0;
     }
 
     // Check for checkmate (note: this assumes there is at least one king on the board)
 
-    if (pRemoved && pRemoved->type() == PieceTypeId::KING)
-    {
+    if (pRemoved && (pRemoved->type() == PieceTypeId::KING)) {
         return (pRemoved->color() == Color::WHITE) ? -CHECKMATE_VALUE : CHECKMATE_VALUE;
     }
 
@@ -249,22 +219,20 @@ int StaticEvaluator::incremental(Move const &            move,
     // Evaluate any change in position and property values from adding or removing pieces. Note: adding a piece
     // assumes promoting a pawn, so the added piece's position is the To position.
 
-    if (pAdded)
-    {
+    if (pAdded) {
         int color         = (int)pAdded->color();
         int propertyValue = s_PieceValues[color][(int)pAdded->type()].property;
 
         value +=  propertyValue * PROPERTY_FACTOR;
-        value +=  propertyValue * s_PositionValues[color][move.to().m_Row][move.to().m_Column] * POSITION_FACTOR / 1000;
+        value +=  propertyValue * s_PositionValues[color][move.to().row][move.to().column] * POSITION_FACTOR / 1000;
     }
 
-    if (pRemoved)
-    {
+    if (pRemoved) {
         int color         = (int)pRemoved->color();
         int propertyValue = s_PieceValues[color][(int)pRemoved->type()].property;
 
         value -=  propertyValue * PROPERTY_FACTOR;
-        value -=  propertyValue * s_PositionValues[color][pRemovedPosition->m_Row][pRemovedPosition->m_Column] * POSITION_FACTOR /
+        value -=  propertyValue * s_PositionValues[color][pRemovedPosition->row][pRemovedPosition->column] * POSITION_FACTOR /
                  1000;
     }
 
@@ -274,8 +242,8 @@ int StaticEvaluator::incremental(Move const &            move,
         int color         = (int)pMoved->color();
         int propertyValue = s_PieceValues[color][(int)pMoved->type()].property;
 
-        value -=  propertyValue * s_PositionValues[color][move.from().m_Row][move.from().m_Column] * POSITION_FACTOR / 1000;
-        value +=  propertyValue * s_PositionValues[color][move.to().m_Row][move.to().m_Column] * POSITION_FACTOR / 1000;
+        value -=  propertyValue * s_PositionValues[color][move.from().row][move.from().column] * POSITION_FACTOR / 1000;
+        value +=  propertyValue * s_PositionValues[color][move.to().row][move.to().column] * POSITION_FACTOR / 1000;
     }
 
     // Evaluate any change in castling status

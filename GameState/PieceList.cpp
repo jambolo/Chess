@@ -1,27 +1,12 @@
-/********************************************************************************************************************
-
-                                                    PieceList.cpp
-
-                                            Copyright 2004, John J. Bolton
-    --------------------------------------------------------------------------------------------------------------
-
-    $Header: //depot/Chess/PieceList.cpp#6 $
-
-    $NoKeywords: $
-
-********************************************************************************************************************/
-
 #include "PieceList.h"
+
 #include "Piece.h"
 
 PieceList::PieceList(Color color /*= Color::INVALID*/)
 {
-    if (color != Color::INVALID)
-    {
+    if (color != Color::INVALID) {
         initialize(color);
-    }
-    else
-    {
+    } else {
         memset(pieces_, 0, sizeof pieces_);
     }
 }
@@ -43,8 +28,7 @@ void PieceList::initialize(Color color)
 
 void PieceList::clear()
 {
-    for (auto p : pieces_)
-    {
+    for (auto p : pieces_) {
         delete p;
     }
     memset(pieces_, 0, sizeof pieces_);

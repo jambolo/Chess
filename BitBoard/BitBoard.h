@@ -16,6 +16,9 @@
 
 #pragma once
 
+#if !defined(BitBoard_h__)
+#define BitBoard_h__
+
 #include "GameState/ChessTypes.h"
 #include <algorithm>
 
@@ -31,7 +34,7 @@ public:
     explicit BitBoard(uint64_t i) : board_(i) {}
 
     //! Converts the bitboard to a uint64_t
-    operator uint64_t() const { return board_; }
+    operator uint64_t () const { return board_; }
 
     //! Sets the value of the specified square to 1
     BitBoard set(int r, int c)
@@ -54,7 +57,7 @@ public:
     //! Returns the contents of the given row
     unsigned row(int r) const
     {
-        return unsigned((board_ >> r) & 0x00000000000000FFui64);
+        return unsigned((board_ >> r) & 0xff);
     }
 
     //! Returns the contents of the given column
@@ -75,7 +78,8 @@ public:
     //! Rotates the bitboard up to 7 squares to the right
     BitBoard const & rotateRight(int n = 1)
     {
-        uint64_t wrap = board_ & rightMask(n); shiftRight(n);
+        uint64_t wrap = board_ & rightMask(n);
+        shiftRight(n);
         board_ |= wrap >> (8 - n);
     }
 
@@ -241,20 +245,18 @@ public:
 private:
 
     //! Returns the index for the given row and column
-    static uint64_t index(int r, int c)                       { return r * 8 + c; }
+    static uint64_t index(int r, int c) { return r * 8 + c; }
 
     //! Returns the row and column for the given index
     static void rowAndColumn(int index, int & r, int & c) { r = index / 8; c = index % 8; }
 
-    static uint64_t mask(int r, int c)  { return 1ui64 << index(r, c); }
-    static uint64_t leftMask(int n)     { return 0x0101010101010101ui64 * ((1 << n) - 1); }
-    static uint64_t rightMask(int n)    { return ~leftMask(8 - n); }
-    static uint64_t lowerMask(int n)    { return (1ui64 << (8 * n)) - 1; }
-    static uint64_t upperMask(int n)    { return ~lowerMask(8 - n); }
+    static uint64_t mask(int r, int c) { return 1ui64 << index(r, c); }
+    static uint64_t leftMask(int n) { return 0x0101010101010101ui64 * ((1 << n) - 1); }
+    static uint64_t rightMask(int n) { return ~leftMask(8 - n); }
+    static uint64_t lowerMask(int n) { return (1ui64 << (8 * n)) - 1; }
+    static uint64_t upperMask(int n) { return ~lowerMask(8 - n); }
 
-    union
-    {
-        uint64_t board_;
-        uint8_t  rows_[8];
-    };
+    uint64_t board_;
 };
+
+#endif // !defined(BitBoard_h__)

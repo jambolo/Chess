@@ -1,70 +1,38 @@
-/** @file *//********************************************************************************************************
-
-                                                     Sequence.inl
-
-						                    Copyright 2004, John J. Bolton
-	--------------------------------------------------------------------------------------------------------------
-
-	$Header: //depot/Chess/Sequence.inl#8 $
-
-	$NoKeywords: $
-
- ********************************************************************************************************************/
-
 #pragma once
 
+#if !defined(Sequence_inl__)
+#define Sequence_inl__
 
 #include "Sequence.h"
 
-/********************************************************************************************************************/
-/*																													*/
-/********************************************************************************************************************/
-
-inline SequenceEntry::SequenceEntry()
-	: m_PieceTypeId( -1 )
+inline SequenceEntry:: SequenceEntry()
+    : pieceTypeId_(-1)
 {
 }
 
-/********************************************************************************************************************/
-/*																													*/
-/********************************************************************************************************************/
-
-inline SequenceEntry::SequenceEntry( Color color, PieceTypeId piece, Move const & move )
-	:	m_Color( (int)color ),
-		m_PieceTypeId( (int)piece ),
-		m_FromRow( move.from().m_Row ),
-		m_FromColumn( move.from().m_Column ),
-		m_ToRow( move.to().m_Row ),
-		m_ToColumn( move.to().m_Column )
+inline SequenceEntry:: SequenceEntry(Color color, PieceTypeId piece, Move const & move)
+    : color_( (int)color)
+    , pieceTypeId_((int)piece)
+    , fromRow_(move.from().row)
+    , fromColumn_(move.from().column)
+    , toRow_(move.to().row)
+    , toColumn_(move.to().column)
 {
 }
 
-
-/********************************************************************************************************************/
-/*																													*/
-/********************************************************************************************************************/
-
-inline Move SequenceEntry::GetMove() const
+inline Move SequenceEntry:: GetMove() const
 {
-	return Move( Position( m_FromRow, m_FromColumn ), Position( m_ToRow, m_ToColumn ) );
+    return Move(Position(fromRow_, fromColumn_), Position(toRow_, toColumn_) );
 }
 
-
-/********************************************************************************************************************/
-/*																													*/
-/********************************************************************************************************************/
-
-inline Color SequenceEntry::GetColor() const
+inline Color SequenceEntry:: GetColor() const
 {
-	return static_cast< Color >( m_Color );
+    return static_cast <Color> ( color_ );
 }
 
-
-/********************************************************************************************************************/
-/*																													*/
-/********************************************************************************************************************/
-
-inline PieceTypeId SequenceEntry::GetPieceTypeId() const
+inline PieceTypeId SequenceEntry:: GetPieceTypeId() const
 {
-	return ( m_PieceTypeId != 7 ) ? static_cast< PieceTypeId >( m_PieceTypeId ) : PieceTypeId::INVALID;
+    return ( pieceTypeId_ != 7 ) ? static_cast <PieceTypeId> ( pieceTypeId_ ) : PieceTypeId:: INVALID;
 }
+
+#endif // !defined(Sequence_inl__)

@@ -16,6 +16,9 @@
 
 #pragma once
 
+#if !defined(ZHash_inl__)
+#define ZHash_inl__
+
 #include "ZHash.h"
 #include "GameState/Board.h"
 
@@ -24,28 +27,28 @@ inline ZHash::ZHash(Z z /* = 0 */)
 {
 }
 
-inline bool operator ==(ZHash const & x, ZHash const & y)
+inline bool operator == (ZHash const & x, ZHash const & y)
 {
     return x.value_ == y.value_;
 }
 
 inline ZHash & ZHash::add(Piece const & piece, Position const & position)
 {
-    value_ ^= zValueTable_.pieceValue((int)piece.color(), (int)piece.type(), position.m_Row, position.m_Column);
+    value_ ^= zValueTable_.pieceValue((int)piece.color(), (int)piece.type(), position.row, position.column);
 
     return *this;
 }
 
 inline ZHash & ZHash::remove(Piece const & piece, Position const & position)
 {
-    value_ ^= zValueTable_.pieceValue((int)piece.color(), (int)piece.type(), position.m_Row, position.m_Column);
+    value_ ^= zValueTable_.pieceValue((int)piece.color(), (int)piece.type(), position.row, position.column);
 
     return *this;
 }
 
-inline ZHash & ZHash::castle(CastleId castle)
+inline ZHash & ZHash::castle(int castle)
 {
-    value_ ^= zValueTable_.castleValue((int)castle);
+    value_ ^= zValueTable_.castleValue(castle);
 
     return *this;
 }
@@ -60,7 +63,7 @@ inline ZHash & ZHash::enPassant(Color color, int column)
 inline bool ZHash::isUndefined() const
 {
     // The value is undefined if the high order bit is set
-    return static_cast <signed __int64>(value_) < 0;
+    return static_cast<signed __int64>(value_) < 0;
 }
 
 inline ZHash::Z ZHash::ZValueTable::pieceValue(int color, int type, int row, int column) const
@@ -77,3 +80,5 @@ inline ZHash::Z ZHash::ZValueTable::castleValue(int castle) const
 {
     return castleValues_[castle];
 }
+
+#endif // !defined(ZHash_inl__)

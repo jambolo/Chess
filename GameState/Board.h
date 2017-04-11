@@ -1,28 +1,18 @@
-/** @file *//********************************************************************************************************
-
-                                                       Board.h
-
-                                            Copyright 2004, John J. Bolton
-    --------------------------------------------------------------------------------------------------------------
-
-    $Header: //depot/Chess/Board.h#7 $
-
-    $NoKeywords: $
-
-********************************************************************************************************************/
-
 #pragma once
+
+#if !defined(Board_h__)
+#define Board_h__
 
 #include "GameState/ChessTypes.h"
 
 class PieceList;
 class Piece;
-class Position;
+struct Position;
 
 class Board
 {
 public:
-    static int const SIZE = 8;          // Number of rows and columns
+    static int const SIZE = 8; // Number of rows and columns
 
     // A reference to a particular piece on the board
     typedef unsigned char PieceId;
@@ -61,17 +51,17 @@ public:
     static Piece const * piece(PieceId id);
 
     // Returns the piece id of a piece
-    static PieceId  pieceId(Piece const * piece);
+    static PieceId pieceId(Piece const * piece);
 
 private:
 
-    friend bool operator ==(Board const & x, Board const & y);
+    friend bool operator == (Board const & x, Board const & y);
 
     // Remove all pieces from the board
     void clear();
 
     // Convert a PieceTypeId to a PieceId
-    static PieceId  pieceId(PieceTypeId type, Color color);
+    static PieceId pieceId(PieceTypeId type, Color color);
 
     PieceId board_[SIZE][SIZE]; // The board
 
@@ -79,8 +69,10 @@ private:
 };
 
 // Returns true if the other board is the same as this one
-bool operator ==(Board const & x, Board const & y);
+bool operator == (Board const & x, Board const & y);
 
 // Inline functions
 
 #include "Board.inl"
+
+#endif // !defined(Board_h__)

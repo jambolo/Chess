@@ -1,17 +1,7 @@
-/********************************************************************************************************************
-
-                                                   ComputerPlayer.h
-
-                                            Copyright 2004, John J. Bolton
-    --------------------------------------------------------------------------------------------------------------
-
-    $Header: //depot/Chess/ComputerPlayer.h#8 $
-
-    $NoKeywords: $
-
-********************************************************************************************************************/
-
 #pragma once
+
+#if !defined(ComputerPlayer_h__)
+#define ComputerPlayer_h__
 
 #include "Player.h"
 
@@ -33,3 +23,5 @@ private:
     TranspositionTable * transpositionTable_;
     int maxDepth_;
 };
+
+#endif // !defined(ComputerPlayer_h__)
