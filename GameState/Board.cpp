@@ -61,7 +61,7 @@ void Board::initialize(std::string const & fen)
     {
         std::regex re(
             "([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)");
-        if (!std::regex_search(fen, match, re) || match.size() != Board::SIZE + 1)
+        if (!std::regex_search(fen, match, re) || match.size() != SIZE + 1)
             throw ConstructorFailedException();
     }
     catch (std::regex_error &)
@@ -70,7 +70,7 @@ void Board::initialize(std::string const & fen)
     }
 
     int column = 0;
-    for (int row = 0; row < Board::SIZE; ++row)
+    for (int row = 0; row < SIZE; ++row)
     {
         for (auto c : match.str(row + 1))
         {
@@ -101,7 +101,7 @@ void Board::initialize(std::string const & fen)
                 putPiece(piece, Position(row, column));
                 ++column;
             }
-            if (column >= Board::SIZE)
+            if (column >= SIZE)
                 throw ConstructorFailedException();
         }
     }
@@ -110,7 +110,6 @@ void Board::initialize(std::string const & fen)
 bool Board::spanIsEmpty(Position const & from, Position const & to) const
 {
     // Get the distance in rows and columns of the move (sign determines direction)
-
     int row_move    = to.row - from.row;
     int column_move = to.column - from.column;
 
@@ -120,13 +119,11 @@ bool Board::spanIsEmpty(Position const & from, Position const & to) const
     int column_delta = (column_move < 0) ? -1 : (column_move == 0) ? 0 : 1;
 
     // Determine the number of squares moved (excluding the last square)
-    int squares_moved = std::max(abs(row_move), abs(column_move)) - 1;
+    int distance = std::max(abs(row_move), abs(column_move)) - 1;
 
     // Check every square except the first one. If there is a piece occupying a square, then return false.
-
     Position p = from;
-
-    for (int i = 0; i < squares_moved; ++i)
+    for (int i = 0; i < distance; ++i)
     {
         p.row    += row_delta;
         p.column += column_delta;

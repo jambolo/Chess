@@ -69,12 +69,9 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
     int worst_score = std::numeric_limits<int>::max();
 #endif // defined( GAME_TREE_ANALYSIS_ENABLED )
 
-    for (GameStateList::iterator pResponse = responses.begin(); pResponse != responses.end(); ++pResponse)
+    for (auto & response : responses)
     {
-        GameState & response = *pResponse;                      // Convenience
-
         // Revise the value of the move by searching the tree of all possible responses
-
         opponentsAlphaBeta(&response, best_score, std::numeric_limits<int>::max(), responseDepth);
 
 #if defined(GAME_TREE_ANALYSIS_ENABLED)
@@ -90,7 +87,6 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 
         // If this is the highest value so far, then save it (if it is checkmate, then there is no need to
         // continue looking for better results).
-
         if (response.value_ > best_score)
         {
             best_score = response.value_;
@@ -104,7 +100,6 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
     }
 
     // If the value of my best move is really bad, then just resign
-
     if (best_score < -StaticEvaluator::RESIGNATION_THRESHOLD)
     {
         best_state.move_ = Move::resign();
@@ -113,7 +108,6 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 #if defined(GAME_TREE_ANALYSIS_ENABLED)
 
     // Update analysis data
-
     analysisData_.worstValue = worst_score;
     analysisData_.tTableAnalysisData    = transpositionTable_->analysisData_;
     analysisData_.gameStateAnalysisData = best_state.analysisData_;
@@ -129,7 +123,6 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 #endif // defined( GAME_STATE_ANALYSIS_ENABLED )
 
     // Return the best move
-
     return best_state;
 }
 
@@ -161,14 +154,11 @@ void GameTree::myAlphaBeta(GameState * pS0, int alpha, int beta, int depth)
     GameState * pBestResponse = 0;
 #endif // defined( GAME_STATE_ANALYSIS_ENABLED )
 
-    for (GameStateList::iterator pResponse = responses.begin(); pResponse != responses.end(); ++pResponse)
+    for (auto & response : responses)
     {
-        GameState & response = *pResponse;                      // Convenience
-
         // If the quality of the preliminary value is not as good as the quality of the response ply and we haven't
         // reached the maximum depth, then do a search. Otherwise, the preliminary quality is as good as a search
         // so just use the preliminary value.
-
         if (  (response.quality_ < responseQuality)
            && (  (responseDepth < maxDepth_)
               || (  _ShouldDoQuiescentSearch(pS0->value_, response.value_)
@@ -178,11 +168,9 @@ void GameTree::myAlphaBeta(GameState * pS0, int alpha, int beta, int depth)
         }
 
         // Determine if this response's value is the best so far. If so, then do stuff
-
         if (response.value_ > bestScore)
         {
             // Save it
-
             bestScore = response.value_;
 
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
@@ -190,7 +178,6 @@ void GameTree::myAlphaBeta(GameState * pS0, int alpha, int beta, int depth)
 #endif      // defined( GAME_STATE_ANALYSIS_ENABLED )
 
             // If this is a checkmate, then there is no reason to look for anything better
-
             if (bestScore == MY_CHECKMATE_VALUE)
             {
                 break;
@@ -252,7 +239,6 @@ void GameTree::myAlphaBeta(GameState * pS0, int alpha, int beta, int depth)
     // Save the value of the state in the T-table if the ply was not pruned. Pruning results in an incorrect value
     // because the search is not complete. Also, the value is stored only if its quality is better than the quality
     // of the value in the table.
-
     if (!bPruned)
     {
         transpositionTable_->update(*pS0);
@@ -273,26 +259,21 @@ void GameTree::opponentsAlphaBeta(GameState * pS0, int alpha, int beta, int dept
     // Generate a list of my opponent's possible responses to this state sorted ascending by value. They are sorted
     // in ascending order hoping that a alpha cutoff will occur early.
     // Note: Preliminary values of the generated states are computed by the static evaluation function (SEF).
-
     GameStateList responses;
     generateStates(*pS0, false, responseDepth, responses);
 
     // Evaluate each of his responses and choose the one with the lowest score
-
     int bestScore = std::numeric_limits<int>::max();                                            // Initialize to worst
     bool bPruned = false;
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
     GameState * pBestResponse = 0;
 #endif // defined( GAME_STATE_ANALYSIS_ENABLED )
 
-    for (GameStateList::iterator pResponse = responses.begin(); pResponse != responses.end(); ++pResponse)
+    for (auto & response : responses)
     {
-        GameState & response = *pResponse;                      // Convenience
-
         // If the quality of the preliminary value is not as good as the quality of the response ply and we haven't
         // reached the maximum depth, then do a search. Otherwise, the preliminary quality is as good as a search
         // so just use the preliminary value.
-
         if (  (response.quality_ < responseQuality)
            && (  (responseDepth < maxDepth_)
               || (  _ShouldDoQuiescentSearch(pS0->value_, response.value_)
@@ -302,11 +283,9 @@ void GameTree::opponentsAlphaBeta(GameState * pS0, int alpha, int beta, int dept
         }
 
         // Determine if this response's value is the best so far. If so, the do stuff
-
         if (response.value_ < bestScore)
         {
             // Save it
-
             bestScore = response.value_;
 
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
@@ -314,7 +293,6 @@ void GameTree::opponentsAlphaBeta(GameState * pS0, int alpha, int beta, int dept
 #endif      // defined( GAME_STATE_ANALYSIS_ENABLED )
 
             // If this is a checkmate, then there is no reason to look for anything better
-
             if (bestScore == OPPONENT_CHECKMATE_VALUE)
             {
                 break;
@@ -332,7 +310,6 @@ void GameTree::opponentsAlphaBeta(GameState * pS0, int alpha, int beta, int dept
             if (bestScore < alpha)
             {
                 // Alpha cutoff
-
                 bPruned = true;
 
 #if defined(GAME_TREE_ANALYSIS_ENABLED)
@@ -366,7 +343,6 @@ void GameTree::opponentsAlphaBeta(GameState * pS0, int alpha, int beta, int dept
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
 
     // Save the expected sequence
-
     memcpy(&pS0->analysisData_.expected,
            &pBestResponse->analysisData_.expected,
            sizeof(pS0->analysisData_.expected));
@@ -376,7 +352,6 @@ void GameTree::opponentsAlphaBeta(GameState * pS0, int alpha, int beta, int dept
     // Save the value of the state in the T-table if the ply was not pruned. Pruning results in an incorrect value
     // because the search is not complete. Also, only store the value if its quality is better than the quality
     // of the value in the table.
-
     if (!bPruned)
     {
         transpositionTable_->update(*pS0);
@@ -391,7 +366,6 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
     Color current_color           = my_move ? myColor_ : yourColor_;
 
     // Preallocate enough space to hold all the generated states
-
     states.reserve(MAX_POSSIBLE_STATES);
 
     // For each square on the board, if it contains a piece on the side whose turn it is, generate all the possible
@@ -405,15 +379,11 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
 
             if ((piece != NO_PIECE) && (piece->color() == current_color))
             {
-                static Piece::MoveList moves;                       // Persistent in order to eliminate allocations (in
-                                                                    // conjunction with
-                // resize and reserve)
-                moves.resize(0);
-
+                Piece::MoveList moves;
                 piece->generatePossibleMoves(s0, p, moves);
 
                 // Convert the moves into new states and put the new states into the state list
-                for (auto move : moves)
+                for (auto const & move : moves)
                 {
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
                     GameState new_state(s0, current_color, move, depth);
@@ -442,7 +412,6 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
     }
 
     // Now sort the moves in descending (my moves) or ascending (opponent's moves) value
-
     if (my_move)
     {
         std::sort(states.begin(), states.end(), GameStateListSorter<std::greater<int> >());
@@ -465,7 +434,6 @@ void GameTree::evaluate(GameState * pState, int depth)
     // lookup is so much faster than the SEF.
 
     // If it is in the T-table then use that value, otherwise compute the value using SEF.
-
     if (transpositionTable_->check(*pState, &pState->value_, &pState->quality_))
     {
         // Use the value from the T-table
@@ -498,7 +466,6 @@ void GameTree::evaluate(GameState * pState, int depth)
 
         // Black has negative value so if I am black then I need to negate the value. This is to make the value in terms
         // of me or my opponent, rather than color.
-
         if (myColor_ == Color::BLACK)
         {
             value = -value;
@@ -510,7 +477,6 @@ void GameTree::evaluate(GameState * pState, int depth)
 #endif  // defined( INCREMENTAL_STATIC_EVALUATION_ENABLED )
 
         // Save the value of the state in the T-table
-
         transpositionTable_->update(*pState);
     }
 }

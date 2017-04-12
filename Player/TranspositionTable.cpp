@@ -9,9 +9,9 @@ TranspositionTable::TranspositionTable()
 {
     // Invalidate all entries in the table
 
-    for (int i = 0; i < elementsof(table_); ++i)
+    for (auto & e : table_)
     {
-        table_[i].clear();
+        e.clear();
     }
 }
 
@@ -209,10 +209,8 @@ void TranspositionTable::update(GameState const & state)
 
 void TranspositionTable::age()
 {
-    for (int i = 0; i < SIZE; ++i)
+    for (auto & entry : table_)
     {
-        TableEntry & entry = table_[i];
-
         if (entry.hashCode_ != TableEntry::UNUSED_ENTRY)
         {
             ++entry.age_;

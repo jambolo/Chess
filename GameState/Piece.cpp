@@ -344,7 +344,7 @@ void Knight::generatePossibleMoves(GameState const & state, Position const & fro
 {
     Board const & board = state.board_;
 
-    static Position const offsets[] =
+    static Position const OFFSETS[] =
     {
         Position(-2, -1), // up-left
         Position(-2, 1),  // up-right
@@ -358,14 +358,13 @@ void Knight::generatePossibleMoves(GameState const & state, Position const & fro
 
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
 
-    for (int i = 0; i < elementsof(offsets); ++i)
+    for (auto const & o : OFFSETS)
     {
-        Position to(from.row + offsets[i].row, from.column + offsets[i].column);
+        Position to(from.row + o.row, from.column + o.column);
 
         if (board.isValidPosition(to))
         {
             // Check if the destination square can be occupied
-
             if (squareCanBeOccupied(board, to, color_))
             {
                 moves.emplace_back(from, to);
