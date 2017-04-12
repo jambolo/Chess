@@ -170,17 +170,16 @@ void GameState::makeCastleMove(Color color, Move const & move)
 
     if (color == Color::WHITE)
     {
-        castleStatus_.castled     |= (move.isKingSideCastle()) ? (int)CastleId::WHITE_KINGSIDE : (int)CastleId::WHITE_QUEENSIDE;
-        castleStatus_.unavailable |= (int)CastleId::WHITE_KINGSIDE | (int)CastleId::WHITE_QUEENSIDE;
+        castleStatus_ |= move.isKingSideCastle() ? WHITE_KINGSIDE_CASTLE : WHITE_QUEENSIDE_CASTLE;
+        castleStatus_ |= WHITE_CASTLE_UNAVAILABLE;
     }
     else
     {
-        castleStatus_.castled     |= (move.isKingSideCastle()) ? (int)CastleId::BLACK_KINGSIDE : (int)CastleId::BLACK_QUEENSIDE;
-        castleStatus_.unavailable |= (int)CastleId::BLACK_KINGSIDE | (int)CastleId::BLACK_QUEENSIDE;
+        castleStatus_ |= move.isKingSideCastle() ? BLACK_KINGSIDE_CASTLE : BLACK_QUEENSIDE_CASTLE;
+        castleStatus_ |= BLACK_CASTLE_UNAVAILABLE;
     }
 
-    CastleStatus castleStatusChange;
-    castleStatusChange.status = oldStatus.status ^ castleStatus_.status;
+    CastleStatus castleStatusChange = oldStatus ^ castleStatus_;
 
     // Update check status
     // @todo check for in check
@@ -201,7 +200,7 @@ void GameState::makeNormalMove(Color color, Move const & move)
 
     if (move.isEnPassant())
     {
-        capturedPosition = Position(move.from().m_Row, move.to().m_Column);
+        capturedPosition = Position(move.from().row, move.to().column);
     }
     else
     {
@@ -243,17 +242,17 @@ void GameState::makeNormalMove(Color color, Move const & move)
     {
         if (pMoved->type() == PieceTypeId::KING)
         {
-            castleStatus_.unavailable |= (int)CastleId::WHITE_KINGSIDE | (int)CastleId::WHITE_QUEENSIDE;
+            castleStatus_ |= WHITE_CASTLE_UNAVAILABLE;
         }
         else if (pMoved->type() == PieceTypeId::ROOK)
         {
-            if (move.from().m_Row == Board::SIZE - 1 && move.from().m_Column == 0)
+            if (( move.from().row == Board::SIZE - 1) && ( move.from().column == 0) )
             {
-                castleStatus_.unavailable |= (int)CastleId::WHITE_QUEENSIDE;
+                castleStatus_ |= WHITE_QUEENSIDE_CASTLE_UNAVAILABLE;
             }
-            else if (move.from().m_Row == Board::SIZE - 1 && move.from().m_Column == Board::SIZE - 1)
+            else if (( move.from().row == Board::SIZE - 1) && ( move.from().column == Board::SIZE - 1) )
             {
-                castleStatus_.unavailable |= (int)CastleId::WHITE_KINGSIDE;
+                castleStatus_ |= WHITE_KINGSIDE_CASTLE_UNAVAILABLE;
             }
         }
     }
@@ -261,23 +260,22 @@ void GameState::makeNormalMove(Color color, Move const & move)
     {
         if (pMoved->type() == PieceTypeId::KING)
         {
-            castleStatus_.unavailable |= (int)CastleId::BLACK_KINGSIDE | (int)CastleId::BLACK_QUEENSIDE;
+            castleStatus_ |= BLACK_CASTLE_UNAVAILABLE;
         }
         else if (pMoved->type() == PieceTypeId::ROOK)
         {
-            if (move.from().m_Row == 0 && move.from().m_Column == 0)
+            if (( move.from().row == 0) && ( move.from().column == 0) )
             {
-                castleStatus_.unavailable |= (int)CastleId::BLACK_KINGSIDE;
+                castleStatus_ |= BLACK_KINGSIDE_CASTLE_UNAVAILABLE;
             }
-            else if (move.from().m_Row == 0 && move.from().m_Column == 7)
+            else if (( move.from().row == 0) && ( move.from().column == Board::SIZE - 1) )
             {
-                castleStatus_.unavailable |= (int)CastleId::BLACK_QUEENSIDE;
+                castleStatus_ |= BLACK_QUEENSIDE_CASTLE_UNAVAILABLE;
             }
         }
     }
 
-    CastleStatus castleStatusChange;
-    castleStatusChange.status = oldStatus.status ^ castleStatus_.status;
+    CastleStatus castleStatusChange = oldStatus ^ castleStatus_;
 
     // Update check status
     // @todo check for in check

@@ -1,28 +1,18 @@
-/** @file *//********************************************************************************************************
-
-                                                       Board.h
-
-                                            Copyright 2004, John J. Bolton
-    --------------------------------------------------------------------------------------------------------------
-
-    $Header: //depot/Chess/Board.h#7 $
-
-    $NoKeywords: $
-
-********************************************************************************************************************/
-
 #pragma once
+
+#if !defined(Board_h__)
+#define Board_h__
 
 #include "GameState/ChessTypes.h"
 
 class PieceList;
 class Piece;
-class Position;
+struct Position;
 
 class Board
 {
 public:
-    static int const SIZE = 8;          // Number of rows and columns
+    static int const SIZE = 8; // Number of rows and columns
 
     Board();
 
@@ -68,3 +58,5 @@ bool operator ==(Board const & x, Board const & y);
 // Inline functions
 
 #include "Board.inl"
+
+#endif // !defined(Board_h__)

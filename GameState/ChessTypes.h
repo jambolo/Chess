@@ -1,43 +1,39 @@
-/** @file *//********************************************************************************************************
-
-                                                     ChessTypes.h
-
-                                            Copyright 2004, John J. Bolton
-    --------------------------------------------------------------------------------------------------------------
-
-    $Header: //depot/Chess/ChessTypes.h#11 $
-
-    $NoKeywords: $
-
-********************************************************************************************************************/
-
 #pragma once
+
+#if !defined(ChessTypes_h__)
+#define ChessTypes_h__
 
 #include <vector>
 
-class Position
+struct Position
 {
-public:
-    Position() {}
-    Position(int r, int c) : m_Row(r), m_Column(c) {}
-    explicit Position(unsigned _id) : id(_id) {}
+    int8_t column;
+    int8_t row;
 
-    union
+    Position() {}
+    Position(int r, int c)
+        : column(c)
+        , row(r)
     {
-        struct
-        {
-            int8_t m_Column;
-            int8_t m_Row;
-        };
-        uint16_t id;    // Warning: Bitboards require m_Column to be the low-order byte
-    };
+    }
+
+    explicit Position(int id)
+        : column(id & 0xff)
+        , row((id >> 8) & 0xff)
+    {
+    }
+
+    int id() const
+    {
+        return (row << 8) + column;
+    }
 };
 
 typedef std::vector<Position> PositionVector;
 
 inline bool operator ==(Position const & a, Position const & b)
 {
-    return a.id == b.id;
+    return a.column == b.column && a.row == b.row;
 }
 
 enum class Color
@@ -46,7 +42,6 @@ enum class Color
     WHITE   = 0,
     BLACK
 };
-
 static int const NUMBER_OF_COLORS = (int)Color::BLACK - (int)Color::WHITE + 1;
 
 enum class PieceTypeId
@@ -59,15 +54,23 @@ enum class PieceTypeId
     ROOK,
     PAWN
 };
-
 static int const NUMBER_OF_PIECE_TYPES = (int)PieceTypeId::PAWN - (int)PieceTypeId::KING + 1;
 
-enum class CastleId
-{
-    WHITE_QUEENSIDE,
-    WHITE_KINGSIDE,
-    BLACK_QUEENSIDE,
-    BLACK_KINGSIDE
-};
+// Castle values
+static int const WHITE_QUEENSIDE_CASTLE             = 0x01;
+static int const WHITE_KINGSIDE_CASTLE              = 0x02;
+static int const BLACK_QUEENSIDE_CASTLE             = 0x04;
+static int const BLACK_KINGSIDE_CASTLE              = 0x08;
+static int const WHITE_CASTLE                       = WHITE_QUEENSIDE_CASTLE | WHITE_KINGSIDE_CASTLE;
+static int const BLACK_CASTLE                       = BLACK_QUEENSIDE_CASTLE | BLACK_KINGSIDE_CASTLE;
 
-static int const NUMBER_OF_CASTLES = (int)CastleId::BLACK_KINGSIDE - (int)CastleId::WHITE_QUEENSIDE + 1;
+static int const WHITE_QUEENSIDE_CASTLE_UNAVAILABLE = 0x10;
+static int const WHITE_KINGSIDE_CASTLE_UNAVAILABLE  = 0x20;
+static int const BLACK_QUEENSIDE_CASTLE_UNAVAILABLE = 0x40;
+static int const BLACK_KINGSIDE_CASTLE_UNAVAILABLE  = 0x80;
+static int const WHITE_CASTLE_UNAVAILABLE           = WHITE_QUEENSIDE_CASTLE_UNAVAILABLE | WHITE_KINGSIDE_CASTLE_UNAVAILABLE;
+static int const BLACK_CASTLE_UNAVAILABLE           = BLACK_QUEENSIDE_CASTLE_UNAVAILABLE | BLACK_KINGSIDE_CASTLE_UNAVAILABLE;
+
+static int const NUMBER_OF_CASTLE_BITS = 8;
+
+#endif // !defined(ChessTypes_h__)

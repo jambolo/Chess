@@ -1,5 +1,8 @@
 #pragma once
 
+#if !defined(Piece_h__)
+#define Piece_h__
+
 #include "gamestate/ChessTypes.h"
 #include <memory>
 #include <vector>
@@ -129,3 +132,5 @@ public:
     // Returns true if the move is valid
     bool isValidMove(GameState const & state, Move const & move) const override;
 };
+
+#endif // !defined(Piece_h__)

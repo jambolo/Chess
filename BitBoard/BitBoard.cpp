@@ -260,9 +260,8 @@ unsigned BitBoard::column(int c) const
 {
     unsigned result = 0;
     uint64_t temp   = board_ >> c;
-    for (unsigned r = 1; r < 0x100; r <<= 1)
-    {
-        result |= unsigned(temp & 0x00000000000000FFui64) & r;
+    for (unsigned r = 1; r < 0x100; r <<= 1) {
+        result |= unsigned(temp & 0xff) & r;
         temp  >>= 7;
     }
     return result;
@@ -271,15 +270,14 @@ unsigned BitBoard::column(int c) const
 BitBoard const & BitBoard::flip()
 {
     uint64_t temp = board_;
-
-    rows_[0] = ((uint8_t *)&temp)[7];
-    rows_[1] = ((uint8_t *)&temp)[6];
-    rows_[2] = ((uint8_t *)&temp)[5];
-    rows_[3] = ((uint8_t *)&temp)[4];
-    rows_[4] = ((uint8_t *)&temp)[3];
-    rows_[5] = ((uint8_t *)&temp)[2];
-    rows_[6] = ((uint8_t *)&temp)[1];
-    rows_[7] = ((uint8_t *)&temp)[0];
+    ((uint8_t *)&board_)[0] = ((uint8_t *)&temp)[7];
+    ((uint8_t *)&board_)[1] = ((uint8_t *)&temp)[6];
+    ((uint8_t *)&board_)[2] = ((uint8_t *)&temp)[5];
+    ((uint8_t *)&board_)[3] = ((uint8_t *)&temp)[4];
+    ((uint8_t *)&board_)[4] = ((uint8_t *)&temp)[3];
+    ((uint8_t *)&board_)[5] = ((uint8_t *)&temp)[2];
+    ((uint8_t *)&board_)[6] = ((uint8_t *)&temp)[1];
+    ((uint8_t *)&board_)[7] = ((uint8_t *)&temp)[0];
 
     return *this;
 }
@@ -305,9 +303,9 @@ BitBoard const & BitBoard::mirror()
 BitBoard BitBoard::threatenedSquares(PieceTypeId type, Position position)
 {
     assert(type != PieceTypeId::INVALID);
-    assert(position.id < NUMBER_OF_SQUARES);
+    assert(position.id() < NUMBER_OF_SQUARES);
 
-    return BitBoard(s_threatenedSquares[(int)type][position.id]);
+    return BitBoard(s_threatenedSquares[(int)type][position.id()]);
 }
 
 BitBoard BitBoard::threatenedSquares(PieceTypeId type, Position position, BitBoard const & friends, BitBoard const & foes)
@@ -326,9 +324,9 @@ BitBoard BitBoard::threatenedSquares(PieceTypeId type, Position position, BitBoa
 BitBoard BitBoard::destinationSquares(PieceTypeId type, Position position)
 {
     assert(type != PieceTypeId::INVALID);
-    assert(position.id < NUMBER_OF_SQUARES);
+    assert(position.id() < NUMBER_OF_SQUARES);
 
-    return BitBoard(s_destinationSquares[(int)type][position.id]);
+    return BitBoard(s_destinationSquares[(int)type][position.id()]);
 }
 
 BitBoard BitBoard::destinationSquares(PieceTypeId type, Position position, BitBoard const & friends, BitBoard const & foes)

@@ -111,8 +111,8 @@ bool Board::spanIsEmpty(Position const & from, Position const & to) const
 {
     // Get the distance in rows and columns of the move (sign determines direction)
 
-    int row_move    = to.m_Row - from.m_Row;
-    int column_move = to.m_Column - from.m_Column;
+    int row_move    = to.row - from.row;
+    int column_move = to.column - from.column;
 
     // Determine the row and column increment for each square tested. If the distance moved in a direction is < 0,
     // the increment is -1, if the distance is > 0, then the increment is 1, otherwise the increment is 0.
@@ -126,10 +126,9 @@ bool Board::spanIsEmpty(Position const & from, Position const & to) const
 
     Position p = from;
 
-    for (int i = 0; i < squares_moved; ++i)
-    {
-        p.m_Row    += row_delta;
-        p.m_Column += column_delta;
+    for (int i = 0; i < squares_moved; ++i) {
+        p.row    += row_delta;
+        p.column += column_delta;
 
         if (pieceAt(p) != NO_PIECE)
             return false;

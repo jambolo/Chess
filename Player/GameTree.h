@@ -1,17 +1,7 @@
-/** @file *//********************************************************************************************************
-
-                                                      GameTree.h
-
-                                            Copyright 2004, John J. Bolton
-    --------------------------------------------------------------------------------------------------------------
-
-    $Header: //depot/Chess/GameTree.h#11 $
-
-    $NoKeywords: $
-
-********************************************************************************************************************/
-
 #pragma once
+
+#if !defined(GameTree_h__)
+#define GameTree_h__
 
 #include "GameState/GameState.h"
 #include "GameState/Move.h"
@@ -81,10 +71,12 @@ private:
 #endif
 
     // Generate a list of all possible states in response to the specified one
-    void generateStates(GameState const & state, bool my_move, int depth, GameStateList &states);
+    void generateStates(GameState const & state, bool my_move, int depth, GameStateList & states);
 
-    Color myColor_;                                // My color
-    Color yourColor_;                              // My opponent's color
-    TranspositionTable * transpositionTable_;      // Transposition table
-    int maxDepth_;                                 // How deep to seach
+    Color myColor_;                           // My color
+    Color yourColor_;                         // My opponent's color
+    TranspositionTable * transpositionTable_; // Transposition table
+    int maxDepth_;                            // How deep to seach
 };
+
+#endif // !defined(GameTree_h__)

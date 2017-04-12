@@ -1,17 +1,7 @@
-/** @file *//********************************************************************************************************
-
-                                                    GameState.inl
-
-                                            Copyright 2004, John J. Bolton
-    --------------------------------------------------------------------------------------------------------------
-
-    $Header: //depot/Chess/GameState.inl#12 $
-
-    $NoKeywords: $
-
-********************************************************************************************************************/
-
 #pragma once
+
+#if !defined(GameState_inl__)
+#define GameState_inl__
 
 #include "GameState/Board.h"
 #include "GameState/ChessTypes.h"
@@ -30,27 +20,20 @@ inline GameState::GameState(Board const & board, Move const & move, int value, C
 
 inline bool GameState::castleIsAllowed(Color c) const
 {
-    unsigned mask = (c == Color::WHITE) ?
-                    (int)CastleId::WHITE_QUEENSIDE | (int)CastleId::WHITE_KINGSIDE :
-                    (int)CastleId::BLACK_QUEENSIDE | (int)CastleId::BLACK_KINGSIDE;
-    return castleIsAllowed(mask);
+    unsigned mask = (c == Color::WHITE) ? WHITE_CASTLE_UNAVAILABLE : BLACK_CASTLE_UNAVAILABLE;
+    return (castleStatus_ & mask) == 0;
 }
 
 inline bool GameState::kingSideCastleIsAllowed(Color c) const
 {
-    unsigned mask = (c == Color::WHITE) ? (int)CastleId::WHITE_KINGSIDE : (int)CastleId::BLACK_KINGSIDE;
-    return castleIsAllowed(mask);
+    unsigned mask = (c == Color::WHITE) ? WHITE_KINGSIDE_CASTLE_UNAVAILABLE : BLACK_KINGSIDE_CASTLE_UNAVAILABLE;
+    return (castleStatus_ & mask) == 0;
 }
 
 inline bool GameState::queenSideCastleIsAllowed(Color c) const
 {
-    unsigned mask = (c == Color::WHITE) ? (int)CastleId::WHITE_QUEENSIDE : (int)CastleId::BLACK_QUEENSIDE;
-    return castleIsAllowed(mask);
-}
-
-inline bool GameState::castleIsAllowed(unsigned mask) const
-{
-    return (castleStatus_.unavailable & mask) == 0;
+    unsigned mask = (c == Color::WHITE) ? WHITE_QUEENSIDE_CASTLE_UNAVAILABLE : BLACK_QUEENSIDE_CASTLE_UNAVAILABLE;
+    return (castleStatus_ & mask) == 0;
 }
 
 inline ZHash GameState::zhash() const
@@ -63,10 +46,12 @@ inline Piece const * GameState::queen(Color color)
     return (color == Color::WHITE) ? whiteQueen_ : blackQueen_;
 }
 
-inline bool operator ==(GameState const & x, GameState const & y)
+inline bool operator == (GameState const & x, GameState const & y)
 {
     //! @todo	Actually this is not correct because en passant validity is part of the state too
     return x.zhash_ == y.zhash_ &&
            x.board_ == y.board_ &&
-           x.castleStatus_.unavailable == y.castleStatus_.unavailable;
+           (x.castleStatus_ & 0xf0) == (y.castleStatus_ & 0xf0);
 }
+
+#endif // !defined(GameState_inl__)

@@ -1,5 +1,8 @@
 #pragma once
 
+#if !defined(GameState_h__)
+#define GameState_h__
+
 #include "Board.h"
 #include "Move.h"
 #include "Player/Sequence.h"
@@ -20,15 +23,7 @@ class GameState
 {
 public:
 
-    union CastleStatus
-    {
-        struct
-        {
-            uint8_t castled     : 4;    // Which castles have occurred
-            uint8_t unavailable : 4;    // Which castles are no longer possible
-        };
-        uint8_t status;
-    };
+    typedef uint32_t CastleStatus;
 
     GameState() {}
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
@@ -70,7 +65,7 @@ public:
 
     struct AnalysisData
     {
-        SequenceEntry expected[EXPECTED_SEQUENCE_SIZE];     // Sequence expected to follow this state
+        SequenceEntry expected[EXPECTED_SEQUENCE_SIZE]; // Sequence expected to follow this state
 
         void reset();
     };
@@ -94,7 +89,7 @@ public:
 
 private:
 
-    friend bool operator ==(GameState const & x, GameState const & y);
+    friend bool operator == (GameState const & x, GameState const & y);
 
     // Updates the game state with a move (but not a castle)
     void makeNormalMove(Color color, Move const & move);
@@ -112,7 +107,7 @@ private:
 };
 
 // Equality operator
-bool operator ==(GameState const & x, GameState const & y);
+bool operator == (GameState const & x, GameState const & y);
 
 typedef std::vector<GameState> GameStateList;
 
@@ -120,7 +115,7 @@ template <typename _Cmp>
 class GameStateListSorter
 {
 public:
-    bool operator ()(GameState const & g0, GameState const & g1) const
+    bool operator () (GameState const & g0, GameState const & g1) const
     {
         _Cmp cmp;
 
@@ -137,10 +132,12 @@ public:
             return false;
         }
 
-#endif //defined( USING_PRIORITIZED_MOVE_ORDERING )
+#endif  //defined( USING_PRIORITIZED_MOVE_ORDERING )
 
         return cmp(g0.value_, g1.value_);
     }
 };
 
 #include "GameState/GameState.inl"
+
+#endif // !defined(GameState_h__)

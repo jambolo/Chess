@@ -1,16 +1,3 @@
-/** @file *//********************************************************************************************************
-
-                                                 StaticEvaluator.cpp
-
-                                            Copyright 2004, John J. Bolton
-    --------------------------------------------------------------------------------------------------------------
-
-    $Header: //depot/Chess/StaticEvaluationFunction.cpp#12 $
-
-    $NoKeywords: $
-
-********************************************************************************************************************/
-
 #include "StaticEvaluator.h"
 
 #include "GameState/GameState.h"
@@ -95,22 +82,14 @@ int _Evaluate(GameState::CastleStatus castleStatus)
     // A bonus is given for having castled. Likewise, a penalty is given for losing the ability to castle.
 
     int value = 0;
-    int const BLACK_CASTLE_MASK = (int)CastleId::BLACK_QUEENSIDE | (int)CastleId::BLACK_KINGSIDE;
-    if (castleStatus.castled & BLACK_CASTLE_MASK)
-    {
+    if (castleStatus & BLACK_CASTLE) {
         value += -2;
-    }
-    else if ((castleStatus.unavailable & BLACK_CASTLE_MASK) == BLACK_CASTLE_MASK)
-    {
+    } else if ((castleStatus & BLACK_CASTLE_UNAVAILABLE) == BLACK_CASTLE_UNAVAILABLE)   {
         value -= -1;
     }
-    int const WHITE_CASTLE_MASK = (int)CastleId::WHITE_QUEENSIDE | (int)CastleId::WHITE_KINGSIDE;
-    if (castleStatus.castled & WHITE_CASTLE_MASK)
-    {
+    if (castleStatus & WHITE_CASTLE) {
         value += 2;
-    }
-    else if ((castleStatus.unavailable & WHITE_CASTLE_MASK) == WHITE_CASTLE_MASK)
-    {
+    } else if ((castleStatus & WHITE_CASTLE_UNAVAILABLE) == WHITE_CASTLE_UNAVAILABLE) {
         value -= 1;
     }
 
@@ -154,8 +133,7 @@ int StaticEvaluator::evaluate(GameState const & state)
 
                 // Compute the checkmate value
 
-                if (id == (int)PieceTypeId::KING)
-                {
+                if (id == (int)PieceTypeId::KING) {
                     checkmate_value += (color == Color::WHITE) ? CHECKMATE_VALUE : -CHECKMATE_VALUE;
                 }
 
@@ -193,12 +171,9 @@ int StaticEvaluator::evaluate(GameState const & state)
 
     int value;
 
-    if (checkmate_value != 0)
-    {
+    if (checkmate_value != 0) {
         value = checkmate_value;
-    }
-    else
-    {
+    } else {
         value =   property_value * PROPERTY_FACTOR
                 + position_value * POSITION_FACTOR / 1000
                 + castleStatusValue * CASTLE_FACTOR
@@ -232,15 +207,13 @@ int StaticEvaluator::incremental(Move const &            move,
 
     // These special moves don't do anything
 
-    if (move.isResignation() || move.isUndo() || move.isStartingPosition())
-    {
+    if (move.isResignation() || move.isUndo() || move.isStartingPosition()) {
         return 0;
     }
 
     // Check for checkmate (note: this assumes there is at least one king on the board)
 
-    if (pRemoved && pRemoved->type() == PieceTypeId::KING)
-    {
+    if (pRemoved && (pRemoved->type() == PieceTypeId::KING)) {
         return (pRemoved->color() == Color::WHITE) ? -CHECKMATE_VALUE : CHECKMATE_VALUE;
     }
 
@@ -249,22 +222,20 @@ int StaticEvaluator::incremental(Move const &            move,
     // Evaluate any change in position and property values from adding or removing pieces. Note: adding a piece
     // assumes promoting a pawn, so the added piece's position is the To position.
 
-    if (pAdded)
-    {
+    if (pAdded) {
         int color         = (int)pAdded->color();
         int propertyValue = s_PieceValues[color][(int)pAdded->type()].property;
 
         value +=  propertyValue * PROPERTY_FACTOR;
-        value +=  propertyValue * s_PositionValues[color][move.to().m_Row][move.to().m_Column] * POSITION_FACTOR / 1000;
+        value +=  propertyValue * s_PositionValues[color][move.to().row][move.to().column] * POSITION_FACTOR / 1000;
     }
 
-    if (pRemoved)
-    {
+    if (pRemoved) {
         int color         = (int)pRemoved->color();
         int propertyValue = s_PieceValues[color][(int)pRemoved->type()].property;
 
         value -=  propertyValue * PROPERTY_FACTOR;
-        value -=  propertyValue * s_PositionValues[color][pRemovedPosition->m_Row][pRemovedPosition->m_Column] * POSITION_FACTOR /
+        value -=  propertyValue * s_PositionValues[color][pRemovedPosition->row][pRemovedPosition->column] * POSITION_FACTOR /
                  1000;
     }
 
@@ -274,8 +245,8 @@ int StaticEvaluator::incremental(Move const &            move,
         int color         = (int)pMoved->color();
         int propertyValue = s_PieceValues[color][(int)pMoved->type()].property;
 
-        value -=  propertyValue * s_PositionValues[color][move.from().m_Row][move.from().m_Column] * POSITION_FACTOR / 1000;
-        value +=  propertyValue * s_PositionValues[color][move.to().m_Row][move.to().m_Column] * POSITION_FACTOR / 1000;
+        value -=  propertyValue * s_PositionValues[color][move.from().row][move.from().column] * POSITION_FACTOR / 1000;
+        value +=  propertyValue * s_PositionValues[color][move.to().row][move.to().column] * POSITION_FACTOR / 1000;
     }
 
     // Evaluate any change in castling status

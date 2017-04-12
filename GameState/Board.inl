@@ -1,5 +1,8 @@
 #pragma once
 
+#if !defined(Board_inl__)
+#define Board_inl__
+
 #include "Board.h"
 
 #include "gamestate/Piece.h"
@@ -9,16 +12,15 @@
 
 inline void Board::clear()
 {
-    assert((int)NO_PIECE == (int)0);
-    memset(board_, 0, sizeof board_);
+    memset(board_, (int)EMPTY_SQUARE, sizeof board_);
 }
 
 inline bool Board::isValidPosition(Position const & p)
 {
-    return p.m_Row >= 0 &&
-           p.m_Row < SIZE &&
-           p.m_Column >= 0 &&
-           p.m_Column < SIZE;
+    return p.row >= 0 &&
+           p.row < SIZE &&
+           p.column >= 0 &&
+           p.column < SIZE;
 }
 
 inline Piece const * Board::pieceAt(Position const & p) const
@@ -34,7 +36,7 @@ inline Piece const * Board::pieceAt(int r, int c) const
 inline void Board::putPiece(Piece const * id, Position const & p)
 {
     // Place the piece
-    board_[p.m_Row][p.m_Column] = id;
+    board_[p.row][p.column] = id;
 }
 
 inline void Board::putPiece(Piece const * piece, Position const & p)
@@ -58,11 +60,13 @@ inline void Board::removePiece(int r, int c)
 inline void Board::movePiece(Position const & from, Position const & to)
 {
     // Move the piece
-    board_[to.m_Row][to.m_Column]     = board_[from.m_Row][from.m_Column];
-    board_[from.m_Row][from.m_Column] = NO_PIECE;
+    board_[to.row][to.column]     = board_[from.row][from.column];
+    board_[from.row][from.column] = NO_PIECE;
 }
 
-inline bool operator ==(Board const & x, Board const & y)
+inline bool operator == (Board const & x, Board const & y)
 {
     return memcmp(x.board_, y.board_, sizeof x.board_) == 0;
 }
+
+#endif // !defined(Board_inl__)

@@ -1,17 +1,7 @@
-/** @file *//********************************************************************************************************
-
-                                                        Move.h
-
-                                            Copyright 2004, John J. Bolton
-    --------------------------------------------------------------------------------------------------------------
-
-    $Header: //depot/Chess/Move.h#8 $
-
-    $NoKeywords: $
-
-********************************************************************************************************************/
-
 #pragma once
+
+#if !defined(Move_h__)
+#define Move_h__
 
 #include <vector>
 #include "GameState/ChessTypes.h"
@@ -26,13 +16,13 @@ public:
 
     enum class SpecialMoveId
     {
-        RESIGN = 1 << 3,            
-        UNDO = 2 << 3,              
-        RESET = 3 << 3,             
-        KINGSIDE_CASTLE  = 4 << 3,  
-        QUEENSIDE_CASTLE = 5 << 3,  
-        PROMOTION = 6 << 3,         
-        ENPASSANT = 7 << 3          
+        RESIGN              = 1 << 3,
+        UNDO                = 2 << 3,
+        RESET               = 3 << 3,
+        KINGSIDE_CASTLE     = 4 << 3,
+        QUEENSIDE_CASTLE    = 5 << 3,
+        PROMOTION           = 6 << 3,
+        ENPASSANT           = 7 << 3
     };
 
     Move() {}
@@ -115,3 +105,5 @@ private:
 };
 
 #include "Move.inl"
+
+#endif // !defined(Move_h__)

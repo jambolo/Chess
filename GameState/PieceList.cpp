@@ -1,5 +1,7 @@
-#include "Piece.h"
 #include "PieceList.h"
+
+#include "Piece.h"
+
 #include <cstdlib>
 
 PieceList::PieceList(Color color /*= Color::INVALID*/)

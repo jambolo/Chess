@@ -16,10 +16,13 @@
 
 #pragma once
 
+#if !defined(ZHash_h__)
+#define ZHash_h__
+
 #include "GameState/Board.h"
 
 class Piece;
-class Position;
+struct Position;
 
 //! Zobrist Hash Coding.
 class ZHash
@@ -36,10 +39,10 @@ public:
     explicit ZHash(Z z = 0);
 
     // Constructor
-    explicit ZHash(Board const & board, unsigned castle = 0, Color ePColor = Color::INVALID, int ePColumn = -1);
+    explicit ZHash(Board const & board, int castle = 0, Color ePColor = Color::INVALID, int ePColumn = -1);
 
     // Conversion to Z
-    operator Z() const { return value_; }
+    operator Z () const { return value_; }
 
     // Adds a piece. Returns the new value
     ZHash & add(Piece const & piece, Position const & position);
@@ -48,7 +51,7 @@ public:
     ZHash & remove(Piece const & piece, Position const & position);
 
     // Changes the status of the ability to perform a castle. Returns the new value
-    ZHash & castle(CastleId which);
+    ZHash & castle(int which);
 
     // Changes en passant status. Returns the new value
     ZHash & enPassant(Color color, int column);
@@ -58,17 +61,17 @@ public:
 
 private:
 
-    friend bool operator ==(ZHash const & x, ZHash const & y);
+    friend bool operator == (ZHash const & x, ZHash const & y);
 
-    class ZValueTable;  // declared below
+    class ZValueTable; // declared below
 
-    Z value_;    // The hash value
+    Z value_; // The hash value
 
-    static ZValueTable const zValueTable_;    // The hash code table
+    static ZValueTable const zValueTable_; // The hash code table
 };
 
 // Equality operator
-bool operator ==(ZHash const & x, ZHash const & y);
+bool operator == (ZHash const & x, ZHash const & y);
 
 class ZHash::ZValueTable
 {
@@ -77,21 +80,23 @@ public:
     ZValueTable();
 
     // Returns the appropriate value for a piece on the board
-    Z   pieceValue(int color, int type, int row, int column) const;
+    Z pieceValue(int color, int type, int row, int column) const;
 
     // Returns the appropriate value for en passant
-    Z   enPassantValue(int color, int column) const;
+    Z enPassantValue(int color, int column) const;
 
     // Returns the appropriate value for a particular castle
-    Z   castleValue(int which) const;
+    Z castleValue(int which) const;
 
 private:
 
     Z pieceValues_[NUMBER_OF_COLORS][Board::SIZE][Board::SIZE][NUMBER_OF_PIECE_TYPES];
     Z enPassantValues_[NUMBER_OF_COLORS][Board::SIZE];
-    Z castleValues_[NUMBER_OF_CASTLES];
+    Z castleValues_[NUMBER_OF_CASTLE_BITS]; // Castles and availabilities
 };
 
 // Inline functions
 
 #include "ZHash.inl"
+
+#endif // !defined(ZHash_h__)

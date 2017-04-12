@@ -1,5 +1,8 @@
 #pragma once
 
+#if !defined(Player_h__)
+#define Player_h__
+
 #include "Player/GameTree.h" // for AnalysisData
 
 class GameState;
@@ -41,3 +44,5 @@ protected:
 };
 
 #include "Player.inl"
+
+#endif // !defined(Player_h__)

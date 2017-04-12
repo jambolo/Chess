@@ -25,63 +25,49 @@ ZHash::ZValueTable const ZHash::zValueTable_;
 
 namespace
 {
-inline uint64_t generate64BitRandomNumber(RandomMT & rng)
+inline uint64_t generateRandomZ(RandomMT & rng)
 {
-    // Z is 63 bits and Random is 32 bits so we have to concatenate two numbers together to make a Z value.
-    return (uint64_t(rng()) << 32) | rng();
+    // Z is 63 bits and RandomMT is 32 bits so we have to concatenate two numbers together to make a Z value.
+    return ((uint64_t(rng()) << 32) | rng()) & 0x7fffffffffffffff;
 }
 }
 
-ZHash::ZHash(Board const & board, unsigned castle /* = 0*/, Color ePColor /* = INVALID*/, int ePColumn /* = -1*/)
+ZHash::ZHash(Board const & board, int castleStatus /* = 0*/, Color ePColor /* = INVALID*/, int ePColumn /* = -1*/)
 {
     value_ = 0;
 
-    for (int i = 0; i < Board::SIZE; ++i)
-    {
-        for (int j = 0; j < Board::SIZE; ++j)
-        {
+    for (int i = 0; i < Board::SIZE; ++i) {
+        for (int j = 0; j < Board::SIZE; ++j) {
             Piece const * const pPiece = board.pieceAt(i, j);
-            if (pPiece != NO_PIECE)
-            {
+            if (pPiece != NO_PIECE) {
                 add(*pPiece, Position(i, j));
             }
         }
     }
 
-    for (int i = 0; i < NUMBER_OF_CASTLES; ++i)
-    {
-        if ((castle & (1 << i)) != 0)
-        {
-            this->castle(static_cast<CastleId>(i));
+    for (int i = 0; i < NUMBER_OF_CASTLE_BITS; ++i) {
+        int mask = 1 << i;
+        if ((castleStatus & mask) != 0) {
+            castle(i);
         }
     }
 
-    if (ePColor != Color::INVALID && ePColumn >= 0)
-    {
+    if ((ePColor != Color::INVALID) && (ePColumn >= 0)) {
         enPassant(ePColor, ePColumn);
     }
 }
 
 ZHash::ZValueTable::ZValueTable()
 {
-    // Bit 64 is always 0 so that special values can be available by setting the high bit.
-    static uint64_t const MASK = 0X7FFFFFFFFFFFFFFFui64;
-
-    // Generate Z-values
-
     RandomMT rng(0);
 
     // Generate piece values
 
-    for (int i = 0; i < NUMBER_OF_COLORS; ++i)
-    {
-        for (int j = 0; j < Board::SIZE; ++j)
-        {
-            for (int k = 0; k < Board::SIZE; ++k)
-            {
-                for (int m = 0; m < NUMBER_OF_PIECE_TYPES; ++m)
-                {
-                    pieceValues_[i][j][k][m] = generate64BitRandomNumber(rng) & MASK;
+    for (int i = 0; i < NUMBER_OF_COLORS; ++i) {
+        for (int j = 0; j < Board::SIZE; ++j) {
+            for (int k = 0; k < Board::SIZE; ++k) {
+                for (int m = 0; m < NUMBER_OF_PIECE_TYPES; ++m) {
+                    pieceValues_[i][j][k][m] = generateRandomZ(rng);
                 }
             }
         }
@@ -89,18 +75,15 @@ ZHash::ZValueTable::ZValueTable()
 
     // Generate en passant values
 
-    for (int i = 0; i < NUMBER_OF_COLORS; ++i)
-    {
-        for (int j = 0; j < Board::SIZE; ++j)
-        {
-            enPassantValues_[i][j] = generate64BitRandomNumber(rng) & MASK;
+    for (int i = 0; i < NUMBER_OF_COLORS; ++i) {
+        for (int j = 0; j < Board::SIZE; ++j) {
+            enPassantValues_[i][j] = generateRandomZ(rng);
         }
     }
 
     // Generate castle values
 
-    for (int i = 0; i < NUMBER_OF_CASTLES; ++i)
-    {
-        castleValues_[i] = generate64BitRandomNumber(rng) & MASK;
+    for (auto & v : castleValues_) {
+        v = generateRandomZ(rng);
     }
 }
