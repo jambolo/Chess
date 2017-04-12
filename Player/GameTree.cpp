@@ -396,53 +396,46 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
 
     // For each square on the board, if it contains a piece on the side whose turn it is, generate all the possible
     // moves for it and add the resulting game states to game state list.
-
     Position p(0, 0);
     for (p.row = 0; p.row < Board::SIZE; p.row++)
     {
         for (p.column = 0; p.column < Board::SIZE; p.column++)
         {
-            Piece * const id = board.pieceAt(p);
+            Piece const * piece = board.pieceAt(p);
 
-            if (id != NO_PIECE)
+            if ((piece != NO_PIECE) && (piece->color() == current_color))
             {
-                Piece const * const piece = board.piece(id);
+                static Piece::MoveList moves;                       // Persistent in order to eliminate allocations (in
+                                                                    // conjunction with
+                // resize and reserve)
+                moves.resize(0);
 
-                if (piece->color() == current_color)
+                piece->generatePossibleMoves(s0, p, moves);
+
+                // Convert the moves into new states and put the new states into the state list
+                for (auto move : moves)
                 {
-                    static Piece::MoveList moves;                       // Persistent in order to eliminate allocations (in
-                                                                        // conjunction with
-                    // resize and reserve)
-                    moves.resize(0);
-
-                    piece->generatePossibleMoves(s0, p, moves);
-
-                    // Convert the moves into new states and put the new states into the state list
-
-                    for (auto move : moves)
-                    {
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
-                        GameState new_state(s0, current_color, move, depth);
+                    GameState new_state(s0, current_color, move, depth);
 #else                   // defined( GAME_STATE_ANALYSIS_ENABLED )
-                        GameState new_state(s0, current_color, *pMove);
+                    GameState new_state(s0, current_color, move);
 #endif
 
-                        // Compute a preliminary value for the state
-                        evaluate(&new_state, depth);
+                    // Compute a preliminary value for the state
+                    evaluate(&new_state, depth);
 
 #if defined(USING_PRIORITIZED_MOVE_ORDERING)
 
-                        // Determine the new state's priority
-                        prioritize(&new_state, depth);
+                    // Determine the new state's priority
+                    prioritize(&new_state, depth);
 #endif
 
 #if defined(GAME_TREE_ANALYSIS_ENABLED)
-                        ++analysisData_.aGeneratedStateCounts[depth];
+                    ++analysisData_.aGeneratedStateCounts[depth];
 #endif
 
-                        // Save the new state
-                        states.push_back(new_state);
-                    }
+                    // Save the new state
+                    states.push_back(new_state);
                 }
             }
         }
@@ -490,7 +483,7 @@ void GameTree::evaluate(GameState * pState, int depth)
 #if defined(INCREMENTAL_STATIC_EVALUATION_VALIDATION_ENABLED)
         int absoluteValue = StaticEvaluator::evaluate(*pState);
 
-        if (myColor_ == BLACK)
+        if (myColor_ == Color::BLACK)
         {
             value = -value;
         }
@@ -506,7 +499,7 @@ void GameTree::evaluate(GameState * pState, int depth)
         // Black has negative value so if I am black then I need to negate the value. This is to make the value in terms
         // of me or my opponent, rather than color.
 
-        if (myColor_ == BLACK)
+        if (myColor_ == Color::BLACK)
         {
             value = -value;
         }

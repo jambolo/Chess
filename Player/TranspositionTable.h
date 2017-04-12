@@ -32,7 +32,7 @@ public:
     TranspositionTable();
 
     // Returns true and value if the state is already in the table
-    bool check(GameState const & state, int * pReturnedValue, int8_t * pReturnedQuality) const;
+    bool check(GameState const & state, int * pReturnedValue, int * pReturnedQuality) const;
 
     // Returns true and value if the state is already in the table and the quality is high enough.
     bool check(GameState const & state, int minQ, int * pReturnedValue) const;

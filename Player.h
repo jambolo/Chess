@@ -28,8 +28,9 @@ public:
     {
         int time;
         int value;
+#if defined(GAME_TREE_ANALYSIS_ENABLED)
         GameTree::AnalysisData gameTreeAnalysisData;
-
+#endif
         AnalysisData();
         void reset();
     };

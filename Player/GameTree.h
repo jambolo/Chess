@@ -39,9 +39,12 @@ public:
         int worstValue;
         int alphaHitCount;
         int betaHitCount;
+#if defined(TRANSPOSITION_TABLE_ANALYSIS_ENABLED)
         TranspositionTable::AnalysisData tTableAnalysisData;
+#endif
+#if defined(GAME_STATE_ANALYSIS_ENABLED)
         GameState::AnalysisData gameStateAnalysisData;
-
+#endif
         AnalysisData();
         void reset();
     };

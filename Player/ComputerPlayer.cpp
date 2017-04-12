@@ -40,8 +40,9 @@ GameState ComputerPlayer::myTurn(GameState const & s0)
 
     analysisData_.time  = 0; // elapsed_time;
     analysisData_.value = new_state.value_;
+#if defined(GAME_TREE_ANALYSIS_ENABLED)
     analysisData_.gameTreeAnalysisData = game_tree.analysisData_;
-
+#endif
 #endif // defined( PLAYER_ANALYSIS_ENABLED )
 
     return new_state;

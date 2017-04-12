@@ -129,27 +129,23 @@ int StaticEvaluator::evaluate(GameState const & state)
     {
         for (int column = 0; column < Board::SIZE; ++column)
         {
-            Piece * const id = state.board_.pieceAt(row, column);
+            Piece const * p = state.board_.pieceAt(row, column);
 
-            if (id != NO_PIECE)
+            if (p != NO_PIECE)
             {
-                Piece const * pPiece = Board::piece(id);
-                Color color          = pPiece->color();
-                PieceTypeId type     = pPiece->type();
+                Color color          = p->color();
+                PieceTypeId type     = p->type();
 
                 // Compute the checkmate value
-
-                if (id == (int)PieceTypeId::KING)
+                if (type == PieceTypeId::KING)
                 {
                     checkmate_value += (color == Color::WHITE) ? CHECKMATE_VALUE : -CHECKMATE_VALUE;
                 }
 
                 // Compute the property value
-
                 property_value += s_PieceValues[(int)color][(int)type].property;
 
 //				// Compute the mobility value
-//
 //				{
 //					MoveList moves;
 //
@@ -159,13 +155,11 @@ int StaticEvaluator::evaluate(GameState const & state)
 //				}
 
                 // Compute the position value
-
                 {
                     position_value += s_PieceValues[(int)color][(int)type].property * s_PositionValues[(int)color][row][column];
                 }
 
 //				// Compute the threat value
-//
 //				{
 //				}
             }

@@ -81,24 +81,24 @@ void Board::initialize(std::string const & fen)
             }
             else
             {
-                Piece const * p = NO_PIECE;
+                Piece const * piece = NO_PIECE;
                 switch (c)
                 {
-                    case 'B': p = Piece::piece(PieceTypeId::BISHOP, Color::WHITE);   break;
-                    case 'K': p = Piece::piece(PieceTypeId::KING, Color::WHITE);     break;
-                    case 'N': p = Piece::piece(PieceTypeId::KNIGHT, Color::WHITE);   break;
-                    case 'P': p = Piece::piece(PieceTypeId::PAWN, Color::WHITE);     break;
-                    case 'Q': p = Piece::piece(PieceTypeId::QUEEN, Color::WHITE);    break;
-                    case 'R': p = Piece::piece(PieceTypeId::ROOK, Color::WHITE);     break;
-                    case 'b': p = Piece::piece(PieceTypeId::BISHOP, Color::BLACK);   break;
-                    case 'k': p = Piece::piece(PieceTypeId::KING, Color::BLACK);     break;
-                    case 'n': p = Piece::piece(PieceTypeId::KNIGHT, Color::BLACK);   break;
-                    case 'p': p = Piece::piece(PieceTypeId::PAWN, Color::BLACK);     break;
-                    case 'q': p = Piece::piece(PieceTypeId::QUEEN, Color::BLACK);    break;
-                    case 'r': p = Piece::piece(PieceTypeId::ROOK, Color::BLACK);     break;
+                    case 'B': piece = Piece::piece(PieceTypeId::BISHOP, Color::WHITE);   break;
+                    case 'K': piece = Piece::piece(PieceTypeId::KING, Color::WHITE);     break;
+                    case 'N': piece = Piece::piece(PieceTypeId::KNIGHT, Color::WHITE);   break;
+                    case 'P': piece = Piece::piece(PieceTypeId::PAWN, Color::WHITE);     break;
+                    case 'Q': piece = Piece::piece(PieceTypeId::QUEEN, Color::WHITE);    break;
+                    case 'R': piece = Piece::piece(PieceTypeId::ROOK, Color::WHITE);     break;
+                    case 'b': piece = Piece::piece(PieceTypeId::BISHOP, Color::BLACK);   break;
+                    case 'k': piece = Piece::piece(PieceTypeId::KING, Color::BLACK);     break;
+                    case 'n': piece = Piece::piece(PieceTypeId::KNIGHT, Color::BLACK);   break;
+                    case 'p': piece = Piece::piece(PieceTypeId::PAWN, Color::BLACK);     break;
+                    case 'q': piece = Piece::piece(PieceTypeId::QUEEN, Color::BLACK);    break;
+                    case 'r': piece = Piece::piece(PieceTypeId::ROOK, Color::BLACK);     break;
                     default: throw ConstructorFailedException();
                 }
-                board_.putPiece(p, Position(row, column));
+                putPiece(piece, Position(row, column));
                 ++column;
             }
             if (column >= Board::SIZE)

@@ -22,6 +22,12 @@ public:
     Piece(PieceTypeId t, Color c);
     virtual ~Piece();
 
+    // Generates all legal moves for this piece
+    virtual void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const = 0;
+
+    // Returns true if the move is valid
+    virtual bool isValidMove(GameState const & state, Move const & move) const = 0;
+
     PieceTypeId     type() const   { return type_;   }
     Color           color() const  { return color_;  }
     char const *    symbol() const { return symbol_; }
@@ -31,16 +37,7 @@ public:
     static char const * symbol(PieceTypeId id);
 
     // Returns the piece corresponding to the specified type and color
-    static Piece const * piece(PieceTypeId id,
-                               Color       color) { return (id !=
-                                                            PieceTypeId::INVALID) ? pieces_[1 + (int)color * NUMBER_OF_PIECE_TYPES +
-                                                                                            (int)id] : NO_PIECE; }
-
-    // Generates all legal moves for this piece
-    virtual void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const = 0;
-
-    // Returns true if the move is valid
-    virtual bool isValidMove(GameState const & state, Move const & move) const = 0;
+    static Piece const * piece(PieceTypeId id, Color color);
 
 protected:
 
@@ -135,5 +132,10 @@ public:
     // Returns true if the move is valid
     bool isValidMove(GameState const & state, Move const & move) const override;
 };
+
+inline Piece const * Piece::piece(PieceTypeId id, Color color)
+{
+    return (id != PieceTypeId::INVALID) ? pieces_[1 + (int)color * NUMBER_OF_PIECE_TYPES + (int)id] : NO_PIECE;
+}
 
 #endif // !defined(Piece_h__)

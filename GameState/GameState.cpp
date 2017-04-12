@@ -75,25 +75,55 @@ GameState::GameState(char const * fen)
     end = strchr(start, ' ');
     if (!end)
         throw ConstructorFailedException();
-    {
-        std::string placement(start, end);
-        initialize(placement);
-    }
+    board_.initialize(std::string(start, end));
+    start = end + 1;
 
     // Extract the active color
-    std::string color;
+    end = strchr(start, ' ');
+    if (!end || end != start + 1 || ((*start != 'w') && (*start != 'b')))
+        throw ConstructorFailedException();
+    Color color = *start == 'w' ? Color::WHITE : Color::BLACK;
+    start = end + 1;
 
     // Extract the castling availability
-    std::string castle;
+    end = strchr(start, ' ');
+    if (!end)
+        throw ConstructorFailedException();
+    castleStatus_ = WHITE_CASTLE_UNAVAILABLE | BLACK_CASTLE_UNAVAILABLE;
+    if (*start != '-')
+    { 
+        for (auto c = start; c != end; ++c)
+        {
+            switch (*c)
+            {
+                case 'K': castleStatus_ &= ~WHITE_KINGSIDE_CASTLE_UNAVAILABLE;  break;
+                case 'Q': castleStatus_ &= ~WHITE_QUEENSIDE_CASTLE_UNAVAILABLE; break;
+                case 'k': castleStatus_ &= ~BLACK_KINGSIDE_CASTLE_UNAVAILABLE;  break;
+                case 'q': castleStatus_ &= ~BLACK_QUEENSIDE_CASTLE_UNAVAILABLE; break;
+                default:  throw ConstructorFailedException();
+            }
+        }
+    }
+    start = end + 1;
 
     // Extract the en passant target square
-    std::string enPassant;
+    end = strchr(start, ' ');
+    if (!end || (*start != '-' && end != start + 2))
+        throw ConstructorFailedException();
+    Position enpassant = (*start == '-') ? Position(Position::INVALID) : Position(start);
+    start = end + 1;
 
     // Extract the fifty-move rule timer
-    std::string fiftyMoveRuleTimer;
+    end = strchr(start, ' ');
+    if (!end)
+        throw ConstructorFailedException();
+    int fiftyMoveTimer = std::stoi(std::string(start, end));
+    start = end + 1;
 
     // Extract the move number
-    std::string moveNumber;
+    int moveNumber = std::stoi(std::string(start));
+    if (moveNumber < 1)
+        throw ConstructorFailedException();
 }
 
 void GameState::makeMove(Color color, Move const & move)
@@ -295,7 +325,7 @@ Piece const * GameState::promote(Color color, Position const & position)
 
     // Replace with a queen
 
-    Piece const * pAdded = queen(color);
+    Piece const * pAdded = Piece::piece(PieceTypeId::QUEEN, color);
 
     zhash_.add(*pAdded, position);
     board_.putPiece(pAdded, position);
@@ -306,7 +336,7 @@ Piece const * GameState::promote(Color color, Position const & position)
 void GameState::initialize()
 {
     board_.initialize();
-    castleStatus_.status = 0;
+    castleStatus_ = 0;
 
     zhash_ = ZHash(board_);
 

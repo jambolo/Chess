@@ -20,7 +20,7 @@ public:
     void initialize();
 
     // Initialize the board using FEN description
-    void initialize(std::string const & fen)
+    void initialize(std::string const & fen);
 
     // Returns true if p is a valid location
     static bool isValidPosition(Position const & p);
@@ -31,6 +31,7 @@ public:
 
     // Places the piece on the board at the given position
     void putPiece(Piece const * piece, Position const & to);
+    void putPiece(Piece const * piece, int r, int c);
 
     // Removes the piece at the given position from the board
     void removePiece(Position const & p);

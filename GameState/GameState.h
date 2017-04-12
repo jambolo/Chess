@@ -15,9 +15,9 @@ class PieceList;
 class Move;
 class Piece;
 
-// #define GAME_STATE_ANALYSIS_ENABLED
-// #define USING_PRIORITIZED_MOVE_ORDERING
-// #define INCREMENTAL_STATIC_EVALUATION_ENABLED
+#define GAME_STATE_ANALYSIS_ENABLED
+#define USING_PRIORITIZED_MOVE_ORDERING
+#define INCREMENTAL_STATIC_EVALUATION_ENABLED
 
 class GameState
 {
@@ -33,8 +33,6 @@ public:
 #endif // defined( GAME_STATE_ANALYSIS_ENABLED )
     GameState(Board const & board, Move const & move, int value, CastleStatus castleStatus);
     explicit GameState(char const * fen);
-
-    void initialize(std::string placement);
 
     // Resets the game
     void initialize();
@@ -99,9 +97,6 @@ private:
 
     // Updates the game state with a pawn promotion (after moving). Returns the new piece.
     Piece const * promote(Color color, Position const & position);
-
-    // Returns true if the castle is allowed
-    bool castleIsAllowed(unsigned mask) const;
 
     ZHash zhash_; // Hash code for this state
 };

@@ -15,7 +15,7 @@ TranspositionTable::TranspositionTable()
     }
 }
 
-bool TranspositionTable::check(GameState const & state, int * pReturnedValue, int8_t * pReturnedQuality) const
+bool TranspositionTable::check(GameState const & state, int * pReturnedValue, int * pReturnedQuality) const
 {
 #if defined(TRANSPOSITION_TABLE_ANALYSIS_ENABLED)
     ++analysisData_.checkCount;
