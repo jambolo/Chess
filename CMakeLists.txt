@@ -19,7 +19,6 @@ option(BUILD_SHARED_LIBS "Build libraries as DLLs" FALSE)
 
 set(SOURCES
     Chess.cpp
-    Chess.h
     Player.cpp
     Player.h
     Player.inl
@@ -29,6 +28,7 @@ add_executable(chess ${SOURCES})
 target_link_libraries(chess
     bitboard
     game_state
+    misc
     player
     static_evaluator
     zhash
@@ -43,9 +43,9 @@ target_compile_definitions(chess
         -D_SCL_SECURE_NO_WARNINGS
 )
 
-add_subdirectory(Misc)
-add_subdirectory(BitBoard)
-add_subdirectory(GameState)
-add_subdirectory(Player)
-add_subdirectory(StaticEvaluator)
-add_subdirectory(ZHash)
+add_subdirectory(bitBoard)
+add_subdirectory(gamestate)
+add_subdirectory(misc)
+add_subdirectory(player)
+add_subdirectory(staticevaluator)
+add_subdirectory(zhash)

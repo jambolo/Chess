@@ -12,9 +12,9 @@ class PieceList;
 class Move;
 class Piece;
 
-#define GAME_STATE_ANALYSIS_ENABLED
-#define USING_PRIORITIZED_MOVE_ORDERING
-#define INCREMENTAL_STATIC_EVALUATION_ENABLED
+// #define GAME_STATE_ANALYSIS_ENABLED
+// #define USING_PRIORITIZED_MOVE_ORDERING
+// #define INCREMENTAL_STATIC_EVALUATION_ENABLED
 
 class GameState
 {
@@ -39,8 +39,10 @@ public:
     GameState(Board const & board, Move const & move, int value, CastleStatus castleStatus);
     explicit GameState(char const * fen);
 
+    void initialize(std::string placement);
+
     // Resets the game
-    void initialize(PieceList const & white_pieces, PieceList const & black_pieces);
+    void initialize();
 
     // Returns true if a castle is allowed
     bool castleIsAllowed(Color c) const;
@@ -82,10 +84,10 @@ public:
 
     Board board_;                                   // The board
     Move move_;                                     // The move that resulted in this state
-    int value_;                                     // Value of the game
-    int8_t quality_;                                // Quality of the value
+    int value_;                                     // Value of the game state
+    int quality_;                                   // Quality of the value
 #if defined(USING_PRIORITIZED_MOVE_ORDERING)
-    int8_t priority_;                               // Priority of this state (determines sorting order)
+    int priority_;                                  // Priority of this state (determines sorting order)
 #endif // defined( USING_PRIORITIZED_MOVE_ORDERING )
     CastleStatus castleStatus_;                     // Which side has castled and which castles are still possible
     bool inCheck_;                                  // True if the king is in check
@@ -107,12 +109,6 @@ private:
     bool castleIsAllowed(unsigned mask) const;
 
     ZHash zhash_; // Hash code for this state
-
-    // Returns the queen of the specified color
-    static Piece const *    queen(Color color);
-
-    static Piece const * whiteQueen_;
-    static Piece const * blackQueen_;
 };
 
 // Equality operator
@@ -129,7 +125,6 @@ public:
         _Cmp cmp;
 
         // Sort the elements in descending order, first by priority, then by value.
-
 #if defined(USING_PRIORITIZED_MOVE_ORDERING)
 
         if (g0.priority_ > g1.priority_)

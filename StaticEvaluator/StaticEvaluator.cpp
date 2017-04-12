@@ -144,9 +144,9 @@ int StaticEvaluator::evaluate(GameState const & state)
     {
         for (int column = 0; column < Board::SIZE; ++column)
         {
-            Board::PieceId const id = state.board_.pieceIdAt(row, column);
+            Piece * const id = state.board_.pieceAt(row, column);
 
-            if (id != Board::EMPTY_SQUARE)
+            if (id != NO_PIECE)
             {
                 Piece const * pPiece = Board::piece(id);
                 Color color          = pPiece->color();

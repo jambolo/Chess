@@ -1,60 +1,50 @@
-/** @file *//********************************************************************************************************
-
-                                                       Piece.h
-
-						                    Copyright 2004, John J. Bolton
-	--------------------------------------------------------------------------------------------------------------
-
-	$Header: //depot/Chess/Piece.h#9 $
-
-	$NoKeywords: $
-
- ********************************************************************************************************************/
-
 #pragma once
 
-#include <vector>
+#include "gamestate/ChessTypes.h"
 #include <memory>
-#include "GameState/ChessTypes.h"
+#include <vector>
 
 class CBitmap;
 class Move;
 class GameState;
 
-
 class Piece
 {
 public:
 
-	static int const	MAX_POSSIBLE_MOVES	= 28;		// The maximum number of possible moves for any piece
+    static int const MAX_POSSIBLE_MOVES = 28;           // The maximum number of possible moves for any piece
 
     typedef std::vector<Move> MoveList;
 
-	Piece( PieceTypeId t, Color c );
-	virtual ~Piece();
+    Piece(PieceTypeId t, Color c);
+    virtual ~Piece();
 
-	PieceTypeId			type() const 	{ return type_;	}
-	Color				color() const	{ return color_;	}
-	char const *		symbol() const	{ return symbol_;	}
-	CBitmap const * 	image() const	{ return image_;	}
+    PieceTypeId         type() const   { return type_;   }
+    Color               color() const  { return color_;  }
+    char const *        symbol() const { return symbol_; }
+    CBitmap const *     image() const  { return image_;  }
 
-	static char const * symbol( PieceTypeId id );
+    // Returns the symbol for a piece type
+    static char const * symbol(PieceTypeId id);
 
-	// Create a clone of this piece
-	virtual std::unique_ptr< Piece > clone() const = 0;
+    // Returns the piece corresponding to the specified type and color
+    static Piece const * piece(PieceTypeId id, Color color) { return (id != PieceTypeId::INVALID) ? pieces_[1 + (int)color * NUMBER_OF_PIECE_TYPES + (int)id] : NO_PIECE; }
 
-	// Generate all legal moves for this piece
-	virtual void generatePossibleMoves( GameState const & state, Position const & from, MoveList & moves ) const = 0;
+    // Generates all legal moves for this piece
+    virtual void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const = 0;
 
-	// Returns true if the move is valid
-	virtual bool isValidMove( GameState const & state, Move const & move ) const = 0;
+    // Returns true if the move is valid
+    virtual bool isValidMove(GameState const & state, Move const & move) const = 0;
 
 protected:
 
-	PieceTypeId		type_; 		// Type of piece
-	Color			color_;		// Color of piece
-	char const *	symbol_;	// Symbol for documentation
-	CBitmap *		image_;		// Image of piece
+    PieceTypeId type_;          // Type of piece
+    Color color_;               // Color of piece
+    char const * symbol_;       // Symbol for documentation
+    CBitmap * image_;           // Image of piece
+
+private:
+    static Piece const * pieces_[1 + NUMBER_OF_COLORS * NUMBER_OF_PIECE_TYPES];
 };
 
 Piece const * const NO_PIECE = nullptr;
@@ -63,104 +53,79 @@ class King : public Piece
 {
 public:
 
-	King( Color c ) : Piece( PieceTypeId::KING, c ) {}
-//	~King();
+    King(Color c) : Piece(PieceTypeId::KING, c) {}
 
-	// Create a clone of this piece
-	std::unique_ptr< Piece > clone() const	{ return std::unique_ptr< Piece >( new King( *this ) ); }
+    // Generates all legal moves for this piece
+    void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const override;
 
-	// Generate all legal moves for this piece
-	void generatePossibleMoves( GameState const & state, Position const & from, MoveList & moves ) const;
-
-	// Returns true if the move is valid
-	bool isValidMove( GameState const & state, Move const & move ) const;
+    // Returns true if the move is valid
+    bool isValidMove(GameState const & state, Move const & move) const override;
 };
 
 class Queen : public Piece
 {
 public:
 
-	Queen( Color c ) : Piece( PieceTypeId::QUEEN, c ) {}
-//	~Queen();
+    Queen(Color c) : Piece(PieceTypeId::QUEEN, c) {}
 
-	// Create a clone of this piece
-	std::unique_ptr< Piece > clone() const	{ return std::unique_ptr< Piece >( new Queen( *this ) ); }
+    // Generates all legal moves for this piece
+    void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const override;
 
-	// Generate all legal moves for this piece
-	void generatePossibleMoves( GameState const & state, Position const & from, MoveList & moves ) const;
-
-	// Returns true if the move is valid
-	bool isValidMove( GameState const & state, Move const & move ) const;
+    // Returns true if the move is valid
+    bool isValidMove(GameState const & state, Move const & move) const override;
 };
 
 class Rook : public Piece
 {
 public:
 
-	Rook( Color c ) : Piece( PieceTypeId::ROOK, c ) {}
-//	~Rook();
+    Rook(Color c) : Piece(PieceTypeId::ROOK, c) {}
 
-	// Create a clone of this piece
-	std::unique_ptr< Piece > clone() const	{ return std::unique_ptr< Piece >( new Rook( *this ) ); }
+    // Generates all legal moves for this piece
+    void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const override;
 
-	// Generate all legal moves for this piece
-	void generatePossibleMoves( GameState const & state, Position const & from, MoveList & moves ) const;
-
-	// Returns true if the move is valid
-	bool isValidMove( GameState const & state, Move const & move ) const;
+    // Returns true if the move is valid
+    bool isValidMove(GameState const & state, Move const & move) const override;
 };
 
 class Bishop : public Piece
 {
 public:
 
-	Bishop( Color c ) : Piece( PieceTypeId::BISHOP, c ) {}
-//	~Bishop();
+    Bishop(Color c) : Piece(PieceTypeId::BISHOP, c) {}
 
-	// Create a clone of this piece
-	std::unique_ptr< Piece > clone() const	{ return std::unique_ptr< Piece >( new Bishop( *this ) ); }
+    // Generates all legal moves for this piece
+    void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const override;
 
-	// Generate all legal moves for this piece
-	void generatePossibleMoves( GameState const & state, Position const & from, MoveList & moves ) const;
-
-	// Returns true if the move is valid
-	bool isValidMove( GameState const & state, Move const & move ) const;
+    // Returns true if the move is valid
+    bool isValidMove(GameState const & state, Move const & move) const override;
 };
 
 class Knight : public Piece
 {
 public:
 
-	Knight( Color c ) : Piece( PieceTypeId::KNIGHT, c ) {}
-//	~Knight();
+    Knight(Color c) : Piece(PieceTypeId::KNIGHT, c) {}
 
-	// Create a clone of this piece
-	std::unique_ptr< Piece > clone() const	{ return std::unique_ptr< Piece >( new Knight( *this ) ); }
+    // Generates all legal moves for this piece
+    void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const override;
 
-	// Generate all legal moves for this piece
-	void generatePossibleMoves( GameState const & state, Position const & from, MoveList & moves ) const;
-
-	// Returns true if the move is valid
-	bool isValidMove( GameState const & state, Move const & move ) const;
+    // Returns true if the move is valid
+    bool isValidMove(GameState const & state, Move const & move) const override;
 };
 
 class Pawn : public Piece
 {
 public:
 
-	static int const	STARTING_ROW_BLACK	= 1;
-	static int const	STARTING_ROW_WHITE	= 6;
+    static int const STARTING_ROW_BLACK = 1;
+    static int const STARTING_ROW_WHITE = 6;
 
-	Pawn( Color c ) : Piece( PieceTypeId::PAWN, c ) {}
-//	~Pawn();
+    Pawn(Color c) : Piece(PieceTypeId::PAWN, c) {}
 
-	// Create a clone of this piece
-	std::unique_ptr< Piece > clone() const	{ return std::unique_ptr< Piece >( new Pawn( *this ) ); }
+    // Generates all legal moves for this piece
+    void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const override;
 
-	// Generate all legal moves for this piece
-	void generatePossibleMoves( GameState const & state, Position const & from, MoveList & moves ) const;
-
-	// Returns true if the move is valid
-	bool isValidMove( GameState const & state, Move const & move ) const;
+    // Returns true if the move is valid
+    bool isValidMove(GameState const & state, Move const & move) const override;
 };
-

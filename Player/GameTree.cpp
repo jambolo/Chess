@@ -434,9 +434,9 @@ void GameTree::generateStates( GameState const & s0, bool my_move, int depth, Ga
 	{
 		for ( p.m_Column = 0; p.m_Column < Board::SIZE; p.m_Column++ )
 		{
-			Board::PieceId const	id	= board.pieceIdAt( p );
+			Piece * const	id	= board.pieceAt( p );
 
-			if ( id != Board::EMPTY_SQUARE )
+			if ( id != NO_PIECE )
 			{
 				Piece const * const	piece	= board.piece( id );
 
