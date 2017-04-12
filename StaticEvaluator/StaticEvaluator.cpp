@@ -8,7 +8,6 @@
 
 namespace
 {
-
 struct PieceValues
 {
     int property;           // Values are the standard values times 1000
@@ -49,32 +48,34 @@ PieceValues const s_PieceValues[NUMBER_OF_COLORS][NUMBER_OF_PIECE_TYPES] =
 {
     // White
     {
-        { 4000,  6560,   4000,    }, //	PieceTypeId::KING
-        { 9000,  22750,  9000,    }, //	PieceTypeId::QUEEN
-        { 3000,  8750,   3000,    }, //	PieceTypeId::BISHOP
-        { 3000,  5250,   3000,    }, //	PieceTypeId::KNIGHT
-        { 5000,  14000,  5000,    }, //	PieceTypeId::ROOK
-        { 1000,  1667,   1000,    } //	PieceTypeId::PAWN
+        { 4000,  6560,   4000,      }, //	PieceTypeId::KING
+        { 9000,  22750,  9000,      }, //	PieceTypeId::QUEEN
+        { 3000,  8750,   3000,      }, //	PieceTypeId::BISHOP
+        { 3000,  5250,   3000,      }, //	PieceTypeId::KNIGHT
+        { 5000,  14000,  5000,      }, //	PieceTypeId::ROOK
+        { 1000,  1667,   1000,      } //	PieceTypeId::PAWN
     },
 
     // Black
     {
-        { -4000, -6560,  -4000,   }, //	PieceTypeId::KING
-        { -9000, -22750, -9000,   }, //	PieceTypeId::QUEEN
-        { -3000, -8750,  -3000,   }, //	PieceTypeId::BISHOP
-        { -3000, -5250,  -3000,   }, //	PieceTypeId::KNIGHT
-        { -5000, -14000, -5000,   }, //	PieceTypeId::ROOK
-        { -1000, -1667,  -1000,   } //	PieceTypeId::PAWN
+        { -4000, -6560,  -4000,     }, //	PieceTypeId::KING
+        { -9000, -22750, -9000,     }, //	PieceTypeId::QUEEN
+        { -3000, -8750,  -3000,     }, //	PieceTypeId::BISHOP
+        { -3000, -5250,  -3000,     }, //	PieceTypeId::KNIGHT
+        { -5000, -14000, -5000,     }, //	PieceTypeId::ROOK
+        { -1000, -1667,  -1000,     } //	PieceTypeId::PAWN
     }
 };
 
-int const PROPERTY_FACTOR = 1;      // The property factor is the reference. All other factors are relative to it.
-int const CASTLE_FACTOR   = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property * 3 / 4 / 3;       // Max is 3, which is worth
-                                                                                                    // about 3/4 a pawn
-int const MOBILITY_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::QUEEN].property / 144;        // Maximum is about 144 which is
-                                                                                                // worth a queen
-int const POSITION_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property / 100;     // Reasonable maximum is 100,000 which
-                                                                                            // is worth a pawn
+int const PROPERTY_FACTOR = 1;                                                                // The property factor is the
+                                                                                              // reference. All other factors are
+                                                                                              // relative to it.
+int const CASTLE_FACTOR   = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property * 3 / 4 / 3; // Max is 3, which is worth
+                                                                                              // about 3/4 a pawn
+int const MOBILITY_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::QUEEN].property / 144;      // Maximum is about 144 which is
+                                                                                              // worth a queen
+int const POSITION_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property / 100;       // Reasonable maximum is 100,000 which
+                                                                                              // is worth a pawn
 int const THREAT_FACTOR   = 0;
 
 int _Evaluate(GameState::CastleStatus castleStatus)
@@ -82,20 +83,25 @@ int _Evaluate(GameState::CastleStatus castleStatus)
     // A bonus is given for having castled. Likewise, a penalty is given for losing the ability to castle.
 
     int value = 0;
-    if (castleStatus & BLACK_CASTLE) {
+    if (castleStatus & BLACK_CASTLE)
+    {
         value += -2;
-    } else if ((castleStatus & BLACK_CASTLE_UNAVAILABLE) == BLACK_CASTLE_UNAVAILABLE)   {
+    }
+    else if ((castleStatus & BLACK_CASTLE_UNAVAILABLE) == BLACK_CASTLE_UNAVAILABLE)
+    {
         value -= -1;
     }
-    if (castleStatus & WHITE_CASTLE) {
+    if (castleStatus & WHITE_CASTLE)
+    {
         value += 2;
-    } else if ((castleStatus & WHITE_CASTLE_UNAVAILABLE) == WHITE_CASTLE_UNAVAILABLE) {
+    }
+    else if ((castleStatus & WHITE_CASTLE_UNAVAILABLE) == WHITE_CASTLE_UNAVAILABLE)
+    {
         value -= 1;
     }
 
     return value;
 }
-
 } // anonymous namespace
 
 // This function returns the value of the board *** BY COLOR ***.
@@ -133,7 +139,8 @@ int StaticEvaluator::evaluate(GameState const & state)
 
                 // Compute the checkmate value
 
-                if (id == (int)PieceTypeId::KING) {
+                if (id == (int)PieceTypeId::KING)
+                {
                     checkmate_value += (color == Color::WHITE) ? CHECKMATE_VALUE : -CHECKMATE_VALUE;
                 }
 
@@ -171,9 +178,12 @@ int StaticEvaluator::evaluate(GameState const & state)
 
     int value;
 
-    if (checkmate_value != 0) {
+    if (checkmate_value != 0)
+    {
         value = checkmate_value;
-    } else {
+    }
+    else
+    {
         value =   property_value * PROPERTY_FACTOR
                 + position_value * POSITION_FACTOR / 1000
                 + castleStatusValue * CASTLE_FACTOR
@@ -207,13 +217,15 @@ int StaticEvaluator::incremental(Move const &            move,
 
     // These special moves don't do anything
 
-    if (move.isResignation() || move.isUndo() || move.isStartingPosition()) {
+    if (move.isResignation() || move.isUndo() || move.isStartingPosition())
+    {
         return 0;
     }
 
     // Check for checkmate (note: this assumes there is at least one king on the board)
 
-    if (pRemoved && (pRemoved->type() == PieceTypeId::KING)) {
+    if (pRemoved && (pRemoved->type() == PieceTypeId::KING))
+    {
         return (pRemoved->color() == Color::WHITE) ? -CHECKMATE_VALUE : CHECKMATE_VALUE;
     }
 
@@ -222,7 +234,8 @@ int StaticEvaluator::incremental(Move const &            move,
     // Evaluate any change in position and property values from adding or removing pieces. Note: adding a piece
     // assumes promoting a pawn, so the added piece's position is the To position.
 
-    if (pAdded) {
+    if (pAdded)
+    {
         int color         = (int)pAdded->color();
         int propertyValue = s_PieceValues[color][(int)pAdded->type()].property;
 
@@ -230,7 +243,8 @@ int StaticEvaluator::incremental(Move const &            move,
         value +=  propertyValue * s_PositionValues[color][move.to().row][move.to().column] * POSITION_FACTOR / 1000;
     }
 
-    if (pRemoved) {
+    if (pRemoved)
+    {
         int color         = (int)pRemoved->color();
         int propertyValue = s_PieceValues[color][(int)pRemoved->type()].property;
 

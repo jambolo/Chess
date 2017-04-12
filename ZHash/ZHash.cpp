@@ -36,23 +36,29 @@ ZHash::ZHash(Board const & board, int castleStatus /* = 0*/, Color ePColor /* = 
 {
     value_ = 0;
 
-    for (int i = 0; i < Board::SIZE; ++i) {
-        for (int j = 0; j < Board::SIZE; ++j) {
+    for (int i = 0; i < Board::SIZE; ++i)
+    {
+        for (int j = 0; j < Board::SIZE; ++j)
+        {
             Piece const * const pPiece = board.pieceAt(i, j);
-            if (pPiece != NO_PIECE) {
+            if (pPiece != NO_PIECE)
+            {
                 add(*pPiece, Position(i, j));
             }
         }
     }
 
-    for (int i = 0; i < NUMBER_OF_CASTLE_BITS; ++i) {
+    for (int i = 0; i < NUMBER_OF_CASTLE_BITS; ++i)
+    {
         int mask = 1 << i;
-        if ((castleStatus & mask) != 0) {
+        if ((castleStatus & mask) != 0)
+        {
             castle(i);
         }
     }
 
-    if ((ePColor != Color::INVALID) && (ePColumn >= 0)) {
+    if ((ePColor != Color::INVALID) && (ePColumn >= 0))
+    {
         enPassant(ePColor, ePColumn);
     }
 }
@@ -63,10 +69,14 @@ ZHash::ZValueTable::ZValueTable()
 
     // Generate piece values
 
-    for (int i = 0; i < NUMBER_OF_COLORS; ++i) {
-        for (int j = 0; j < Board::SIZE; ++j) {
-            for (int k = 0; k < Board::SIZE; ++k) {
-                for (int m = 0; m < NUMBER_OF_PIECE_TYPES; ++m) {
+    for (int i = 0; i < NUMBER_OF_COLORS; ++i)
+    {
+        for (int j = 0; j < Board::SIZE; ++j)
+        {
+            for (int k = 0; k < Board::SIZE; ++k)
+            {
+                for (int m = 0; m < NUMBER_OF_PIECE_TYPES; ++m)
+                {
                     pieceValues_[i][j][k][m] = generateRandomZ(rng);
                 }
             }
@@ -75,15 +85,18 @@ ZHash::ZValueTable::ZValueTable()
 
     // Generate en passant values
 
-    for (int i = 0; i < NUMBER_OF_COLORS; ++i) {
-        for (int j = 0; j < Board::SIZE; ++j) {
+    for (int i = 0; i < NUMBER_OF_COLORS; ++i)
+    {
+        for (int j = 0; j < Board::SIZE; ++j)
+        {
             enPassantValues_[i][j] = generateRandomZ(rng);
         }
     }
 
     // Generate castle values
 
-    for (auto & v : castleValues_) {
+    for (auto & v : castleValues_)
+    {
         v = generateRandomZ(rng);
     }
 }

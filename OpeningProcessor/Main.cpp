@@ -1,9 +1,9 @@
-#include <cstdio>
-#include <vector>
 #include <cassert>
-#include <locale>
+#include <cstdio>
 #include <iostream>
+#include <locale>
 #include <sstream>
+#include <vector>
 
 #include "../../Libraries/Misc/etc.h"
 #define ASSERT                                                  assert
@@ -45,7 +45,8 @@ int main(int argc, char ** argv)
     // Open the file
 
     FILE * fp = fopen("ECOextended.txt", "r");
-    if (!fp) {
+    if (!fp)
+    {
         fputs("Can't open 'ECOextended.txt'.\n", stderr);
         exit(1);
     }
@@ -59,24 +60,25 @@ int main(int argc, char ** argv)
         FS_READING_HEADER,
         FS_READING_NAME,
         FS_READING_SEQUENCE
-    } file_state = FS_READING_HEADER;
+    } file_state        = FS_READING_HEADER;
 
     bool error_detected = false;
-    char line[ 1024 ];
+    char line[1024];
     std::ostringstream error_message;
     std::string eco_code;
     std::string eco_name;
 
-    while (!error_detected) {
-
+    while (!error_detected)
+    {
         ++line_number;
 
         if (fgets(line, sizeof line, fp) == NULL)
             break;
 
-        line[ strlen(line) - 1 ] = 0;                   // Chop off \n
+        line[strlen(line) - 1] = 0;                     // Chop off \n
 
-        switch (file_state) {
+        switch (file_state)
+        {
             case FS_READING_HEADER:
             {
                 // Make sure we are really reading a header
@@ -86,16 +88,17 @@ int main(int argc, char ** argv)
                 std::string const left_dashes("------------------------------------ ");
                 std::string const right_dashes(" ------------------------------------");
 
-                if (strlen(line) != 77) {
+                if (strlen(line) != 77)
+                {
                     error_detected = true;
                     error_message << "Invalid line length " << std::ends;
                     break;
                 }
-                if (( left_dashes.compare(0, 37, &line[0], 37) != 0) ||
-                    ( right_dashes.compare(0, 37, &line[40], 37) != 0) ||
-                    ( line[37] < 'A') || ( line[37] > 'E') ||
-                    ( line[38] < '0') || ( line[38] > '9') ||
-                    ( line[39] < '0') || ( line[39] > '9') )
+                if ((left_dashes.compare(0, 37, &line[0], 37) != 0) ||
+                    (right_dashes.compare(0, 37, &line[40], 37) != 0) ||
+                    (line[37] < 'A') || (line[37] > 'E') ||
+                    (line[38] < '0') || (line[38] > '9') ||
+                    (line[39] < '0') || (line[39] > '9'))
                 {
                     error_detected = true;
                     error_message << "Expecting: " << header_prototype << std::endl
@@ -122,12 +125,14 @@ int main(int argc, char ** argv)
 
                 // Scan the line for the first non-space
 
-                for (code_start = line; isspace(*code_start) && *code_start != 0; code_start++) {
+                for (code_start = line; isspace(*code_start) && *code_start != 0; code_start++)
+                {
                 }
 
                 // Check for blank line which means end of section
 
-                if (*code_start == 0) {
+                if (*code_start == 0)
+                {
                     // Next is a header
 
                     file_state = FS_READING_HEADER;
@@ -137,7 +142,8 @@ int main(int argc, char ** argv)
 
                 // Now there should be a code with the format xnn followed by a space (and then the name)
 
-                if (( strlen(code_start) < 4) || !isspace(code_start[3]) ) {
+                if ((strlen(code_start) < 4) || !isspace(code_start[3]))
+                {
                     error_detected = true;
                     error_message << "Invalid code: " << code_start << std::ends;
                     break;
@@ -146,7 +152,8 @@ int main(int argc, char ** argv)
                 // The code should match the code for this section
 
                 std::string const this_code(code_start, 3);
-                if (eco_code.compare(this_code) != 0) {
+                if (eco_code.compare(this_code) != 0)
+                {
                     error_detected = true;
                     error_message << "ECO code mismatch: expecting '" << eco_code
                                   << "', found '" << this_code << "'"
@@ -156,7 +163,8 @@ int main(int argc, char ** argv)
 
                 // Make sure a name follows the code
                 eco_name = &code_start[4];
-                if (eco_name.size() <= 0) {
+                if (eco_name.size() <= 0)
+                {
                     error_detected = true;
                     error_message << "Missing opening name" << std::ends;
                     break;
@@ -173,11 +181,12 @@ int main(int argc, char ** argv)
             {
                 char * sequence_start;
 
-                for (sequence_start = line; isspace(*sequence_start) && *sequence_start != 0; sequence_start++) {
+                for (sequence_start = line; isspace(*sequence_start) && *sequence_start != 0; sequence_start++)
+                {
                 }
 
-                if (( strlen(sequence_start) < 6) ||
-                    ( sequence_start[0] != '1') || ( sequence_start[1] != '.') )
+                if ((strlen(sequence_start) < 6) ||
+                    (sequence_start[0] != '1') || (sequence_start[1] != '.'))
                 {
                     error_detected = true;
                     error_message << "Invalid sequence: " << sequence_start << std::ends;
@@ -186,30 +195,32 @@ int main(int argc, char ** argv)
 
                 // Load the sequence
 
-                char * p       = &sequence_start[ 2 ];
-                int length          = 0;
-                int chars_left      = strlen(p);
+                char * p = &sequence_start[2];
+                int length = 0;
+                int chars_left = strlen(p);
 
-                Sequence sequence( ( chars_left + 1 ) / 5);
+                Sequence sequence((chars_left + 1) / 5);
 
-                while (chars_left >= 4) {
-                    sequence[ length ].From().m_Column      = *p++ - 'a';
-                    sequence[ length ].From().m_Row         = *p++ - '1';
-                    sequence[ length ].To().m_Column        = *p++ - 'a';
-                    sequence[ length ].To().m_Row           = *p++ - '1';
+                while (chars_left >= 4)
+                {
+                    sequence[length].From().m_Column = *p++ - 'a';
+                    sequence[length].From().m_Row    = *p++ - '1';
+                    sequence[length].To().m_Column   = *p++ - 'a';
+                    sequence[length].To().m_Row      = *p++ - '1';
                     chars_left -= 4;
 
-                    if ( (( sequence[ length ].From().m_Column < 0) || ( sequence[ length ].From().m_Column > 7) ) ||
-                         (( sequence[ length ].From().m_Row < 0) || ( sequence[ length ].From().m_Row > 7) ) ||
-                         (( sequence[ length ].To().m_Column < 0) || ( sequence[ length ].To().m_Column > 7) ) ||
-                         (( sequence[ length ].To().m_Row < 0) || ( sequence[ length ].To().m_Row > 7) ) )
+                    if (((sequence[length].From().m_Column < 0) || (sequence[length].From().m_Column > 7)) ||
+                        ((sequence[length].From().m_Row < 0) || (sequence[length].From().m_Row > 7)) ||
+                        ((sequence[length].To().m_Column < 0) || (sequence[length].To().m_Column > 7)) ||
+                        ((sequence[length].To().m_Row < 0) || (sequence[length].To().m_Row > 7)))
                     {
                         error_detected = true;
                         error_message << "Invalid move: " << p - 4 << std::ends;
                         break;
                     }
 
-                    if (*p != 0) {
+                    if (*p != 0)
+                    {
                         if (!isspace(*p)
                         {
                             error_detected = true;
@@ -244,7 +255,8 @@ int main(int argc, char ** argv)
 
                             // Display errors
 
-                            if (error_detected) {
+                            if (error_detected)
+                        {
                             std::cerr << "Error detected in line " << line_number << std::endl
                                       << "Read    : '" << line << "'." << std::endl
                                       << error_message.str() << std::endl;

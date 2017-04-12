@@ -22,16 +22,19 @@ public:
     Piece(PieceTypeId t, Color c);
     virtual ~Piece();
 
-    PieceTypeId         type() const   { return type_;   }
-    Color               color() const  { return color_;  }
-    char const *        symbol() const { return symbol_; }
-    CBitmap const *     image() const  { return image_;  }
+    PieceTypeId     type() const   { return type_;   }
+    Color           color() const  { return color_;  }
+    char const *    symbol() const { return symbol_; }
+    CBitmap const * image() const  { return image_;  }
 
     // Returns the symbol for a piece type
     static char const * symbol(PieceTypeId id);
 
     // Returns the piece corresponding to the specified type and color
-    static Piece const * piece(PieceTypeId id, Color color) { return (id != PieceTypeId::INVALID) ? pieces_[1 + (int)color * NUMBER_OF_PIECE_TYPES + (int)id] : NO_PIECE; }
+    static Piece const * piece(PieceTypeId id,
+                               Color       color) { return (id !=
+                                                            PieceTypeId::INVALID) ? pieces_[1 + (int)color * NUMBER_OF_PIECE_TYPES +
+                                                                                            (int)id] : NO_PIECE; }
 
     // Generates all legal moves for this piece
     virtual void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const = 0;

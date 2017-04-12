@@ -46,7 +46,7 @@ inline Piece const * GameState::queen(Color color)
     return (color == Color::WHITE) ? whiteQueen_ : blackQueen_;
 }
 
-inline bool operator == (GameState const & x, GameState const & y)
+inline bool operator ==(GameState const & x, GameState const & y)
 {
     //! @todo	Actually this is not correct because en passant validity is part of the state too
     return x.zhash_ == y.zhash_ &&

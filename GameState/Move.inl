@@ -46,36 +46,48 @@ inline bool Move::isSpecial(SpecialMoveId move) const
 
 inline Move Move::kingSideCastleKing(Color c)
 {
-    if (c == Color::WHITE) {
+    if (c == Color::WHITE)
+    {
         return Move(Position(7, 4), Position(7, 6));
-    } else {
+    }
+    else
+    {
         return Move(Position(0, 4), Position(0, 6));
     }
 }
 
 inline Move Move::kingSideCastleRook(Color c)
 {
-    if (c == Color::WHITE) {
+    if (c == Color::WHITE)
+    {
         return Move(Position(7, 7), Position(7, 5));
-    } else {
+    }
+    else
+    {
         return Move(Position(0, 7), Position(0, 5));
     }
 }
 
 inline Move Move::queenSideCastleKing(Color c)
 {
-    if (c == Color::WHITE) {
+    if (c == Color::WHITE)
+    {
         return Move(Position(7, 4), Position(7, 2));
-    } else {
+    }
+    else
+    {
         return Move(Position(0, 4), Position(0, 2));
     }
 }
 
 inline Move Move::queenSideCastleRook(Color c)
 {
-    if (c == Color::WHITE) {
+    if (c == Color::WHITE)
+    {
         return Move(Position(7, 0), Position(7, 3));
-    } else {
+    }
+    else
+    {
         return Move(Position(0, 0), Position(0, 3));
     }
 }

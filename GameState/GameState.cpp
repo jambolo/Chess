@@ -12,7 +12,6 @@
 
 #include <regex>
 
-
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
 
 GameState::GameState(GameState const & old_state, Color color, Move const & move, int depth)
@@ -56,9 +55,9 @@ GameState::GameState(GameState const & old_state, Color color, Move const & move
 
 GameState::GameState(GameState const & old_state, Color color, Move const & move)
 {
-    board_          = old_state.board_;
-    castleStatus_   = old_state.castleStatus_;
-    zhash_          = old_state.zhash_;
+    board_ = old_state.board_;
+    castleStatus_ = old_state.castleStatus_;
+    zhash_        = old_state.zhash_;
 
     makeMove(color, move);
 
@@ -246,11 +245,11 @@ void GameState::makeNormalMove(Color color, Move const & move)
         }
         else if (pMoved->type() == PieceTypeId::ROOK)
         {
-            if (( move.from().row == Board::SIZE - 1) && ( move.from().column == 0) )
+            if ((move.from().row == Board::SIZE - 1) && (move.from().column == 0))
             {
                 castleStatus_ |= WHITE_QUEENSIDE_CASTLE_UNAVAILABLE;
             }
-            else if (( move.from().row == Board::SIZE - 1) && ( move.from().column == Board::SIZE - 1) )
+            else if ((move.from().row == Board::SIZE - 1) && (move.from().column == Board::SIZE - 1))
             {
                 castleStatus_ |= WHITE_KINGSIDE_CASTLE_UNAVAILABLE;
             }
@@ -264,11 +263,11 @@ void GameState::makeNormalMove(Color color, Move const & move)
         }
         else if (pMoved->type() == PieceTypeId::ROOK)
         {
-            if (( move.from().row == 0) && ( move.from().column == 0) )
+            if ((move.from().row == 0) && (move.from().column == 0))
             {
                 castleStatus_ |= BLACK_KINGSIDE_CASTLE_UNAVAILABLE;
             }
-            else if (( move.from().row == 0) && ( move.from().column == Board::SIZE - 1) )
+            else if ((move.from().row == 0) && (move.from().column == Board::SIZE - 1))
             {
                 castleStatus_ |= BLACK_QUEENSIDE_CASTLE_UNAVAILABLE;
             }

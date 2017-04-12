@@ -76,7 +76,7 @@ private:
 
     class TableEntry
     {
-    public:
+public:
 
         static uint32_t const UNUSED_ENTRY = (uint32_t)(ZHash::INVALID >> 32);
 

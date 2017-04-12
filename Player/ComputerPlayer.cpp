@@ -38,7 +38,7 @@ GameState ComputerPlayer::myTurn(GameState const & s0)
 
     // Update analysis data
 
-    analysisData_.time = 0; // elapsed_time;
+    analysisData_.time  = 0; // elapsed_time;
     analysisData_.value = new_state.value_;
     analysisData_.gameTreeAnalysisData = game_tree.analysisData_;
 

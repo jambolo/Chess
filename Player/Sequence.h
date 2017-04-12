@@ -13,8 +13,8 @@ public:
     SequenceEntry();
     SequenceEntry(Color color, PieceTypeId piece, Move const & move);
 
-    Move GetMove() const;
-    Color GetColor() const;
+    Move        GetMove() const;
+    Color       GetColor() const;
     PieceTypeId GetPieceTypeId() const;
 
     uint16_t color_        : 1;

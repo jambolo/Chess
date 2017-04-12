@@ -42,7 +42,7 @@ public:
     explicit ZHash(Board const & board, int castle = 0, Color ePColor = Color::INVALID, int ePColumn = -1);
 
     // Conversion to Z
-    operator Z () const { return value_; }
+    operator Z() const { return value_; }
 
     // Adds a piece. Returns the new value
     ZHash & add(Piece const & piece, Position const & position);
@@ -61,7 +61,7 @@ public:
 
 private:
 
-    friend bool operator == (ZHash const & x, ZHash const & y);
+    friend bool operator ==(ZHash const & x, ZHash const & y);
 
     class ZValueTable; // declared below
 
@@ -71,7 +71,7 @@ private:
 };
 
 // Equality operator
-bool operator == (ZHash const & x, ZHash const & y);
+bool operator ==(ZHash const & x, ZHash const & y);
 
 class ZHash::ZValueTable
 {

@@ -260,7 +260,8 @@ unsigned BitBoard::column(int c) const
 {
     unsigned result = 0;
     uint64_t temp   = board_ >> c;
-    for (unsigned r = 1; r < 0x100; r <<= 1) {
+    for (unsigned r = 1; r < 0x100; r <<= 1)
+    {
         result |= unsigned(temp & 0xff) & r;
         temp  >>= 7;
     }
@@ -286,14 +287,14 @@ BitBoard const & BitBoard::mirror()
 {
     uint64_t temp = 0;
 
-    temp   |= (board_ & 0x0101010101010101ui64) << 7;
-    temp   |= (board_ & 0x0202020202020202ui64) << 5;
-    temp   |= (board_ & 0x0404040404040404ui64) << 3;
-    temp   |= (board_ & 0x0808080808080808ui64) << 1;
-    temp   |= (board_ & 0x1010101010101010ui64) >> 1;
-    temp   |= (board_ & 0x2020202020202020ui64) >> 3;
-    temp   |= (board_ & 0x4040404040404040ui64) >> 5;
-    temp   |= (board_ & 0x8080808080808080ui64) >> 7;
+    temp  |= (board_ & 0x0101010101010101ui64) << 7;
+    temp  |= (board_ & 0x0202020202020202ui64) << 5;
+    temp  |= (board_ & 0x0404040404040404ui64) << 3;
+    temp  |= (board_ & 0x0808080808080808ui64) << 1;
+    temp  |= (board_ & 0x1010101010101010ui64) >> 1;
+    temp  |= (board_ & 0x2020202020202020ui64) >> 3;
+    temp  |= (board_ & 0x4040404040404040ui64) >> 5;
+    temp  |= (board_ & 0x8080808080808080ui64) >> 7;
 
     board_ = temp;
 

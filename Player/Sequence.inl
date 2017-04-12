@@ -11,7 +11,7 @@ inline SequenceEntry:: SequenceEntry()
 }
 
 inline SequenceEntry:: SequenceEntry(Color color, PieceTypeId piece, Move const & move)
-    : color_( (int)color)
+    : color_((int)color)
     , pieceTypeId_((int)piece)
     , fromRow_(move.from().row)
     , fromColumn_(move.from().column)
@@ -22,17 +22,17 @@ inline SequenceEntry:: SequenceEntry(Color color, PieceTypeId piece, Move const 
 
 inline Move SequenceEntry:: GetMove() const
 {
-    return Move(Position(fromRow_, fromColumn_), Position(toRow_, toColumn_) );
+    return Move(Position(fromRow_, fromColumn_), Position(toRow_, toColumn_));
 }
 
 inline Color SequenceEntry:: GetColor() const
 {
-    return static_cast <Color> ( color_ );
+    return static_cast <Color>(color_);
 }
 
 inline PieceTypeId SequenceEntry:: GetPieceTypeId() const
 {
-    return ( pieceTypeId_ != 7 ) ? static_cast <PieceTypeId> ( pieceTypeId_ ) : PieceTypeId:: INVALID;
+    return (pieceTypeId_ != 7) ? static_cast <PieceTypeId>(pieceTypeId_) : PieceTypeId:: INVALID;
 }
 
 #endif // !defined(Sequence_inl__)

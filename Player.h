@@ -17,7 +17,7 @@ public:
     // Returns my next move
     virtual GameState myTurn(GameState const & s0) = 0;
 
-#if defined( PLAYER_ANALYSIS_ENABLED )
+#if defined(PLAYER_ANALYSIS_ENABLED)
 
     // Resets all analysis data
     void resetAnalysisData();

@@ -89,7 +89,7 @@ public:
 
 private:
 
-    friend bool operator == (GameState const & x, GameState const & y);
+    friend bool operator ==(GameState const & x, GameState const & y);
 
     // Updates the game state with a move (but not a castle)
     void makeNormalMove(Color color, Move const & move);
@@ -107,7 +107,7 @@ private:
 };
 
 // Equality operator
-bool operator == (GameState const & x, GameState const & y);
+bool operator ==(GameState const & x, GameState const & y);
 
 typedef std::vector<GameState> GameStateList;
 
@@ -115,7 +115,7 @@ template <typename _Cmp>
 class GameStateListSorter
 {
 public:
-    bool operator () (GameState const & g0, GameState const & g1) const
+    bool operator ()(GameState const & g0, GameState const & g1) const
     {
         _Cmp cmp;
 

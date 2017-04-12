@@ -13,7 +13,7 @@ public:
     explicit PieceList(Color color = Color::INVALID);
     virtual ~PieceList();
 
-    Piece const * operator [] (PieceTypeId i) const
+    Piece const * operator [](PieceTypeId i) const
     {
         return pieces_[(size_t)i];
     }

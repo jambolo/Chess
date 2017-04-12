@@ -1,6 +1,6 @@
-#include <cstdio>
-#include "player/ComputerPlayer.h"
 #include "gamestate/ChessTypes.h"
+#include "player/ComputerPlayer.h"
+#include <cstdio>
 
 int main(int argc, char ** argv)
 {

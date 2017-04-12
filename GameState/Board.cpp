@@ -59,11 +59,12 @@ void Board::initialize(std::string const & fen)
     std::smatch match;
     try
     {
-        std::regex re("([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)");
+        std::regex re(
+            "([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)");
         if (!std::regex_search(fen, match, re) || match.size() != Board::SIZE + 1)
             throw ConstructorFailedException();
     }
-    catch (std::regex_error&)
+    catch (std::regex_error &)
     {
         throw ConstructorFailedException();
     }
@@ -83,19 +84,19 @@ void Board::initialize(std::string const & fen)
                 Piece const * p = NO_PIECE;
                 switch (c)
                 {
-                case 'B': p = Piece::piece(PieceTypeId::BISHOP, Color::WHITE);   break;
-                case 'K': p = Piece::piece(PieceTypeId::KING, Color::WHITE);     break;
-                case 'N': p = Piece::piece(PieceTypeId::KNIGHT, Color::WHITE);   break;
-                case 'P': p = Piece::piece(PieceTypeId::PAWN, Color::WHITE);     break;
-                case 'Q': p = Piece::piece(PieceTypeId::QUEEN, Color::WHITE);    break;
-                case 'R': p = Piece::piece(PieceTypeId::ROOK, Color::WHITE);     break;
-                case 'b': p = Piece::piece(PieceTypeId::BISHOP, Color::BLACK);   break;
-                case 'k': p = Piece::piece(PieceTypeId::KING, Color::BLACK);     break;
-                case 'n': p = Piece::piece(PieceTypeId::KNIGHT, Color::BLACK);   break;
-                case 'p': p = Piece::piece(PieceTypeId::PAWN, Color::BLACK);     break;
-                case 'q': p = Piece::piece(PieceTypeId::QUEEN, Color::BLACK);    break;
-                case 'r': p = Piece::piece(PieceTypeId::ROOK, Color::BLACK);     break;
-                default: throw ConstructorFailedException();
+                    case 'B': p = Piece::piece(PieceTypeId::BISHOP, Color::WHITE);   break;
+                    case 'K': p = Piece::piece(PieceTypeId::KING, Color::WHITE);     break;
+                    case 'N': p = Piece::piece(PieceTypeId::KNIGHT, Color::WHITE);   break;
+                    case 'P': p = Piece::piece(PieceTypeId::PAWN, Color::WHITE);     break;
+                    case 'Q': p = Piece::piece(PieceTypeId::QUEEN, Color::WHITE);    break;
+                    case 'R': p = Piece::piece(PieceTypeId::ROOK, Color::WHITE);     break;
+                    case 'b': p = Piece::piece(PieceTypeId::BISHOP, Color::BLACK);   break;
+                    case 'k': p = Piece::piece(PieceTypeId::KING, Color::BLACK);     break;
+                    case 'n': p = Piece::piece(PieceTypeId::KNIGHT, Color::BLACK);   break;
+                    case 'p': p = Piece::piece(PieceTypeId::PAWN, Color::BLACK);     break;
+                    case 'q': p = Piece::piece(PieceTypeId::QUEEN, Color::BLACK);    break;
+                    case 'r': p = Piece::piece(PieceTypeId::ROOK, Color::BLACK);     break;
+                    default: throw ConstructorFailedException();
                 }
                 board_.putPiece(p, Position(row, column));
                 ++column;
@@ -105,7 +106,6 @@ void Board::initialize(std::string const & fen)
         }
     }
 }
-
 
 bool Board::spanIsEmpty(Position const & from, Position const & to) const
 {
@@ -126,7 +126,8 @@ bool Board::spanIsEmpty(Position const & from, Position const & to) const
 
     Position p = from;
 
-    for (int i = 0; i < squares_moved; ++i) {
+    for (int i = 0; i < squares_moved; ++i)
+    {
         p.row    += row_delta;
         p.column += column_delta;
 

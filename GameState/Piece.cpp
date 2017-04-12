@@ -24,7 +24,6 @@ PieceTraits const PIECE_TRAITS[NUMBER_OF_PIECE_TYPES] =
     { /*IDB_BPAWN,	IDB_WPAWN,		*/"P"   },
 };
 
-
 bool squareCanBeOccupied(Board const & board, Position const & p, Color myColor)
 {
     Piece const * piece = board.pieceAt(p);
@@ -63,7 +62,7 @@ void generateSpanMoves(Board const &     board,
 
         // Next square in span
 
-        to.row += dr;
+        to.row    += dr;
         to.column += dc;
     }
 }
@@ -147,7 +146,7 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
     // Up
 
     --to.row;
-    if (( to.row >= 0) && squareCanBeOccupied(board, to, color_))
+    if ((to.row >= 0) && squareCanBeOccupied(board, to, color_))
     {
         moves.emplace_back(from, to);
     }
@@ -155,7 +154,7 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
     // Up-right
 
     ++to.column;
-    if (( to.row >= 0) && ( to.column < Board::SIZE) && squareCanBeOccupied(board, to, color_))
+    if ((to.row >= 0) && (to.column < Board::SIZE) && squareCanBeOccupied(board, to, color_))
     {
         moves.emplace_back(from, to);
     }
@@ -163,7 +162,8 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
     // Right
 
     ++to.row;
-    if ((to.column < Board::SIZE) && squareCanBeOccupied(board, to, color_) ) {
+    if ((to.column < Board::SIZE) && squareCanBeOccupied(board, to, color_))
+    {
         moves.emplace_back(from, to);
     }
 
@@ -186,32 +186,37 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
     // Down-left
 
     --to.column;
-    if (( to.row < Board::SIZE) && ( to.column >= 0) && squareCanBeOccupied(board, to, color_) ) {
+    if ((to.row < Board::SIZE) && (to.column >= 0) && squareCanBeOccupied(board, to, color_))
+    {
         moves.emplace_back(from, to);
     }
 
     // Left
 
     --to.row;
-    if (( to.column >= 0) && squareCanBeOccupied(board, to, color_) ) {
+    if ((to.column >= 0) && squareCanBeOccupied(board, to, color_))
+    {
         moves.emplace_back(from, to);
     }
 
     // Up-left
 
     --to.row;
-    if (( to.row >= 0) && ( to.column >= 0) && squareCanBeOccupied(board, to, color_) ) {
+    if ((to.row >= 0) && (to.column >= 0) && squareCanBeOccupied(board, to, color_))
+    {
         moves.emplace_back(from, to);
     }
 
     // Castles
 
-    if (state.kingSideCastleIsAllowed(color_) && !state.inCheck_) {
+    if (state.kingSideCastleIsAllowed(color_) && !state.inCheck_)
+    {
         //! @todo Must check all squares that the kings moves through
         moves.push_back(Move::kingSideCastle());
     }
 
-    if (state.queenSideCastleIsAllowed(color_) && !state.inCheck_) {
+    if (state.queenSideCastleIsAllowed(color_) && !state.inCheck_)
+    {
         //! @todo Must check all squares that the kings moves through
         moves.push_back(Move::queenSideCastle());
     }
@@ -221,7 +226,7 @@ bool King::isValidMove(GameState const & state, Move const & move) const
 {
     Board const & board   = state.board_;
     Position const & from = move.from();
-    Position const & to = move.to();
+    Position const & to   = move.to();
 
     // Check castles
 
@@ -273,7 +278,7 @@ bool Queen::isValidMove(GameState const & state, Move const & move) const
 {
     Board const & board   = state.board_;
     Position const & from = move.from();
-    Position const & to = move.to();
+    Position const & to   = move.to();
 
     // Check if the destination square can be occupied
 
@@ -312,7 +317,7 @@ bool Bishop::isValidMove(GameState const & state, Move const & move) const
 {
     Board const & board   = state.board_;
     Position const & from = move.from();
-    Position const & to = move.to();
+    Position const & to   = move.to();
 
     // Check if the destination square can be occupied
 
@@ -353,7 +358,8 @@ void Knight::generatePossibleMoves(GameState const & state, Position const & fro
 
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
 
-    for (int i = 0; i < elementsof(offsets); ++i) {
+    for (int i = 0; i < elementsof(offsets); ++i)
+    {
         Position to(from.row + offsets[i].row, from.column + offsets[i].column);
 
         if (board.isValidPosition(to))
@@ -372,7 +378,7 @@ bool Knight::isValidMove(GameState const & state, Move const & move) const
 {
     Board const & board   = state.board_;
     Position const & from = move.from();
-    Position const & to = move.to();
+    Position const & to   = move.to();
 
     // Check if the destination square can be occupied
     if (!squareCanBeOccupied(board, to, color_))
@@ -380,8 +386,8 @@ bool Knight::isValidMove(GameState const & state, Move const & move) const
 
     // Check movement
 
-    int adr     = abs(to.row - from.row);
-    int adc     = abs(to.column - from.column);
+    int adr = abs(to.row - from.row);
+    int adc = abs(to.column - from.column);
 
     if (!isMoved(adr, adc))
         return false;
@@ -408,7 +414,7 @@ bool Rook::isValidMove(GameState const & state, Move const & move) const
 {
     Board const & board   = state.board_;
     Position const & from = move.from();
-    Position const & to = move.to();
+    Position const & to   = move.to();
 
     // Check if the destination square can be occupied
 
@@ -443,7 +449,7 @@ void Pawn::generatePossibleMoves(GameState const & state, Position const & from,
 
     // Diagonal to left (must capture)
 
-    to.row        = from.row + direction;
+    to.row    = from.row + direction;
     to.column = from.column - 1;
 
     if (board.isValidPosition(to))
@@ -463,10 +469,10 @@ void Pawn::generatePossibleMoves(GameState const & state, Position const & from,
 
             captured = board.pieceAt(from.row, to.column);
 
-            if (( captured != NO_PIECE) &&
-                ( captured->type() == PieceTypeId::PAWN) &&
-                ( state.move_.from() == Position(to.row + direction, to.column)) &&
-                ( state.move_.to() == Position(from.row, to.column)) )
+            if ((captured != NO_PIECE) &&
+                (captured->type() == PieceTypeId::PAWN) &&
+                (state.move_.from() == Position(to.row + direction, to.column)) &&
+                (state.move_.to() == Position(from.row, to.column)))
             {
                 moves.push_back(Move::enPassant(from, to));
             }
@@ -495,10 +501,10 @@ void Pawn::generatePossibleMoves(GameState const & state, Position const & from,
 
             captured = board.pieceAt(from.row, to.column);
 
-            if (( captured != NO_PIECE) &&
-                ( captured->type() == PieceTypeId::PAWN) &&
-                ( state.move_.from() == Position(to.row + direction, to.column)) &&
-                ( state.move_.to() == Position(from.row, to.column)) )
+            if ((captured != NO_PIECE) &&
+                (captured->type() == PieceTypeId::PAWN) &&
+                (state.move_.from() == Position(to.row + direction, to.column)) &&
+                (state.move_.to() == Position(from.row, to.column)))
             {
                 moves.push_back(Move::enPassant(from, to));
             }
@@ -507,7 +513,7 @@ void Pawn::generatePossibleMoves(GameState const & state, Position const & from,
 
     // Ahead 1 row (must be empty) and ahead 2 rows (must be empty)
 
-    to.row        = from.row + direction;
+    to.row    = from.row + direction;
     to.column = from.column;
 
     if (board.isValidPosition(to) && (board.pieceAt(to) == NO_PIECE))
@@ -516,11 +522,12 @@ void Pawn::generatePossibleMoves(GameState const & state, Position const & from,
 
         // Ahead 2 rows if in its original spot (must be empty)
 
-        if (( from.row == STARTING_ROW_BLACK) && ( color_ == Color::BLACK) ||
-            ( from.row == STARTING_ROW_WHITE) && ( color_ == Color::WHITE) )
+        if ((from.row == STARTING_ROW_BLACK) && (color_ == Color::BLACK) ||
+            (from.row == STARTING_ROW_WHITE) && (color_ == Color::WHITE))
         {
             to.row += direction;
-            if (board.pieceAt(to) == NO_PIECE) {
+            if (board.pieceAt(to) == NO_PIECE)
+            {
                 moves.emplace_back(from, to);
             }
         }
@@ -531,23 +538,23 @@ bool Pawn::isValidMove(GameState const & state, Move const & move) const
 {
     Board const & board   = state.board_;
     Position const & from = move.from();
-    Position const & to = move.to();
+    Position const & to   = move.to();
 
-    int direction       = (color_ == Color::BLACK) ? 1 : -1;
+    int direction         = (color_ == Color::BLACK) ? 1 : -1;
 
     // Ahead 1?
 
-    if (( to.row == from.row + direction) &&
-        ( to.column == from.column) &&
-        ( board.pieceAt(to) == NO_PIECE) )
+    if ((to.row == from.row + direction) &&
+        (to.column == from.column) &&
+        (board.pieceAt(to) == NO_PIECE))
     {
         return true;
     }
 
     // Capture diagonally?
 
-    if (( to.row == from.row + direction) &&
-        (( to.column == from.column + 1) || ( to.column == from.column - 1) ) )
+    if ((to.row == from.row + direction) &&
+        ((to.column == from.column + 1) || (to.column == from.column - 1)))
     {
         Piece const * captured = board.pieceAt(to);
 
@@ -561,9 +568,9 @@ bool Pawn::isValidMove(GameState const & state, Move const & move) const
         captured = board.pieceAt(from.row, to.column);
 
         if ((captured != NO_PIECE) &&
-            ( captured->type() == PieceTypeId::PAWN) &&
-            ( state.move_.from() == Position(to.row + direction, to.column)) &&
-            ( state.move_.to() == Position(from.row, to.column)) )
+            (captured->type() == PieceTypeId::PAWN) &&
+            (state.move_.from() == Position(to.row + direction, to.column)) &&
+            (state.move_.to() == Position(from.row, to.column)))
         {
             return true;
         }
@@ -571,10 +578,10 @@ bool Pawn::isValidMove(GameState const & state, Move const & move) const
 
     // Ahead 2?
 
-    if (( to.row == from.row + 2 * direction) &&
-        ( to.column == from.column) &&
-        ( board.pieceAt(Position(from.row + direction, from.column) ) == NO_PIECE) &&
-        ( board.pieceAt(to) == NO_PIECE) )
+    if ((to.row == from.row + 2 * direction) &&
+        (to.column == from.column) &&
+        (board.pieceAt(Position(from.row + direction, from.column)) == NO_PIECE) &&
+        (board.pieceAt(to) == NO_PIECE))
     {
         return true;
     }

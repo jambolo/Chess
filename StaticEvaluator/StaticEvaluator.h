@@ -18,12 +18,12 @@ public:
     static int evaluate(GameState const & state);
 
     // Returns a value for the game state based on the move and its current value
-    static int incremental(Move const & move,
-                           GameState::CastleStatus castleStatus, 
-                           Piece const * pMoved                  = nullptr,
-                           Position const * pRemovedPosition     = nullptr,
-                           Piece const * pRemoved                = nullptr,
-                           Piece const * pAdded                  = nullptr);
+    static int incremental(Move const &            move,
+                           GameState::CastleStatus castleStatus,
+                           Piece const *           pMoved                  = nullptr,
+                           Position const *        pRemovedPosition     = nullptr,
+                           Piece const *           pRemoved                = nullptr,
+                           Piece const *           pAdded                  = nullptr);
 
     // The absolute value of checkmate
     static int constexpr CHECKMATE_VALUE = std::numeric_limits<int>::max() - 1;

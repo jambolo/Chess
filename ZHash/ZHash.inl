@@ -19,15 +19,15 @@
 #if !defined(ZHash_inl__)
 #define ZHash_inl__
 
-#include "ZHash.h"
 #include "GameState/Board.h"
+#include "ZHash.h"
 
 inline ZHash::ZHash(Z z /* = 0 */)
     : value_(z)
 {
 }
 
-inline bool operator == (ZHash const & x, ZHash const & y)
+inline bool operator ==(ZHash const & x, ZHash const & y)
 {
     return x.value_ == y.value_;
 }

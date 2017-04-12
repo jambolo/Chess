@@ -64,7 +64,7 @@ inline void Board::movePiece(Position const & from, Position const & to)
     board_[from.row][from.column] = NO_PIECE;
 }
 
-inline bool operator == (Board const & x, Board const & y)
+inline bool operator ==(Board const & x, Board const & y)
 {
     return memcmp(x.board_, y.board_, sizeof x.board_) == 0;
 }
