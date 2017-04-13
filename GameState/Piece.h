@@ -10,6 +10,7 @@
 class CBitmap;
 class Move;
 class GameState;
+struct Position;
 
 class Piece
 {

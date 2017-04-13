@@ -54,19 +54,19 @@ void Board::initialize()
     putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), Position(6, 7));
 }
 
-void Board::initialize(std::string const & fen)
+bool Board::initializeFromFen(char const * start, char const * end)
 {
+    std::string fen(start, end);
     std::smatch match;
     try
     {
-        std::regex re(
-            "([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)");
+        std::regex re("([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)");
         if (!std::regex_search(fen, match, re) || match.size() != SIZE + 1)
-            throw ConstructorFailedException();
+            return false;
     }
     catch (std::regex_error &)
     {
-        throw ConstructorFailedException();
+        return false;
     }
 
     int column = 0;
@@ -102,9 +102,10 @@ void Board::initialize(std::string const & fen)
                 ++column;
             }
             if (column >= SIZE)
-                throw ConstructorFailedException();
+                return false;
         }
     }
+    return true;
 }
 
 bool Board::spanIsEmpty(Position const & from, Position const & to) const

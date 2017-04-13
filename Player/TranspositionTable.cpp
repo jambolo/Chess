@@ -21,7 +21,7 @@ bool TranspositionTable::check(GameState const & state, int * pReturnedValue, in
     ++analysisData_.checkCount;
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
-    ZHash hashCode = state.zhash();
+    ZHash hashCode = state.zhash_;
     uint32_t upperHashCode = (uint32_t)(hashCode >> 32);
     uint32_t lowerHashCode = (uint32_t)(hashCode & 0xffffffff);
     int index              = lowerHashCode % SIZE;
@@ -63,7 +63,7 @@ bool TranspositionTable::check(GameState const & state, int minQ, int * pReturne
     ++analysisData_.checkCount;
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
-    ZHash hashCode = state.zhash();
+    ZHash hashCode = state.zhash_;
     uint32_t upperHashCode = (uint32_t)(hashCode >> 32);
     uint32_t lowerHashCode = (uint32_t)(hashCode & 0xffffffff);
     int index              = lowerHashCode % SIZE;
@@ -110,7 +110,7 @@ void TranspositionTable::forceUpdate(GameState const & state)
     ++analysisData_.updateCount;
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
-    ZHash hashCode = state.zhash();
+    ZHash hashCode = state.zhash_;
     uint32_t upperHashCode = (uint32_t)(hashCode >> 32);
     uint32_t lowerHashCode = (uint32_t)(hashCode & 0xffffffff);
     int index              = lowerHashCode % SIZE;
@@ -155,7 +155,7 @@ void TranspositionTable::update(GameState const & state)
     ++analysisData_.updateCount;
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
-    ZHash hashCode = state.zhash();
+    ZHash hashCode = state.zhash_;
     uint32_t upperHashCode = (uint32_t)(hashCode >> 32);
     uint32_t lowerHashCode = (uint32_t)(hashCode & 0xffffffff);
     int index              = lowerHashCode % SIZE;

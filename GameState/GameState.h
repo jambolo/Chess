@@ -26,13 +26,10 @@ public:
     typedef uint32_t CastleStatus;
 
     GameState() {}
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
-    GameState(GameState const & old_state, Color color, Move const & move, int depth);
-#else // defined( GAME_STATE_ANALYSIS_ENABLED )
-    GameState(GameState const & old_state, Color color, Move const & move);
-#endif // defined( GAME_STATE_ANALYSIS_ENABLED )
-    GameState(Board const & board, Move const & move, int value, CastleStatus castleStatus);
-    explicit GameState(char const * fen);
+    GameState(Board const & board, CastleStatus castleStatus, Move const & move, int value, bool inCheck);
+
+    bool initializeFromFen(char const * fen);
+
 
     // Resets the game
     void initialize();
@@ -47,10 +44,7 @@ public:
     bool queenSideCastleIsAllowed(Color c) const;
 
     // Updates the game state with the specified move
-    void makeMove(Color color, Move const & move);
-
-    // Returns the hash code for the state
-    ZHash zhash() const;
+    void makeMove(Color color, Move const & move, int depth = 0);
 
     // Returns the FEN string for the state
     std::string fen() const;
@@ -75,15 +69,17 @@ public:
 
 #endif // defined( GAME_STATE_ANALYSIS_ENABLED )
 
-    Board board_;                                   // The board
-    Move move_;                                     // The move that resulted in this state
-    int value_;                                     // Value of the game state
-    int quality_;                                   // Quality of the value
+    Board board_;               // The board
+    CastleStatus castleStatus_; // Which side has castled and which castles are still possible
+
+    Move move_;                 // The move that resulted in this state
+    int value_;                 // Value of the game state
+    int quality_;               // Quality of the value
 #if defined(USING_PRIORITIZED_MOVE_ORDERING)
-    int priority_;                                  // Priority of this state (determines sorting order)
+    int priority_;              // Priority of this state (determines sorting order)
 #endif // defined( USING_PRIORITIZED_MOVE_ORDERING )
-    CastleStatus castleStatus_;                     // Which side has castled and which castles are still possible
-    bool inCheck_;                                  // True if the king is in check
+    bool inCheck_;              // True if the king is in check
+    ZHash zhash_;               // Hash code for this state
 
 private:
 
@@ -98,7 +94,10 @@ private:
     // Updates the game state with a pawn promotion (after moving). Returns the new piece.
     Piece const * promote(Color color, Position const & position);
 
-    ZHash zhash_; // Hash code for this state
+    bool extractColorFromFen(char const * start, char const * end);
+    bool extractCastleAvailabilityFromFen(char const * start, char const * end);
+    bool extractFiftyMoveTimerFromFen(char const * start, char const * end);
+    bool extractMoveNumberFromFen(char const * start, char const * end);
 };
 
 // Equality operator

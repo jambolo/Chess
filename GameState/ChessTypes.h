@@ -3,47 +3,6 @@
 #if !defined(ChessTypes_h__)
 #define ChessTypes_h__
 
-#include <vector>
-
-struct Position
-{
-    int8_t column;
-    int8_t row;
-
-    static int const INVALID = -1;
-
-    Position() {}
-    Position(int r, int c)
-        : column(c)
-        , row(r)
-    {
-    }
-
-    explicit Position(int id)
-        : column(id & 0xff)
-        , row((id >> 8) & 0xff)
-    {
-    }
-
-    explicit Position(char const * algebraic)
-    {
-        column = algebraic[0] - 'a';
-        row = 7 - (algebraic[1] - '1');
-    }
-
-    int id() const
-    {
-        return (row >= 0 && column >= 0) ? (row << 8) + column : INVALID;
-    }
-};
-
-typedef std::vector<Position> PositionVector;
-
-inline bool operator ==(Position const & a, Position const & b)
-{
-    return a.column == b.column && a.row == b.row;
-}
-
 enum class Color
 {
     INVALID = -1,
@@ -73,6 +32,7 @@ static int const WHITE_CASTLE = WHITE_QUEENSIDE_CASTLE | WHITE_KINGSIDE_CASTLE;
 static int const BLACK_CASTLE = BLACK_QUEENSIDE_CASTLE | BLACK_KINGSIDE_CASTLE;
 
 // Castle availability
+static int const CASTLE_AVAILABILITY_MASK           = 0xf0;
 static int const WHITE_QUEENSIDE_CASTLE_UNAVAILABLE = 0x10;
 static int const WHITE_KINGSIDE_CASTLE_UNAVAILABLE  = 0x20;
 static int const BLACK_QUEENSIDE_CASTLE_UNAVAILABLE = 0x40;

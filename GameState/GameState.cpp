@@ -12,23 +12,69 @@
 
 #include <regex>
 
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
-
-GameState::GameState(GameState const & old_state, Color color, Move const & move, int depth)
+inline GameState::GameState(Board const & board, CastleStatus castleStatus, Move const & move, int value, bool inCheck)
+    : board_(board)
+    , castleStatus_(castleStatus)
+    , move_(move)
+    , value_(value)
+    , quality_(std::numeric_limits<int>::min())
+#if defined(USING_PRIORITIZED_MOVE_ORDERING)
+    , priority_(0)
+#endif // defined( USING_PRIORITIZED_MOVE_ORDERING )
+    , inCheck_(inCheck)
+    , zhash_(board)
 {
-    analysisData_ = old_state.analysisData_;
-    board_        = old_state.board_;
-    castleStatus_ = old_state.castleStatus_;
-    zhash_        = old_state.zhash_;
+}
 
-#if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
-    value_ = old_state.value_;
-#endif
+bool GameState::initializeFromFen(char const * fen)
+{
+    char const * start = fen;
+    char const * end   = start;
 
+    // Extract the piece placement field
+    end = strchr(start, ' ');
+    if (!end || !board_.initializeFromFen(start, end))
+        return false;
+    start = end + 1;
+
+    // Extract the active color
+    end = strchr(start, ' ');
+    if (!end || !extractColorFromFen(start, end))
+        return false;
+    start = end + 1;
+
+    // Extract the castling availability
+    end = strchr(start, ' ');
+    if (!end || !extractCastleAvailabilityFromFen(start, end))
+        return false;
+    start = end + 1;
+
+    // Extract the en passant target square
+    Position enpassant;
+    end = strchr(start, ' ');
+    if (!end && !enpassant.initializeFromFen(start, end))
+    start = end + 1;
+
+    // Extract the fifty-move rule timer
+    end = strchr(start, ' ');
+    if (!end || !extractFiftyMoveTimerFromFen(start, end))
+        return false;
+    start = end + 1;
+
+    // Extract the move number
+    end = strchr(start, 0);
+    if (!end || !extractMoveNumberFromFen(start, end))
+        return false;
+
+    return true;
+}
+
+void GameState::makeMove(Color color, Move const & move, int depth /*= 0*/)
+{
+#if defined(GAME_STATE_ANALYSIS_ENABLED)
     // Add this move to the sequence
-
+    assert(depth > 0);
     int const sequenceIndex = depth - 1;
-
     if (sequenceIndex < elementsof(analysisData_.expected))
     {
         if (!move.isResignation() && !move.isUndo())
@@ -44,110 +90,26 @@ GameState::GameState(GameState const & old_state, Color color, Move const & move
             }
         }
     }
+#else
+    (void)depth;
+#endif
 
-    // Make the move
-    makeMove(color, move);
-
-    // Note: value_, quality_, and priority_ are left uninitialized
-}
-
-#else // defined( GAME_STATE_ANALYSIS_ENABLED )
-
-GameState::GameState(GameState const & old_state, Color color, Move const & move)
-{
-    board_ = old_state.board_;
-    castleStatus_ = old_state.castleStatus_;
-    zhash_        = old_state.zhash_;
-
-    makeMove(color, move);
-
-    // Note: value_, quality_, and priority_ are left uninitialized
-}
-
-#endif // defined( GAME_STATE_ANALYSIS_ENABLED )
-
-GameState::GameState(char const * fen)
-{
-    char const * start = fen;
-    char const * end   = start;
-
-    // Extract the piece placement field
-    end = strchr(start, ' ');
-    if (!end)
-        throw ConstructorFailedException();
-    board_.initialize(std::string(start, end));
-    start = end + 1;
-
-    // Extract the active color
-    end = strchr(start, ' ');
-    if (!end || end != start + 1 || ((*start != 'w') && (*start != 'b')))
-        throw ConstructorFailedException();
-    Color color = *start == 'w' ? Color::WHITE : Color::BLACK;
-    start = end + 1;
-
-    // Extract the castling availability
-    end = strchr(start, ' ');
-    if (!end)
-        throw ConstructorFailedException();
-    castleStatus_ = WHITE_CASTLE_UNAVAILABLE | BLACK_CASTLE_UNAVAILABLE;
-    if (*start != '-')
-    { 
-        for (auto c = start; c != end; ++c)
-        {
-            switch (*c)
-            {
-                case 'K': castleStatus_ &= ~WHITE_KINGSIDE_CASTLE_UNAVAILABLE;  break;
-                case 'Q': castleStatus_ &= ~WHITE_QUEENSIDE_CASTLE_UNAVAILABLE; break;
-                case 'k': castleStatus_ &= ~BLACK_KINGSIDE_CASTLE_UNAVAILABLE;  break;
-                case 'q': castleStatus_ &= ~BLACK_QUEENSIDE_CASTLE_UNAVAILABLE; break;
-                default:  throw ConstructorFailedException();
-            }
-        }
-    }
-    start = end + 1;
-
-    // Extract the en passant target square
-    end = strchr(start, ' ');
-    if (!end || (*start != '-' && end != start + 2))
-        throw ConstructorFailedException();
-    Position enpassant = (*start == '-') ? Position(Position::INVALID) : Position(start);
-    start = end + 1;
-
-    // Extract the fifty-move rule timer
-    end = strchr(start, ' ');
-    if (!end)
-        throw ConstructorFailedException();
-    int fiftyMoveTimer = std::stoi(std::string(start, end));
-    start = end + 1;
-
-    // Extract the move number
-    int moveNumber = std::stoi(std::string(start));
-    if (moveNumber < 1)
-        throw ConstructorFailedException();
-}
-
-void GameState::makeMove(Color color, Move const & move)
-{
     // Save the move
-
     move_ = move;
 
     // These special moves don't do anything
-
     if (move.isResignation() || move.isUndo() || move.isStartingPosition())
     {
         // Do nothing
     }
 
     // Castle is a special case move. Handle it separately
-
     else if (move.isKingSideCastle() || move.isQueenSideCastle())
     {
         makeCastleMove(color, move);
     }
 
     // Normal move
-
     else
     {
         makeNormalMove(color, move);
@@ -196,7 +158,6 @@ void GameState::makeCastleMove(Color color, Move const & move)
     board_.movePiece(rooksMove.from(), rooksMove.to());
 
     // Update castle status
-
     if (color == Color::WHITE)
     {
         castleStatus_ |= move.isKingSideCastle() ? WHITE_KINGSIDE_CASTLE : WHITE_QUEENSIDE_CASTLE;
@@ -244,14 +205,12 @@ void GameState::makeNormalMove(Color color, Move const & move)
     }
 
     // Move the piece on the board
-
     zhash_.remove(*pMoved, move.from());
     zhash_.add(*pMoved, move.to());
 
     board_.movePiece(move.from(), move.to());
 
     // Handle promotion
-
     Piece const * pAdded;
 
     if (move.isPromotion())
@@ -264,7 +223,6 @@ void GameState::makeNormalMove(Color color, Move const & move)
     }
 
     // Update castle status
-
     CastleStatus oldStatus = castleStatus_;
 
     if (color == Color::WHITE)
@@ -337,15 +295,17 @@ void GameState::initialize()
 {
     board_.initialize();
     castleStatus_ = 0;
-
-    zhash_ = ZHash(board_);
-
     makeMove(Color::WHITE, Move::reset());
-
     value_    = 0;
     quality_  = std::numeric_limits<int8_t>::min();
 #if defined(USING_PRIORITIZED_MOVE_ORDERING)
     priority_ = 0;
+#endif
+    inCheck_ = false;
+    zhash_ = ZHash(board_);
+
+#if defined(GAME_STATE_ANALYSIS_ENABLED)
+    analysisData_.reset();
 #endif
 }
 
@@ -362,3 +322,43 @@ void GameState::AnalysisData::reset()
 }
 
 #endif // defined( GAME_STATE_ANALYSIS_ENABLED )
+
+bool GameState::extractColorFromFen(char const * start, char const * end)
+{
+    if ((end != start + 1) || ((*start != 'w') && (*start == 'b')))
+        return false;
+    Color color = (*start == 'w') ? Color::WHITE : Color::BLACK;
+    return true;
+}
+
+bool GameState::extractCastleAvailabilityFromFen(char const * start, char const * end)
+{
+    castleStatus_ = WHITE_CASTLE_UNAVAILABLE | BLACK_CASTLE_UNAVAILABLE;
+    if (*start != '-') {
+        for (auto c = start; c != end; ++c) {
+            switch (*c) {
+                case 'K': castleStatus_ &= ~WHITE_KINGSIDE_CASTLE_UNAVAILABLE;  break;
+                case 'Q': castleStatus_ &= ~WHITE_QUEENSIDE_CASTLE_UNAVAILABLE; break;
+                case 'k': castleStatus_ &= ~BLACK_KINGSIDE_CASTLE_UNAVAILABLE;  break;
+                case 'q': castleStatus_ &= ~BLACK_QUEENSIDE_CASTLE_UNAVAILABLE; break;
+                default:  return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool GameState::extractFiftyMoveTimerFromFen(char const * start, char const * end)
+{
+    int fiftyMoveTimer = std::stoi(std::string(start, end));
+    return true;
+}
+
+bool GameState::extractMoveNumberFromFen(char const * start, char const * end)
+{
+    int moveNumber = std::stoi(std::string(start, end));
+    if (moveNumber < 1)
+        return false;
+
+    return true;
+}

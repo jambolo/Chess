@@ -20,7 +20,7 @@ public:
     void initialize();
 
     // Initialize the board using FEN description
-    void initialize(std::string const & fen);
+    bool initializeFromFen(char const * start, char const * end);
 
     // Returns true if p is a valid location
     static bool isValidPosition(Position const & p);

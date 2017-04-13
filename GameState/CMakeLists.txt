@@ -14,6 +14,8 @@ set(SOURCES
     Move.inl
     Piece.cpp
     Piece.h
+    Position.cpp
+    Position.h
     PieceList.cpp
     PieceList.h
 )

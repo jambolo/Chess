@@ -385,11 +385,8 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
                 // Convert the moves into new states and put the new states into the state list
                 for (auto const & move : moves)
                 {
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
-                    GameState new_state(s0, current_color, move, depth);
-#else                   // defined( GAME_STATE_ANALYSIS_ENABLED )
-                    GameState new_state(s0, current_color, move);
-#endif
+                    GameState new_state(s0);
+                    new_state.makeMove(current_color, move, depth);
 
                     // Compute a preliminary value for the state
                     evaluate(&new_state, depth);

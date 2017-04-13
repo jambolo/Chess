@@ -22,6 +22,8 @@
 #include "GameState/ChessTypes.h"
 #include <algorithm>
 
+struct Position;
+
 class BitBoard
 {
 public:
@@ -182,7 +184,7 @@ public:
     //!
     //! @note	En passant is included.
 
-    static BitBoard threatenedSquares(PieceTypeId type, Position position);
+    static BitBoard threatenedSquares(PieceTypeId type, Position const & position);
 
     //! Returns a bit board showing all squares threatened by a piece at a position.
     //!
@@ -197,7 +199,7 @@ public:
     //!
     //! @note	En passant is included.
 
-    static BitBoard threatenedSquares(PieceTypeId type, Position position, BitBoard const & friends, BitBoard const & foes);
+    static BitBoard threatenedSquares(PieceTypeId type, Position const & position, BitBoard const & friends, BitBoard const & foes);
 
     //! Returns a bit board showing all squares that a piece at a position can move to, if it isn't blocked.
     //!
@@ -213,7 +215,7 @@ public:
     //! @note	Castling is not included.
     //! @note	The pawn's initial two-square move is included.
 
-    static BitBoard destinationSquares(PieceTypeId type, Position position);
+    static BitBoard destinationSquares(PieceTypeId type, Position const & position);
 
     //! Returns a bit board showing all squares that a piece at a position can move to.
     //!
@@ -230,7 +232,7 @@ public:
     //! @note	En passant is included.
     //! @note	The pawn's initial two-square move is included.
 
-    static BitBoard destinationSquares(PieceTypeId type, Position position, BitBoard const & friends, BitBoard const & foes);
+    static BitBoard destinationSquares(PieceTypeId type, Position const & position, BitBoard const & friends, BitBoard const & foes);
 
     //! Returns a bit board showing all squares normally accessible by a piece at a position but blocked.
     //!
@@ -240,7 +242,7 @@ public:
     //!
     //! @return
 
-    static BitBoard blockedSquares(PieceTypeId type, Position position, Position block);
+    static BitBoard blockedSquares(PieceTypeId type, Position const & position, Position block);
 
 private:
 
