@@ -11,7 +11,6 @@
 #include <queue>
 #include <vector>
 
-class PieceList;
 class Move;
 class Piece;
 

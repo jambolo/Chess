@@ -5,7 +5,6 @@
 
 #include "GameState/ChessTypes.h"
 
-class PieceList;
 class Piece;
 struct Position;
 

@@ -3,7 +3,6 @@
 #include "Board.h"
 #include "Move.h"
 #include "Piece.h"
-#include "Piecelist.h"
 
 #include "misc/Etc.h"
 #include "misc/exceptions.h"

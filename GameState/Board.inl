@@ -6,7 +6,6 @@
 #include "Board.h"
 
 #include "gamestate/Piece.h"
-#include "gamestate/PieceList.h"
 #include "gamestate/Position.h"
 
 #include <cassert>

@@ -2,7 +2,6 @@
 
 #include "Move.h"
 #include "Piece.h"
-#include "PieceList.h"
 
 #include "misc/Etc.h"
 #include "misc/exceptions.h"

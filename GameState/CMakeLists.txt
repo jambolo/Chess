@@ -16,8 +16,6 @@ set(SOURCES
     Piece.h
     Position.cpp
     Position.h
-    PieceList.cpp
-    PieceList.h
 )
 
 set(PRIVATE_INCLUDE_PATHS
