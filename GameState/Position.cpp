@@ -8,3 +8,16 @@ bool Position::initializeFromFen(char const * start, char const * end)
     column = start[0] - 'a';
     return true;
 }
+
+std::string Position::fen() const
+{
+    std::string result;
+    if (row < 0 || row > 7 || column < 0 || column > 7)
+        result = "-";
+    else
+    {
+        result += char(column + 'a');
+        result += char(7 - row + '1');
+    }
+    return result;
+}

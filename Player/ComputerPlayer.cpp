@@ -9,8 +9,8 @@
 //#include <mmsystem.h>
 
 ComputerPlayer::ComputerPlayer(Color color, int maxDepth)
-    : Player(color),
-    maxDepth_(maxDepth)
+    : Player(color)
+    , maxDepth_(maxDepth)
 {
     transpositionTable_ = new TranspositionTable;
 }

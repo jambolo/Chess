@@ -11,9 +11,18 @@
 
 #include <regex>
 
-inline GameState::GameState(Board const & board, CastleStatus castleStatus, Move const & move, int value, bool inCheck)
+inline GameState::GameState(Board const & board,
+                            Color         whoseTurn,
+                            CastleStatus  castleStatus,
+                            int           fiftyMoveTimer,
+                            Move const &  move,
+                            int           value,
+                            bool          inCheck,
+                            int           moveNumber)
     : board_(board)
+    , whoseTurn_(whoseTurn)
     , castleStatus_(castleStatus)
+    , fiftyMoveTimer_(fiftyMoveTimer)
     , move_(move)
     , value_(value)
     , quality_(std::numeric_limits<int>::min())
@@ -21,6 +30,7 @@ inline GameState::GameState(Board const & board, CastleStatus castleStatus, Move
     , priority_(0)
 #endif // defined( USING_PRIORITIZED_MOVE_ORDERING )
     , inCheck_(inCheck)
+    , moveNumber_(moveNumber)
     , zhash_(board)
 {
 }
@@ -38,13 +48,13 @@ bool GameState::initializeFromFen(char const * fen)
 
     // Extract the active color
     end = strchr(start, ' ');
-    if (!end || !extractColorFromFen(start, end))
+    if (!end || !whoseTurnFromFen(start, end))
         return false;
     start = end + 1;
 
     // Extract the castling availability
     end = strchr(start, ' ');
-    if (!end || !extractCastleAvailabilityFromFen(start, end))
+    if (!end || !castleStatusFromFen(start, end))
         return false;
     start = end + 1;
 
@@ -52,17 +62,18 @@ bool GameState::initializeFromFen(char const * fen)
     Position enpassant;
     end = strchr(start, ' ');
     if (!end && !enpassant.initializeFromFen(start, end))
+        return false;
     start = end + 1;
 
     // Extract the fifty-move rule timer
     end = strchr(start, ' ');
-    if (!end || !extractFiftyMoveTimerFromFen(start, end))
+    if (!end || !fiftyMoveTimerFromFen(start, end))
         return false;
     start = end + 1;
 
     // Extract the move number
     end = strchr(start, 0);
-    if (!end || !extractMoveNumberFromFen(start, end))
+    if (!end || !moveNumberFromFen(start, end))
         return false;
 
     return true;
@@ -89,9 +100,9 @@ void GameState::makeMove(Color color, Move const & move, int depth /*= 0*/)
             }
         }
     }
-#else
+#else // if defined(GAME_STATE_ANALYSIS_ENABLED)
     (void)depth;
-#endif
+#endif // if defined(GAME_STATE_ANALYSIS_ENABLED)
 
     // Save the move
     move_ = move;
@@ -113,11 +124,65 @@ void GameState::makeMove(Color color, Move const & move, int depth /*= 0*/)
     {
         makeNormalMove(color, move);
     }
+
+    if (color == Color::WHITE)
+    {
+        whoseTurn_ = Color::BLACK;
+    }
+    else
+    {
+        whoseTurn_ = (color == Color::WHITE) ? Color::BLACK : Color::WHITE;
+        ++moveNumber_;
+    }
 }
 
 std::string GameState::fen() const
 {
-    return std::string();
+    std::string result;
+
+    result  = board_.fen();
+    result += ' ';
+    result += (whoseTurn_ == Color::BLACK) ? 'b' : 'w';
+    result += ' ';
+    result += castleStatusToFen();
+    result += ' ';
+    result += enPassant_.fen();
+    result += ' ';
+    result += std::to_string(fiftyMoveTimer_);
+    result += ' ';
+    result += std::to_string(moveNumber_);
+    result += ' ';
+    return result;
+}
+
+std::string GameState::moveAlgebraic() const
+{
+    std::string result;
+    if (move_.isSpecial())
+    {
+        if (move_.isKingSideCastle())
+            result = "0-0";
+        else if (move_.isQueenSideCastle())
+            result = "0-0-0";
+        else if (move_.isPromotion())
+            result = move_.to().fen() + "=Q";
+        else if (move_.isEnPassant())
+        {
+            result += char(move_.from().column + 'a');
+            result += 'x';
+            result += move_.to().fen();
+        }
+        else if (move_.isResignation())
+            result = (whoseTurn_ == Color::WHITE) ? "1-0" : "0-1";
+    }
+    else
+    {
+        Piece const * piece = board_.pieceAt(move_.to());
+        if (piece->type() != PieceTypeId::PAWN)
+            result = Piece::symbol(piece->type());
+        result += move_.to().fen();
+    }
+    return result;
 }
 
 void GameState::makeCastleMove(Color color, Move const & move)
@@ -293,15 +358,18 @@ Piece const * GameState::promote(Color color, Position const & position)
 void GameState::initialize()
 {
     board_.initialize();
-    castleStatus_ = 0;
+    whoseTurn_      = Color::WHITE;
+    castleStatus_   = 0;
+    fiftyMoveTimer_ = 0;
     makeMove(Color::WHITE, Move::reset());
-    value_    = 0;
-    quality_  = std::numeric_limits<int8_t>::min();
+    value_      = 0;
+    quality_    = std::numeric_limits<int8_t>::min();
 #if defined(USING_PRIORITIZED_MOVE_ORDERING)
-    priority_ = 0;
+    priority_   = 0;
 #endif
-    inCheck_ = false;
-    zhash_ = ZHash(board_);
+    inCheck_    = false;
+    moveNumber_ = 1;
+    zhash_      = ZHash(board_);
 
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
     analysisData_.reset();
@@ -322,20 +390,23 @@ void GameState::AnalysisData::reset()
 
 #endif // defined( GAME_STATE_ANALYSIS_ENABLED )
 
-bool GameState::extractColorFromFen(char const * start, char const * end)
+bool GameState::whoseTurnFromFen(char const * start, char const * end)
 {
-    if ((end != start + 1) || ((*start != 'w') && (*start == 'b')))
+    if ((end != start + 1) || ((*start != 'w') && (*start != 'b')))
         return false;
-    Color color = (*start == 'w') ? Color::WHITE : Color::BLACK;
+    whoseTurn_ = (*start == 'w') ? Color::WHITE : Color::BLACK;
     return true;
 }
 
-bool GameState::extractCastleAvailabilityFromFen(char const * start, char const * end)
+bool GameState::castleStatusFromFen(char const * start, char const * end)
 {
     castleStatus_ = WHITE_CASTLE_UNAVAILABLE | BLACK_CASTLE_UNAVAILABLE;
-    if (*start != '-') {
-        for (auto c = start; c != end; ++c) {
-            switch (*c) {
+    if (*start != '-')
+    {
+        for (auto c = start; c != end; ++c)
+        {
+            switch (*c)
+            {
                 case 'K': castleStatus_ &= ~WHITE_KINGSIDE_CASTLE_UNAVAILABLE;  break;
                 case 'Q': castleStatus_ &= ~WHITE_QUEENSIDE_CASTLE_UNAVAILABLE; break;
                 case 'k': castleStatus_ &= ~BLACK_KINGSIDE_CASTLE_UNAVAILABLE;  break;
@@ -347,17 +418,40 @@ bool GameState::extractCastleAvailabilityFromFen(char const * start, char const 
     return true;
 }
 
-bool GameState::extractFiftyMoveTimerFromFen(char const * start, char const * end)
+bool GameState::fiftyMoveTimerFromFen(char const * start, char const * end)
 {
-    int fiftyMoveTimer = std::stoi(std::string(start, end));
+    fiftyMoveTimer_ = std::stoi(std::string(start, end));
+    if (fiftyMoveTimer_ < 0)
+        return false;
     return true;
 }
 
-bool GameState::extractMoveNumberFromFen(char const * start, char const * end)
+bool GameState::moveNumberFromFen(char const * start, char const * end)
 {
-    int moveNumber = std::stoi(std::string(start, end));
-    if (moveNumber < 1)
+    moveNumber_ = std::stoi(std::string(start, end));
+    if (moveNumber_ < 1)
         return false;
 
     return true;
+}
+
+std::string GameState::castleStatusToFen() const
+{
+    std::string result;
+    if ((castleStatus_ & CASTLE_AVAILABILITY_MASK) == CASTLE_AVAILABILITY_MASK)
+    {
+        result = "-";
+    }
+    else
+    {
+        if ((castleStatus_ & WHITE_KINGSIDE_CASTLE_UNAVAILABLE) == 0)
+            result += 'K';
+        if ((castleStatus_ & WHITE_QUEENSIDE_CASTLE_UNAVAILABLE) == 0)
+            result += 'Q';
+        if ((castleStatus_ & BLACK_KINGSIDE_CASTLE_UNAVAILABLE) == 0)
+            result += 'k';
+        if ((castleStatus_ & BLACK_QUEENSIDE_CASTLE_UNAVAILABLE) == 0)
+            result += 'q';
+    }
+    return result;
 }

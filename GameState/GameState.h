@@ -25,10 +25,16 @@ public:
     typedef uint32_t CastleStatus;
 
     GameState() {}
-    GameState(Board const & board, CastleStatus castleStatus, Move const & move, int value, bool inCheck);
+    GameState(Board const & board,
+              Color         whoseTurn_,
+              CastleStatus  castleStatus,
+              int           fiftyMoveTimer,
+              Move const &  move,
+              int           value,
+              bool          inCheck,
+              int           moveNumber);
 
     bool initializeFromFen(char const * fen);
-
 
     // Resets the game
     void initialize();
@@ -47,6 +53,9 @@ public:
 
     // Returns the FEN string for the state
     std::string fen() const;
+    
+    // Returns the algebraic notation for the move
+    std::string moveAlgebraic() const;
 
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
 
@@ -70,6 +79,9 @@ public:
 
     Board board_;               // The board
     CastleStatus castleStatus_; // Which side has castled and which castles are still possible
+    Color whoseTurn_;           // Whose turn
+    int fiftyMoveTimer_;        // Fifty move rule countdown
+    Position enPassant_;        // En passant target if any
 
     Move move_;                 // The move that resulted in this state
     int value_;                 // Value of the game state
@@ -78,6 +90,7 @@ public:
     int priority_;              // Priority of this state (determines sorting order)
 #endif // defined( USING_PRIORITIZED_MOVE_ORDERING )
     bool inCheck_;              // True if the king is in check
+    int moveNumber_;            // Move number
     ZHash zhash_;               // Hash code for this state
 
 private:
@@ -93,10 +106,11 @@ private:
     // Updates the game state with a pawn promotion (after moving). Returns the new piece.
     Piece const * promote(Color color, Position const & position);
 
-    bool extractColorFromFen(char const * start, char const * end);
-    bool extractCastleAvailabilityFromFen(char const * start, char const * end);
-    bool extractFiftyMoveTimerFromFen(char const * start, char const * end);
-    bool extractMoveNumberFromFen(char const * start, char const * end);
+    bool          whoseTurnFromFen(char const * start, char const * end);
+    bool          castleStatusFromFen(char const * start, char const * end);
+    bool          fiftyMoveTimerFromFen(char const * start, char const * end);
+    bool          moveNumberFromFen(char const * start, char const * end);
+    std::string   castleStatusToFen() const;
 };
 
 // Equality operator

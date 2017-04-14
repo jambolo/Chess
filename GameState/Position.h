@@ -3,16 +3,18 @@
 #if !defined(Position_h__)
 #define Position_h__
 
-#include <vector>
+#include <string>
 
 struct Position
 {
     int row;
     int column;
 
-    static int const INVALID = -1;
-
-    Position() {}
+    Position()
+        : row(-1)
+        , column(-1)
+    {
+    }
 
     Position(int r, int c)
         : row(r)
@@ -21,6 +23,7 @@ struct Position
     }
 
     bool initializeFromFen(char const * start, char const * end);
+    std::string fen() const;
 };
 
 inline bool operator ==(Position const & a, Position const & b)

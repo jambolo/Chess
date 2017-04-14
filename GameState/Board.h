@@ -4,6 +4,7 @@
 #define Board_h__
 
 #include "GameState/ChessTypes.h"
+#include <string>
 
 class Piece;
 struct Position;
@@ -41,6 +42,8 @@ public:
 
     // Returns true if the span from 'from' to 'to' (excluding 'to') contains no pieces
     bool spanIsEmpty(Position const & from, Position const & to) const;
+
+    std::string fen() const;
 
 private:
 

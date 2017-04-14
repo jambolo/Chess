@@ -11,17 +11,17 @@ struct PieceTraits
 {
 //	UINT blackResourceId;
 //	UINT whiteResourceId;
-    char symbol[2];
+    char symbol[2][2];
 };
 
 PieceTraits const PIECE_TRAITS[NUMBER_OF_PIECE_TYPES] =
 {
-    { /*IDB_BKING,	IDB_WKING,		*/"K"   },
-    { /*IDB_BQUEEN,	IDB_WQUEEN,		*/"Q" },
-    { /*IDB_BBISHOP,	IDB_WBISHOP,*/"B" },
-    { /*IDB_BKNIGHT,	IDB_WKNIGHT,*/"N" },
-    { /*IDB_BROOK,	IDB_WROOK,		*/"R"   },
-    { /*IDB_BPAWN,	IDB_WPAWN,		*/"P"   },
+    { /*IDB_BKING,	IDB_WKING,		*/{ "K", "k" } },
+    { /*IDB_BQUEEN,	IDB_WQUEEN,		*/{ "Q", "q" } },
+    { /*IDB_BBISHOP,	IDB_WBISHOP,*/{ "B", "b" } },
+    { /*IDB_BKNIGHT,	IDB_WKNIGHT,*/{ "N", "n" } },
+    { /*IDB_BROOK,	IDB_WROOK,		*/{ "R", "r" } },
+    { /*IDB_BPAWN,	IDB_WPAWN,		*/{ "P", "p" } },
 };
 
 bool squareCanBeOccupied(Board const & board, Position const & p, Color myColor)
@@ -118,7 +118,7 @@ Piece::Piece(PieceTypeId t, Color c)
 //	int	result = image_->LoadBitmap( image_resid );
 //	ASSERT( result != 0 );
 
-    symbol_ = PIECE_TRAITS[(size_t)t].symbol;
+    symbol_ = PIECE_TRAITS[(size_t)t].symbol[(size_t)c];
 }
 
 Piece::~Piece()
@@ -132,7 +132,7 @@ Piece::~Piece()
 
 char const * Piece::symbol(PieceTypeId piece)
 {
-    return (piece != PieceTypeId::INVALID) ? PIECE_TRAITS[(size_t)piece].symbol : "?";
+    return (piece != PieceTypeId::INVALID) ? PIECE_TRAITS[(size_t)piece].symbol[0] : "?";
 }
 
 void King::generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const

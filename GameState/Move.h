@@ -103,6 +103,7 @@ private:
 
     Position from_;
     Position to_;
+public:
 };
 
 #include "Move.inl"

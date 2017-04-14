@@ -18,7 +18,7 @@ inline Move::Move(SpecialMoveId move)
 }
 
 inline Move::Move(SpecialMoveId move, Position const & from, Position const & to)
-    :   from_(from)
+    : from_(from)
     , to_(to)
 {
     from_.row |= (int)move;

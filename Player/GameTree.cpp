@@ -42,14 +42,11 @@ GameTree::GameTree(TranspositionTable * pTTable, int maxDepth)
 
 GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 {
-    int depth = 0;                                                                              // The depth of this ply (this is
-                                                                                                // the current state,
-    // so its depth is 0)
-    int responseDepth = depth + 1;                                              // Depth of responses to this state
-    int quality         = maxDepth_ - depth;                                    // Quality of values at this depth (this is the
-                                                                                // depth of
-    // plies searched to get the results for this ply )
-    int responseQuality = maxDepth_ - responseDepth;            // Normal quality of responses to this state
+    int depth           = 0;                         // The depth of this ply (this is the current state,  so its depth is 0)
+    int responseDepth   = depth + 1;                 // Depth of responses to this state
+    int quality         = maxDepth_ - depth;         // Quality of values at this depth (this is the depth of plies searched to get
+                                                     // the results for this ply )
+    int responseQuality = maxDepth_ - responseDepth; // Normal quality of responses to this state
 
     myColor_   = my_color;
     yourColor_ = (my_color == Color::WHITE) ? Color::BLACK : Color::WHITE;
@@ -58,7 +55,6 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 
     // Generate a list of all my possible responses to the specified state.
     // The responses have a preliminary value and are sorted by priority and highest value.
-
     generateStates(s0, true, responseDepth, responses);
 
     // Find the best of the responses... I want to find the state with the highest score
@@ -91,7 +87,6 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
         {
             best_score = response.value_;
             best_state = response;
-
             if (response.value_ == MY_CHECKMATE_VALUE)
             {
                 break;
@@ -131,11 +126,10 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 
 void GameTree::myAlphaBeta(GameState * pS0, int alpha, int beta, int depth)
 {
-    int responseDepth = depth + 1;                                              // Depth of the responses to this state
-    int quality = maxDepth_ - depth;                                            // Quality of values at this depth (this is the
-    // depth of plies searched to get the results
-    // for this ply )
-    int responseQuality = maxDepth_ - responseDepth;            // Normal quality of responses to this state
+    int responseDepth = depth + 1;                   // Depth of responses to this state
+    int quality = maxDepth_ - depth;                 // Quality of values at this depth (this is the depth of plies searched to get
+                                                     // the results for this ply )
+    int responseQuality = maxDepth_ - responseDepth; // Normal quality of responses to this state
 
     // Generate a list of my possible responses to this state sorted descending by value. They are sorted in
     // descending order hoping that a beta cutoff will occur early.
@@ -250,11 +244,10 @@ void GameTree::myAlphaBeta(GameState * pS0, int alpha, int beta, int depth)
 
 void GameTree::opponentsAlphaBeta(GameState * pS0, int alpha, int beta, int depth)
 {
-    int responseDepth = depth + 1;
-    int quality = maxDepth_ - depth;                                            // Quality of values at this depth (this is the
-    // depth of plies searched to get the results
-    // for this ply )
-    int responseQuality = maxDepth_ - responseDepth;            // Normal quality of responses to this state
+    int responseDepth = depth + 1;                   // Depth of responses to this state
+    int quality = maxDepth_ - depth;                 // Quality of values at this depth (this is the depth of plies searched to get
+                                                     // the results for this ply )
+    int responseQuality = maxDepth_ - responseDepth; // Normal quality of responses to this state
 
     // Generate a list of my opponent's possible responses to this state sorted ascending by value. They are sorted
     // in ascending order hoping that a alpha cutoff will occur early.
@@ -264,7 +257,7 @@ void GameTree::opponentsAlphaBeta(GameState * pS0, int alpha, int beta, int dept
 
     // Evaluate each of his responses and choose the one with the lowest score
     int bestScore = std::numeric_limits<int>::max();                                            // Initialize to worst
-    bool bPruned = false;
+    bool bPruned  = false;
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
     GameState * pBestResponse = 0;
 #endif // defined( GAME_STATE_ANALYSIS_ENABLED )
@@ -468,7 +461,7 @@ void GameTree::evaluate(GameState * pState, int depth)
             value = -value;
         }
 
-        pState->value_ = value;
+        pState->value_   = value;
         pState->quality_ = quality;
 
 #endif  // defined( INCREMENTAL_STATIC_EVALUATION_ENABLED )
@@ -494,7 +487,7 @@ void GameTree::prioritize(GameState * pState, int depth)
     // alpha-beta cutoffs minus the costs of the additional SEFs.
 
     int const PRIORITY_HIGH = 1;
-    int const PRIORITY_LOW = 0;
+    int const PRIORITY_LOW  = 0;
 
     pState->priority_ = (pState->quality_ > quality) ? PRIORITY_HIGH : PRIORITY_LOW;
 }
@@ -515,7 +508,7 @@ void GameTree::AnalysisData::reset()
 
     alphaHitCount = 0;
     betaHitCount  = 0;
-    worstValue = 0;
+    worstValue    = 0;
 
     tTableAnalysisData.reset();
     gameStateAnalysisData.reset();
@@ -528,7 +521,7 @@ GameTree::AnalysisData::AnalysisData()
 
     alphaHitCount = 0;
     betaHitCount  = 0;
-    worstValue = 0;
+    worstValue    = 0;
 }
 
 #endif // defined( GAME_TREE_ANALYSIS_ENABLED )

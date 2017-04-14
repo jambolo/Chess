@@ -68,11 +68,13 @@ bool Board::initializeFromFen(char const * start, char const * end)
         return false;
     }
 
-    int column = 0;
     for (int row = 0; row < SIZE; ++row)
     {
+        int column = 0;
         for (auto c : match.str(row + 1))
         {
+            if (column > SIZE)
+                return false;
             if (c >= '1' && c <= '8')
             {
                 // Skip columns
@@ -83,24 +85,24 @@ bool Board::initializeFromFen(char const * start, char const * end)
                 Piece const * piece = NO_PIECE;
                 switch (c)
                 {
-                    case 'B': piece = Piece::piece(PieceTypeId::BISHOP, Color::WHITE);   break;
-                    case 'K': piece = Piece::piece(PieceTypeId::KING, Color::WHITE);     break;
-                    case 'N': piece = Piece::piece(PieceTypeId::KNIGHT, Color::WHITE);   break;
-                    case 'P': piece = Piece::piece(PieceTypeId::PAWN, Color::WHITE);     break;
-                    case 'Q': piece = Piece::piece(PieceTypeId::QUEEN, Color::WHITE);    break;
-                    case 'R': piece = Piece::piece(PieceTypeId::ROOK, Color::WHITE);     break;
-                    case 'b': piece = Piece::piece(PieceTypeId::BISHOP, Color::BLACK);   break;
-                    case 'k': piece = Piece::piece(PieceTypeId::KING, Color::BLACK);     break;
-                    case 'n': piece = Piece::piece(PieceTypeId::KNIGHT, Color::BLACK);   break;
-                    case 'p': piece = Piece::piece(PieceTypeId::PAWN, Color::BLACK);     break;
-                    case 'q': piece = Piece::piece(PieceTypeId::QUEEN, Color::BLACK);    break;
-                    case 'r': piece = Piece::piece(PieceTypeId::ROOK, Color::BLACK);     break;
+                    case 'B': piece = Piece::piece(PieceTypeId::BISHOP, Color::WHITE); break;
+                    case 'K': piece = Piece::piece(PieceTypeId::KING, Color::WHITE);   break;
+                    case 'N': piece = Piece::piece(PieceTypeId::KNIGHT, Color::WHITE); break;
+                    case 'P': piece = Piece::piece(PieceTypeId::PAWN, Color::WHITE);   break;
+                    case 'Q': piece = Piece::piece(PieceTypeId::QUEEN, Color::WHITE);  break;
+                    case 'R': piece = Piece::piece(PieceTypeId::ROOK, Color::WHITE);   break;
+                    case 'b': piece = Piece::piece(PieceTypeId::BISHOP, Color::BLACK); break;
+                    case 'k': piece = Piece::piece(PieceTypeId::KING, Color::BLACK);   break;
+                    case 'n': piece = Piece::piece(PieceTypeId::KNIGHT, Color::BLACK); break;
+                    case 'p': piece = Piece::piece(PieceTypeId::PAWN, Color::BLACK);   break;
+                    case 'q': piece = Piece::piece(PieceTypeId::QUEEN, Color::BLACK);  break;
+                    case 'r': piece = Piece::piece(PieceTypeId::ROOK, Color::BLACK);   break;
                     default: throw ConstructorFailedException();
                 }
                 putPiece(piece, Position(row, column));
                 ++column;
             }
-            if (column >= SIZE)
+            if (column > SIZE)
                 return false;
         }
     }
@@ -133,4 +135,35 @@ bool Board::spanIsEmpty(Position const & from, Position const & to) const
     }
 
     return true;
+}
+
+std::string Board::fen() const
+{
+    std::string result;
+    for (int row = 0; row < SIZE; ++row)
+    {
+        if (row != 0)
+            result += '/';
+        int span = 0;
+        for (int column = 0; column < SIZE; ++column)
+        {
+            Piece const * piece = board_[row][column];
+            if (piece == NO_PIECE)
+            {
+                ++span;
+            }
+            else
+            {
+                if (span > 0)
+                {
+                    result += std::to_string(span);
+                    span = 0;
+                }
+                result += piece->symbol();
+            }
+        }
+        if (span > 0)
+            result += std::to_string(span);
+    }
+    return result;
 }
