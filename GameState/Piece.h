@@ -27,7 +27,7 @@ public:
     virtual void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const = 0;
 
     // Returns true if the move is valid
-    virtual bool isValidMove(GameState const & state, Move const & move) const = 0;
+    virtual bool    isValidMove(GameState const & state, Move const & move) const = 0;
 
     PieceTypeId     type() const   { return type_;   }
     Color           color() const  { return color_;  }

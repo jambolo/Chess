@@ -34,7 +34,7 @@ void generateSpanMoves(Board const &     board,
                        Position const &  from,
                        int               dr,
                        int               dc,
-                       Color             myColor,
+                       Piece const *     myPiece,
                        Piece::MoveList & moves)
 {
     // Generate moves until the edge of the board is reached or there is a collision
@@ -46,22 +46,18 @@ void generateSpanMoves(Board const &     board,
         Piece const * piece = board.pieceAt(to);
         if (piece != NO_PIECE)
         {
-            Piece const * captured = piece;
-
-            // If it is an opponent's piece, it is also a valid move, so add it before quitting.
-            if (captured->color() != myColor)
+            // If it is an opponent's piece, it is also a valid move, so add the capture before quitting.
+            if (piece->color() != myPiece->color())
             {
-                moves.emplace_back(from, to);
+                moves.emplace_back(myPiece, from, to, true);
             }
             return;
         }
 
         // Add this move
-
-        moves.emplace_back(from, to);
+        moves.emplace_back(myPiece, from, to);
 
         // Next square in span
-
         to.row    += dr;
         to.column += dc;
     }
@@ -148,7 +144,7 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
     --to.row;
     if ((to.row >= 0) && squareCanBeOccupied(board, to, color_))
     {
-        moves.emplace_back(from, to);
+        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
     }
 
     // Up-right
@@ -156,7 +152,7 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
     ++to.column;
     if ((to.row >= 0) && (to.column < Board::SIZE) && squareCanBeOccupied(board, to, color_))
     {
-        moves.emplace_back(from, to);
+        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
     }
 
     // Right
@@ -164,7 +160,7 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
     ++to.row;
     if ((to.column < Board::SIZE) && squareCanBeOccupied(board, to, color_))
     {
-        moves.emplace_back(from, to);
+        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
     }
 
     // Down-right
@@ -172,7 +168,7 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
     ++to.row;
     if ((to.row < Board::SIZE) && (to.column < Board::SIZE) && squareCanBeOccupied(board, to, color_))
     {
-        moves.emplace_back(from, to);
+        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
     }
 
     // Down
@@ -180,7 +176,7 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
     --to.column;
     if ((to.row < Board::SIZE) && squareCanBeOccupied(board, to, color_))
     {
-        moves.emplace_back(from, to);
+        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
     }
 
     // Down-left
@@ -188,7 +184,7 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
     --to.column;
     if ((to.row < Board::SIZE) && (to.column >= 0) && squareCanBeOccupied(board, to, color_))
     {
-        moves.emplace_back(from, to);
+        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
     }
 
     // Left
@@ -196,7 +192,7 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
     --to.row;
     if ((to.column >= 0) && squareCanBeOccupied(board, to, color_))
     {
-        moves.emplace_back(from, to);
+        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
     }
 
     // Up-left
@@ -204,7 +200,7 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
     --to.row;
     if ((to.row >= 0) && (to.column >= 0) && squareCanBeOccupied(board, to, color_))
     {
-        moves.emplace_back(from, to);
+        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
     }
 
     // Castles
@@ -212,13 +208,13 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
     if (state.kingSideCastleIsAllowed(color_) && !state.inCheck_)
     {
         //! @todo Must check all squares that the kings moves through
-        moves.push_back(Move::kingSideCastle());
+        moves.emplace_back(Move::KINGSIDE_CASTLE, color_);
     }
 
     if (state.queenSideCastleIsAllowed(color_) && !state.inCheck_)
     {
         //! @todo Must check all squares that the kings moves through
-        moves.push_back(Move::queenSideCastle());
+        moves.emplace_back(Move::QUEENSIDE_CASTLE, color_);
     }
 }
 
@@ -264,14 +260,14 @@ void Queen::generatePossibleMoves(GameState const & state, Position const & from
 
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
 
-    generateSpanMoves(board, from, -1, 0, color_, moves);  // up
-    generateSpanMoves(board, from, -1, 1, color_, moves);  // up-right
-    generateSpanMoves(board, from, 0, 1, color_, moves);   // right
-    generateSpanMoves(board, from, 1, 1, color_, moves);   // down-right
-    generateSpanMoves(board, from, 1, 0, color_, moves);   // down
-    generateSpanMoves(board, from, 1, -1, color_, moves);  // down-left
-    generateSpanMoves(board, from, 0, -1, color_, moves);  // left
-    generateSpanMoves(board, from, -1, -1, color_, moves); // up-left
+    generateSpanMoves(board, from, -1, 0, this, moves);  // up
+    generateSpanMoves(board, from, -1, 1, this, moves);  // up-right
+    generateSpanMoves(board, from, 0, 1, this, moves);   // right
+    generateSpanMoves(board, from, 1, 1, this, moves);   // down-right
+    generateSpanMoves(board, from, 1, 0, this, moves);   // down
+    generateSpanMoves(board, from, 1, -1, this, moves);  // down-left
+    generateSpanMoves(board, from, 0, -1, this, moves);  // left
+    generateSpanMoves(board, from, -1, -1, this, moves); // up-left
 }
 
 bool Queen::isValidMove(GameState const & state, Move const & move) const
@@ -307,10 +303,10 @@ void Bishop::generatePossibleMoves(GameState const & state, Position const & fro
 
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
 
-    generateSpanMoves(board, from, -1, 1, color_, moves);  // up-right
-    generateSpanMoves(board, from, 1, 1, color_, moves);   // down-right
-    generateSpanMoves(board, from, 1, -1, color_, moves);  // down-left
-    generateSpanMoves(board, from, -1, -1, color_, moves); // up-left
+    generateSpanMoves(board, from, -1, 1, this, moves);  // up-right
+    generateSpanMoves(board, from, 1, 1, this, moves);   // down-right
+    generateSpanMoves(board, from, 1, -1, this, moves);  // down-left
+    generateSpanMoves(board, from, -1, -1, this, moves); // up-left
 }
 
 bool Bishop::isValidMove(GameState const & state, Move const & move) const
@@ -367,7 +363,7 @@ void Knight::generatePossibleMoves(GameState const & state, Position const & fro
             // Check if the destination square can be occupied
             if (squareCanBeOccupied(board, to, color_))
             {
-                moves.emplace_back(from, to);
+                moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
             }
         }
     }
@@ -403,10 +399,10 @@ void Rook::generatePossibleMoves(GameState const & state, Position const & from,
 
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
 
-    generateSpanMoves(board, from, -1, 0, color_, moves); // up
-    generateSpanMoves(board, from, 0, 1, color_, moves);  // right
-    generateSpanMoves(board, from, 1, 0, color_, moves);  // down
-    generateSpanMoves(board, from, 0, -1, color_, moves); // left
+    generateSpanMoves(board, from, -1, 0, this, moves); // up
+    generateSpanMoves(board, from, 0, 1, this, moves);  // right
+    generateSpanMoves(board, from, 1, 0, this, moves);  // down
+    generateSpanMoves(board, from, 0, -1, this, moves); // left
 }
 
 bool Rook::isValidMove(GameState const & state, Move const & move) const
@@ -457,7 +453,7 @@ void Pawn::generatePossibleMoves(GameState const & state, Position const & from,
 
         if ((captured != NO_PIECE) && (captured->color() != color_))
         {
-            moves.emplace_back(from, to);
+            moves.emplace_back(this, from, to, true);
         }
         else
         {
@@ -473,7 +469,7 @@ void Pawn::generatePossibleMoves(GameState const & state, Position const & from,
                 (state.move_.from() == Position(to.row + direction, to.column)) &&
                 (state.move_.to() == Position(from.row, to.column)))
             {
-                moves.push_back(Move::enPassant(from, to));
+                moves.emplace_back(Move::ENPASSANT, color_, from, to, true);
             }
         }
     }
@@ -489,7 +485,7 @@ void Pawn::generatePossibleMoves(GameState const & state, Position const & from,
 
         if ((captured != NO_PIECE) && (captured->color() != color_))
         {
-            moves.emplace_back(from, to);
+            moves.emplace_back(this, from, to, (captured != NO_PIECE));
         }
         else
         {
@@ -505,7 +501,7 @@ void Pawn::generatePossibleMoves(GameState const & state, Position const & from,
                 (state.move_.from() == Position(to.row + direction, to.column)) &&
                 (state.move_.to() == Position(from.row, to.column)))
             {
-                moves.push_back(Move::enPassant(from, to));
+                moves.emplace_back(Move::ENPASSANT, color_, from, to, true);
             }
         }
     }
@@ -517,7 +513,7 @@ void Pawn::generatePossibleMoves(GameState const & state, Position const & from,
 
     if (board.isValidPosition(to) && (board.pieceAt(to) == NO_PIECE))
     {
-        moves.emplace_back(from, to);
+        moves.emplace_back(this, from, to);
 
         // Ahead 2 rows if in its original spot (must be empty)
 
@@ -527,7 +523,7 @@ void Pawn::generatePossibleMoves(GameState const & state, Position const & from,
             to.row += direction;
             if (board.pieceAt(to) == NO_PIECE)
             {
-                moves.emplace_back(from, to);
+                moves.emplace_back(this, from, to);
             }
         }
     }

@@ -43,6 +43,7 @@ public:
     // Returns true if the span from 'from' to 'to' (excluding 'to') contains no pieces
     bool spanIsEmpty(Position const & from, Position const & to) const;
 
+    // Return the board as a FEN string
     std::string fen() const;
 
 private:

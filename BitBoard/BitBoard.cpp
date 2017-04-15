@@ -308,7 +308,7 @@ BitBoard BitBoard::threatenedSquares(PieceTypeId type, Position const & position
     assert(type != PieceTypeId::INVALID);
     assert(position.row * 8 + position.column < NUMBER_OF_SQUARES);
 
-    return BitBoard(s_threatenedSquares[(int)type][position.row*8+position.column]);
+    return BitBoard(s_threatenedSquares[(int)type][position.row * 8 + position.column]);
 }
 
 BitBoard BitBoard::threatenedSquares(PieceTypeId type, Position const & position, BitBoard const & friends, BitBoard const & foes)
@@ -329,7 +329,7 @@ BitBoard BitBoard::destinationSquares(PieceTypeId type, Position const & positio
     assert(type != PieceTypeId::INVALID);
     assert(position.row * 8 + position.column < NUMBER_OF_SQUARES);
 
-    return BitBoard(s_destinationSquares[(int)type][position.row*8+position.column]);
+    return BitBoard(s_destinationSquares[(int)type][position.row * 8 + position.column]);
 }
 
 BitBoard BitBoard::destinationSquares(PieceTypeId type, Position const & position, BitBoard const & friends, BitBoard const & foes)

@@ -22,9 +22,9 @@ bool TranspositionTable::check(GameState const & state, int * pReturnedValue, in
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
     ZHash hashCode = state.zhash_;
-    uint32_t upperHashCode = (uint32_t)(hashCode >> 32);
-    uint32_t lowerHashCode = (uint32_t)(hashCode & 0xffffffff);
-    int index              = lowerHashCode % SIZE;
+    uint32_t upperHashCode   = (uint32_t)(hashCode >> 32);
+    uint32_t lowerHashCode   = (uint32_t)(hashCode & 0xffffffff);
+    int index                = lowerHashCode % SIZE;
     TableEntry const & entry = table_[index];
 
     assert(upperHashCode != TableEntry::UNUSED_ENTRY);
@@ -39,8 +39,8 @@ bool TranspositionTable::check(GameState const & state, int * pReturnedValue, in
         ++analysisData_.hitCount;
 #endif  // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
-        entry.age_ = 0;         // Reset age
-        hit        = true;
+        entry.age_        = 0;  // Reset age
+        hit               = true;
         *pReturnedValue   = entry.value_;
         *pReturnedQuality = entry.q_;
     }
@@ -64,9 +64,9 @@ bool TranspositionTable::check(GameState const & state, int minQ, int * pReturne
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
     ZHash hashCode = state.zhash_;
-    uint32_t upperHashCode = (uint32_t)(hashCode >> 32);
-    uint32_t lowerHashCode = (uint32_t)(hashCode & 0xffffffff);
-    int index              = lowerHashCode % SIZE;
+    uint32_t upperHashCode   = (uint32_t)(hashCode >> 32);
+    uint32_t lowerHashCode   = (uint32_t)(hashCode & 0xffffffff);
+    int index                = lowerHashCode % SIZE;
     TableEntry const & entry = table_[index];
 
     assert(upperHashCode != TableEntry::UNUSED_ENTRY);
@@ -110,11 +110,11 @@ void TranspositionTable::forceUpdate(GameState const & state)
     ++analysisData_.updateCount;
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
-    ZHash hashCode = state.zhash_;
+    ZHash hashCode         = state.zhash_;
     uint32_t upperHashCode = (uint32_t)(hashCode >> 32);
     uint32_t lowerHashCode = (uint32_t)(hashCode & 0xffffffff);
     int index              = lowerHashCode % SIZE;
-    TableEntry & entry = table_[index];
+    TableEntry & entry     = table_[index];
 
     assert(upperHashCode != TableEntry::UNUSED_ENTRY);
 
@@ -145,8 +145,8 @@ void TranspositionTable::forceUpdate(GameState const & state)
     assert(state.quality_ < 256);
     entry.hashCode_ = upperHashCode;
     entry.value_    = state.value_;
-    entry.q_ = state.quality_;
-    entry.age_ = 0;
+    entry.q_        = state.quality_;
+    entry.age_      = 0;
 }
 
 void TranspositionTable::update(GameState const & state)
@@ -155,11 +155,11 @@ void TranspositionTable::update(GameState const & state)
     ++analysisData_.updateCount;
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
-    ZHash hashCode = state.zhash_;
+    ZHash hashCode         = state.zhash_;
     uint32_t upperHashCode = (uint32_t)(hashCode >> 32);
     uint32_t lowerHashCode = (uint32_t)(hashCode & 0xffffffff);
     int index              = lowerHashCode % SIZE;
-    TableEntry & entry = table_[index];
+    TableEntry & entry     = table_[index];
 
     assert(upperHashCode != TableEntry::UNUSED_ENTRY);
 
@@ -193,8 +193,8 @@ void TranspositionTable::update(GameState const & state)
 
         entry.hashCode_ = upperHashCode;
         entry.value_    = state.value_;
-        entry.q_ = state.quality_;
-        entry.age_ = 0;
+        entry.q_        = state.quality_;
+        entry.age_      = 0;
     }
     else
     {
@@ -235,14 +235,14 @@ void TranspositionTable::resetAnalysisData()
 
 void TranspositionTable::AnalysisData::reset()
 {
-    checkCount = 0;
-    updateCount = 0;
+    checkCount     = 0;
+    updateCount    = 0;
     hitCount       = 0;
 //	usage			= 0;	// never reset
     collisionCount = 0;
-    rejected = 0;
-    overwritten = 0;
-    refreshed = 0;
+    rejected       = 0;
+    overwritten    = 0;
+    refreshed      = 0;
 }
 
 TranspositionTable::AnalysisData::AnalysisData()

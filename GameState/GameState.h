@@ -14,9 +14,9 @@
 class Move;
 class Piece;
 
-#define GAME_STATE_ANALYSIS_ENABLED
-#define USING_PRIORITIZED_MOVE_ORDERING
-#define INCREMENTAL_STATIC_EVALUATION_ENABLED
+//#define GAME_STATE_ANALYSIS_ENABLED
+//#define USING_PRIORITIZED_MOVE_ORDERING
+//#define INCREMENTAL_STATIC_EVALUATION_ENABLED
 
 class GameState
 {
@@ -34,10 +34,10 @@ public:
               bool          inCheck,
               int           moveNumber);
 
-    bool initializeFromFen(char const * fen);
-
     // Resets the game
     void initialize();
+
+    bool initializeFromFen(char const * fen);
 
     // Returns true if a castle is allowed
     bool castleIsAllowed(Color c) const;
@@ -53,9 +53,6 @@ public:
 
     // Returns the FEN string for the state
     std::string fen() const;
-    
-    // Returns the algebraic notation for the move
-    std::string moveAlgebraic() const;
 
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
 
@@ -117,33 +114,6 @@ private:
 bool operator ==(GameState const & x, GameState const & y);
 
 typedef std::vector<GameState> GameStateList;
-
-template <typename _Cmp>
-class GameStateListSorter
-{
-public:
-    bool operator ()(GameState const & g0, GameState const & g1) const
-    {
-        _Cmp cmp;
-
-        // Sort the elements in descending order, first by priority, then by value.
-#if defined(USING_PRIORITIZED_MOVE_ORDERING)
-
-        if (g0.priority_ > g1.priority_)
-        {
-            return true;
-        }
-
-        if (g0.priority_ < g1.priority_)
-        {
-            return false;
-        }
-
-#endif  //defined( USING_PRIORITIZED_MOVE_ORDERING )
-
-        return cmp(g0.value_, g1.value_);
-    }
-};
 
 #include "GameState/GameState.inl"
 

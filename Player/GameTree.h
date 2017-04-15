@@ -9,7 +9,9 @@
 
 #include "Player/TranspositionTable.h"
 
-#define GAME_TREE_ANALYSIS_ENABLED
+//#define GAME_TREE_ANALYSIS_ENABLED
+//#define USING_TRANSPOSITION_TABLE
+//#define PRINTING_GAME_TREE_NODE_INFO
 
 class GameTree
 {
@@ -39,7 +41,7 @@ public:
         int worstValue;
         int alphaHitCount;
         int betaHitCount;
-#if defined(TRANSPOSITION_TABLE_ANALYSIS_ENABLED)
+#if defined(USING_TRANSPOSITION_TABLE) && defined(TRANSPOSITION_TABLE_ANALYSIS_ENABLED)
         TranspositionTable::AnalysisData tTableAnalysisData;
 #endif
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
@@ -76,9 +78,15 @@ private:
     // Generate a list of all possible states in response to the specified one
     void generateStates(GameState const & state, bool my_move, int depth, GameStateList & states);
 
+#if defined(PRINTING_GAME_TREE_NODE_INFO)
+    void printStateInfo(GameState const & state, int depth, int alpha, int beta);
+#endif
+
     Color myColor_;                           // My color
     Color yourColor_;                         // My opponent's color
+#if defined(USING_TRANSPOSITION_TABLE)
     TranspositionTable * transpositionTable_; // Transposition table
+#endif
     int maxDepth_;                            // How deep to seach
 };
 

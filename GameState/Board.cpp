@@ -59,7 +59,8 @@ bool Board::initializeFromFen(char const * start, char const * end)
     std::smatch match;
     try
     {
-        std::regex re("([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)");
+        std::regex re(
+            "([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)/([pnbrqkPNBRQK1-8]+)");
         if (!std::regex_search(fen, match, re) || match.size() != SIZE + 1)
             return false;
     }
@@ -157,7 +158,7 @@ std::string Board::fen() const
                 if (span > 0)
                 {
                     result += std::to_string(span);
-                    span = 0;
+                    span    = 0;
                 }
                 result += piece->symbol();
             }

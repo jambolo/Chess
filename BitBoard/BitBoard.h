@@ -232,7 +232,10 @@ public:
     //! @note	En passant is included.
     //! @note	The pawn's initial two-square move is included.
 
-    static BitBoard destinationSquares(PieceTypeId type, Position const & position, BitBoard const & friends, BitBoard const & foes);
+    static BitBoard destinationSquares(PieceTypeId      type,
+                                       Position const & position,
+                                       BitBoard const & friends,
+                                       BitBoard const & foes);
 
     //! Returns a bit board showing all squares normally accessible by a piece at a position but blocked.
     //!

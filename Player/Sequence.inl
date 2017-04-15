@@ -22,7 +22,7 @@ inline SequenceEntry:: SequenceEntry(Color color, PieceTypeId piece, Move const 
 
 inline Move SequenceEntry:: GetMove() const
 {
-    return Move(Position(fromRow_, fromColumn_), Position(toRow_, toColumn_));
+    return Move(Piece::piece(static_cast<PieceTypeId>(pieceTypeId_), static_cast<Color>(color_)), Position(fromRow_, fromColumn_), Position(toRow_, toColumn_));
 }
 
 inline Color SequenceEntry:: GetColor() const

@@ -195,8 +195,8 @@ int main(int argc, char ** argv)
 
                 // Load the sequence
 
-                char * p = &sequence_start[2];
-                int length = 0;
+                char * p       = &sequence_start[2];
+                int length     = 0;
                 int chars_left = strlen(p);
 
                 Sequence sequence((chars_left + 1) / 5);

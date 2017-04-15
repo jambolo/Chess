@@ -146,42 +146,12 @@ std::string GameState::fen() const
     result += ' ';
     result += castleStatusToFen();
     result += ' ';
-    result += enPassant_.fen();
+    result += enPassant_.san();
     result += ' ';
     result += std::to_string(fiftyMoveTimer_);
     result += ' ';
     result += std::to_string(moveNumber_);
     result += ' ';
-    return result;
-}
-
-std::string GameState::moveAlgebraic() const
-{
-    std::string result;
-    if (move_.isSpecial())
-    {
-        if (move_.isKingSideCastle())
-            result = "0-0";
-        else if (move_.isQueenSideCastle())
-            result = "0-0-0";
-        else if (move_.isPromotion())
-            result = move_.to().fen() + "=Q";
-        else if (move_.isEnPassant())
-        {
-            result += char(move_.from().column + 'a');
-            result += 'x';
-            result += move_.to().fen();
-        }
-        else if (move_.isResignation())
-            result = (whoseTurn_ == Color::WHITE) ? "1-0" : "0-1";
-    }
-    else
-    {
-        Piece const * piece = board_.pieceAt(move_.to());
-        if (piece->type() != PieceTypeId::PAWN)
-            result = Piece::symbol(piece->type());
-        result += move_.to().fen();
-    }
     return result;
 }
 
@@ -362,14 +332,14 @@ void GameState::initialize()
     castleStatus_   = 0;
     fiftyMoveTimer_ = 0;
     makeMove(Color::WHITE, Move::reset());
-    value_      = 0;
-    quality_    = std::numeric_limits<int8_t>::min();
+    value_          = 0;
+    quality_        = std::numeric_limits<int8_t>::min();
 #if defined(USING_PRIORITIZED_MOVE_ORDERING)
-    priority_   = 0;
+    priority_       = 0;
 #endif
-    inCheck_    = false;
-    moveNumber_ = 1;
-    zhash_      = ZHash(board_);
+    inCheck_        = false;
+    moveNumber_     = 1;
+    zhash_          = ZHash(board_);
 
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
     analysisData_.reset();

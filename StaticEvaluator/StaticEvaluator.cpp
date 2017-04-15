@@ -48,22 +48,22 @@ PieceValues const s_PieceValues[NUMBER_OF_COLORS][NUMBER_OF_PIECE_TYPES] =
 {
     // White
     {
-        { 4000,  6560,   4000,      }, //	PieceTypeId::KING
-        { 9000,  22750,  9000,      }, //	PieceTypeId::QUEEN
-        { 3000,  8750,   3000,      }, //	PieceTypeId::BISHOP
-        { 3000,  5250,   3000,      }, //	PieceTypeId::KNIGHT
-        { 5000,  14000,  5000,      }, //	PieceTypeId::ROOK
-        { 1000,  1667,   1000,      } //	PieceTypeId::PAWN
+        { 4000,  6560,   4000,          }, //	PieceTypeId::KING
+        { 9000,  22750,  9000,          }, //	PieceTypeId::QUEEN
+        { 3000,  8750,   3000,          }, //	PieceTypeId::BISHOP
+        { 3000,  5250,   3000,          }, //	PieceTypeId::KNIGHT
+        { 5000,  14000,  5000,          }, //	PieceTypeId::ROOK
+        { 1000,  1667,   1000,          } //	PieceTypeId::PAWN
     },
 
     // Black
     {
-        { -4000, -6560,  -4000,     }, //	PieceTypeId::KING
-        { -9000, -22750, -9000,     }, //	PieceTypeId::QUEEN
-        { -3000, -8750,  -3000,     }, //	PieceTypeId::BISHOP
-        { -3000, -5250,  -3000,     }, //	PieceTypeId::KNIGHT
-        { -5000, -14000, -5000,     }, //	PieceTypeId::ROOK
-        { -1000, -1667,  -1000,     } //	PieceTypeId::PAWN
+        { -4000, -6560,  -4000,         }, //	PieceTypeId::KING
+        { -9000, -22750, -9000,         }, //	PieceTypeId::QUEEN
+        { -3000, -8750,  -3000,         }, //	PieceTypeId::BISHOP
+        { -3000, -5250,  -3000,         }, //	PieceTypeId::KNIGHT
+        { -5000, -14000, -5000,         }, //	PieceTypeId::ROOK
+        { -1000, -1667,  -1000,         } //	PieceTypeId::PAWN
     }
 };
 
@@ -133,8 +133,8 @@ int StaticEvaluator::evaluate(GameState const & state)
 
             if (p != NO_PIECE)
             {
-                Color color          = p->color();
-                PieceTypeId type     = p->type();
+                Color color      = p->color();
+                PieceTypeId type = p->type();
 
                 // Compute the checkmate value
                 if (type == PieceTypeId::KING)

@@ -25,14 +25,14 @@ static int const NUMBER_OF_PIECE_TYPES = (int)PieceTypeId::PAWN - (int)PieceType
 
 // Castle moves
 static int const WHITE_QUEENSIDE_CASTLE = 0x01;
-static int const WHITE_KINGSIDE_CASTLE = 0x02;
+static int const WHITE_KINGSIDE_CASTLE  = 0x02;
 static int const BLACK_QUEENSIDE_CASTLE = 0x04;
-static int const BLACK_KINGSIDE_CASTLE = 0x08;
-static int const WHITE_CASTLE = WHITE_QUEENSIDE_CASTLE | WHITE_KINGSIDE_CASTLE;
-static int const BLACK_CASTLE = BLACK_QUEENSIDE_CASTLE | BLACK_KINGSIDE_CASTLE;
+static int const BLACK_KINGSIDE_CASTLE  = 0x08;
+static int const WHITE_CASTLE           = WHITE_QUEENSIDE_CASTLE | WHITE_KINGSIDE_CASTLE;
+static int const BLACK_CASTLE           = BLACK_QUEENSIDE_CASTLE | BLACK_KINGSIDE_CASTLE;
 
 // Castle availability
-static int const CASTLE_AVAILABILITY_MASK           = 0xf0;
+static int const CASTLE_AVAILABILITY_MASK = 0xf0;
 static int const WHITE_QUEENSIDE_CASTLE_UNAVAILABLE = 0x10;
 static int const WHITE_KINGSIDE_CASTLE_UNAVAILABLE  = 0x20;
 static int const BLACK_QUEENSIDE_CASTLE_UNAVAILABLE = 0x40;

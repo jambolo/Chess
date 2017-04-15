@@ -7,7 +7,7 @@
 
 class GameState;
 
-#define PLAYER_ANALYSIS_ENABLED
+//#define PLAYER_ANALYSIS_ENABLED
 
 class Player
 {
