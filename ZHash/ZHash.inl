@@ -63,7 +63,7 @@ inline ZHash & ZHash::enPassant(Color color, int column)
 inline bool ZHash::isUndefined() const
 {
     // The value is undefined if the high order bit is set
-    return static_cast<signed __int64>(value_) < 0;
+    return static_cast<int64_t>(value_) < 0;
 }
 
 inline ZHash::Z ZHash::ZValueTable::pieceValue(int color, int type, int row, int column) const

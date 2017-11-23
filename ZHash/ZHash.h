@@ -33,7 +33,7 @@ public:
     typedef uint64_t Z;
 
     // An impossible value which will always be "undefined"
-    static Z const INVALID = 0xFFFFFFFFFFFFFFFFui64;
+    static Z const INVALID = 0xFFFFFFFFFFFFFFFF;
 
     // Constructor
     explicit ZHash(Z z = 0);

@@ -75,6 +75,7 @@ public:
     BitBoard const & shiftRight(int n = 1)
     {
         board_ <<= n; board_ &= rightMask(8 - n);
+        return *this;
     }
 
     //! Rotates the bitboard up to 7 squares to the right
@@ -83,24 +84,28 @@ public:
         uint64_t wrap = board_ & rightMask(n);
         shiftRight(n);
         board_ |= wrap >> (8 - n);
+        return *this;
     }
 
     //! Shifts the bitboard up to 7 squares up and right
     BitBoard const & shiftUR(int n = 1)
     {
         board_ <<= 9 * n; board_ &= rightMask(8 - n);
+        return *this;
     }
 
     //! Rotates the bitboard up to 7 squares up and right
     BitBoard const & rotateUR(int n = 1)
     {
         rotateUp(n); rotateRight(n);
+        return *this;
     }
 
     //! Shifts the bitboard up to 7 squares up
     BitBoard const & shiftUp(int n = 1)
     {
         board_ <<= 8 * n;
+        return *this;
     }
 
     //! Rotates the bitboard up to 7 squares up
@@ -108,48 +113,56 @@ public:
     {
         uint64_t wrap = board_ & upperMask(1); shiftUp(n);
         board_ |= wrap >> (8 * (8 - n));
+        return *this;
     }
 
     //! Shifts the bitboard up to 7 squares up and left
     BitBoard const & shiftUL(int n = 1)
     {
         board_ <<= 7 * n; board_ &= leftMask(8 - n);
+        return *this;
     }
 
     //! Rotates the bitboard up to 7 squares up and left
     BitBoard const & rotateUL(int n = 1)
     {
         rotateUp(n); rotateLeft(n);
+        return *this;
     }
 
     //! Shifts the bitboard up to 7 squares to the left
     BitBoard const & shiftLeft(int n = 1)
     {
         board_ >>= n; board_ &= leftMask(8 - n);
+        return *this;
     }
 
     //! Rotates the bitboard up to 7 squares to the left
     BitBoard const & rotateLeft(int n = 1)
     {
         uint64_t wrap = board_ & leftMask(n); shiftLeft(n); board_ |= wrap << (8 - n);
+        return *this;
     }
 
     //! Shifts the bitboard up to 7 squares down and left
     BitBoard const & shiftDL(int n = 1)
     {
         board_ >>= 9 * n; board_ &= leftMask(8 - n);
+        return *this;
     }
 
     //! Rotates the bitboard up to 7 squares down and left
     BitBoard const & rotateDL(int n = 1)
     {
         rotateDown(n); rotateLeft(n);
+        return *this;
     }
 
     //! Shifts the bitboard up to 7 squares down
     BitBoard const & shiftDown(int n = 1)
     {
         board_ >>= 8 * n;
+        return *this;
     }
 
     //! Rotates the bitboard up to 7 squares down
@@ -157,18 +170,21 @@ public:
     {
         uint64_t wrap = board_ & lowerMask(n); shiftDown(n);
         board_ |= wrap << (8 * (8 - n));
+        return *this;
     }
 
     //! Shifts the bitboard up to 7 squares down and right
     BitBoard const & shiftDR(int n = 1)
     {
         board_ <<= 7 * n; board_ &= rightMask(8 - n);
+        return *this;
     }
 
     //! Rotates the bitboard up to 7 squares down and right
     BitBoard const & rotateDR(int n = 1)
     {
         rotateDown(); rotateRight();
+        return *this;
     }
 
     //! Returns a bit board showing all squares threatened by a piece at a position, if it isn't blocked.
@@ -255,10 +271,10 @@ private:
     //! Returns the row and column for the given index
     static void     rowAndColumn(int index, int & r, int & c) { r = index / 8; c = index % 8; }
 
-    static uint64_t mask(int r, int c)                        { return 1ui64 << index(r, c); }
-    static uint64_t leftMask(int n)                           { return 0x0101010101010101ui64 * ((1 << n) - 1); }
+    static uint64_t mask(int r, int c)                        { return (uint64_t)1 << index(r, c); }
+    static uint64_t leftMask(int n)                           { return 0x0101010101010101 * (((uint64_t)1 << n) - 1); }
     static uint64_t rightMask(int n)                          { return ~leftMask(8 - n); }
-    static uint64_t lowerMask(int n)                          { return (1ui64 << (8 * n)) - 1; }
+    static uint64_t lowerMask(int n)                          { return ((uint64_t)1 << (8 * n)) - 1; }
     static uint64_t upperMask(int n)                          { return ~lowerMask(8 - n); }
 
     uint64_t board_;
