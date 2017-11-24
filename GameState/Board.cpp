@@ -18,43 +18,45 @@ void Board::initialize()
 {
     clear();
 
-    putPiece(Piece::piece(PieceTypeId::ROOK,   Color::BLACK), Position(0, 0));
-    putPiece(Piece::piece(PieceTypeId::KNIGHT, Color::BLACK), Position(0, 1));
-    putPiece(Piece::piece(PieceTypeId::BISHOP, Color::BLACK), Position(0, 2));
-    putPiece(Piece::piece(PieceTypeId::QUEEN,  Color::BLACK), Position(0, 3));
-    putPiece(Piece::piece(PieceTypeId::KING,   Color::BLACK), Position(0, 4));
-    putPiece(Piece::piece(PieceTypeId::BISHOP, Color::BLACK), Position(0, 5));
-    putPiece(Piece::piece(PieceTypeId::KNIGHT, Color::BLACK), Position(0, 6));
-    putPiece(Piece::piece(PieceTypeId::ROOK,   Color::BLACK), Position(0, 7));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), Position(1, 0));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), Position(1, 1));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), Position(1, 2));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), Position(1, 3));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), Position(1, 4));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), Position(1, 5));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), Position(1, 6));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), Position(1, 7));
+    putPiece(Piece::piece(PieceTypeId::ROOK,   Color::BLACK), { 0, 0 });
+    putPiece(Piece::piece(PieceTypeId::KNIGHT, Color::BLACK), { 0, 1 });
+    putPiece(Piece::piece(PieceTypeId::BISHOP, Color::BLACK), { 0, 2 });
+    putPiece(Piece::piece(PieceTypeId::QUEEN,  Color::BLACK), { 0, 3 });
+    putPiece(Piece::piece(PieceTypeId::KING,   Color::BLACK), { 0, 4 });
+    putPiece(Piece::piece(PieceTypeId::BISHOP, Color::BLACK), { 0, 5 });
+    putPiece(Piece::piece(PieceTypeId::KNIGHT, Color::BLACK), { 0, 6 });
+    putPiece(Piece::piece(PieceTypeId::ROOK,   Color::BLACK), { 0, 7 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 0 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 1 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 2 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 3 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 4 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 5 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 6 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 7 });
 
-    putPiece(Piece::piece(PieceTypeId::ROOK,   Color::WHITE), Position(7, 0));
-    putPiece(Piece::piece(PieceTypeId::KNIGHT, Color::WHITE), Position(7, 1));
-    putPiece(Piece::piece(PieceTypeId::BISHOP, Color::WHITE), Position(7, 2));
-    putPiece(Piece::piece(PieceTypeId::QUEEN,  Color::WHITE), Position(7, 3));
-    putPiece(Piece::piece(PieceTypeId::KING,   Color::WHITE), Position(7, 4));
-    putPiece(Piece::piece(PieceTypeId::BISHOP, Color::WHITE), Position(7, 5));
-    putPiece(Piece::piece(PieceTypeId::KNIGHT, Color::WHITE), Position(7, 6));
-    putPiece(Piece::piece(PieceTypeId::ROOK,   Color::WHITE), Position(7, 7));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), Position(6, 0));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), Position(6, 1));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), Position(6, 2));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), Position(6, 3));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), Position(6, 4));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), Position(6, 5));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), Position(6, 6));
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), Position(6, 7));
+    putPiece(Piece::piece(PieceTypeId::ROOK,   Color::WHITE), { 7, 0 });
+    putPiece(Piece::piece(PieceTypeId::KNIGHT, Color::WHITE), { 7, 1 });
+    putPiece(Piece::piece(PieceTypeId::BISHOP, Color::WHITE), { 7, 2 });
+    putPiece(Piece::piece(PieceTypeId::QUEEN,  Color::WHITE), { 7, 3 });
+    putPiece(Piece::piece(PieceTypeId::KING,   Color::WHITE), { 7, 4 });
+    putPiece(Piece::piece(PieceTypeId::BISHOP, Color::WHITE), { 7, 5 });
+    putPiece(Piece::piece(PieceTypeId::KNIGHT, Color::WHITE), { 7, 6 });
+    putPiece(Piece::piece(PieceTypeId::ROOK,   Color::WHITE), { 7, 7 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 0 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 1 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 2 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 3 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 4 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 5 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 6 });
+    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 7 });
 }
 
 bool Board::initializeFromFen(char const * start, char const * end)
 {
+    clear();
+
     std::string fen(start, end);
     std::smatch match;
     try
@@ -72,7 +74,7 @@ bool Board::initializeFromFen(char const * start, char const * end)
     for (int row = 0; row < SIZE; ++row)
     {
         int column = 0;
-        for (auto c : match.str(row + 1))
+        for (char c : match.str(row + 1))
         {
             if (column > SIZE)
                 return false;
@@ -124,7 +126,7 @@ bool Board::spanIsEmpty(Position const & from, Position const & to) const
     // Determine the number of squares moved (excluding the last square)
     int distance = std::max(abs(row_move), abs(column_move)) - 1;
 
-    // Check every square except the first one. If there is a piece occupying a square, then return false.
+    // Check every square except the first and last ones. If there is a piece occupying a square, then return false.
     Position p = from;
     for (int i = 0; i < distance; ++i)
     {

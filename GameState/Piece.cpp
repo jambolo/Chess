@@ -82,6 +82,7 @@ bool isSquare(int dr, int dc)
 {
     return dr == 0 || dc == 0;
 }
+
 } // anonymous namespace
 
 Piece const * Piece::pieces_[1 + NUMBER_OF_COLORS * NUMBER_OF_PIECE_TYPES] =
@@ -342,14 +343,14 @@ void Knight::generatePossibleMoves(GameState const & state, Position const & fro
 
     static Position const OFFSETS[] =
     {
-        Position(-2, -1), // up-left
-        Position(-2, 1),  // up-right
-        Position(-1, 2),  // right-up
-        Position(1, 2),   // right-down
-        Position(2, -1),  // down-left
-        Position(2, 1),   // down-right
-        Position(-1, -2), // left-up
-        Position(1, -2)   // left-down
+        { -2, -1 }, // up-left
+        { -2,  1 },  // up-right
+        { -1,  2 },  // right-up
+        {  1,  2 },   // right-down
+        {  2, -1 },  // down-left
+        {  2,  1 },   // down-right
+        { -1, -2 }, // left-up
+        {  1, -2 }   // left-down
     };
 
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
@@ -399,10 +400,10 @@ void Rook::generatePossibleMoves(GameState const & state, Position const & from,
 
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
 
-    generateSpanMoves(board, from, -1, 0, this, moves); // up
-    generateSpanMoves(board, from, 0, 1, this, moves);  // right
-    generateSpanMoves(board, from, 1, 0, this, moves);  // down
-    generateSpanMoves(board, from, 0, -1, this, moves); // left
+    generateSpanMoves(board, from, -1,  0, this, moves); // up
+    generateSpanMoves(board, from,  0,  1, this, moves);  // right
+    generateSpanMoves(board, from,  1,  0, this, moves);  // down
+    generateSpanMoves(board, from,  0, -1, this, moves); // left
 }
 
 bool Rook::isValidMove(GameState const & state, Move const & move) const

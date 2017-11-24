@@ -12,7 +12,7 @@ struct Position;
 class Board
 {
 public:
-    static int const SIZE = 8; // Number of rows and columns
+    static int constexpr SIZE = 8; // Number of rows and columns
 
     Board();
 
@@ -40,7 +40,7 @@ public:
     // Moves the piece at 'from' to 'to' (does not check legality)
     void movePiece(Position const & from, Position const & to);
 
-    // Returns true if the span from 'from' to 'to' (excluding 'to') contains no pieces
+    // Returns true if the span from 'from' to 'to' (excluding 'from' and 'to') contains no pieces
     bool spanIsEmpty(Position const & from, Position const & to) const;
 
     // Return the board as a FEN string

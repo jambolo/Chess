@@ -317,7 +317,7 @@ Piece const * GameState::promote(Color color, Position const & position)
 
     // Replace with a queen
 
-    Piece const * pAdded = Piece::piece(PieceTypeId::QUEEN, color);
+    Piece const * pAdded = Piece::piece(PieceTypeId::QUEEN, color); // @todo Not always promoted to a queen
 
     zhash_.add(*pAdded, position);
     board_.putPiece(pAdded, position);

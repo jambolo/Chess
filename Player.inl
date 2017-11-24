@@ -5,7 +5,7 @@
 
 #include "Player.h"
 
-inline Player:: Player(Color color)
+inline Player::Player(Color color)
     : myColor_(color)
 {
 }

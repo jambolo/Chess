@@ -16,9 +16,9 @@ class Piece
 {
 public:
 
-    static int const MAX_POSSIBLE_MOVES = 28;           // The maximum number of possible moves for any piece
+    static int constexpr MAX_POSSIBLE_MOVES = 28;           // The maximum number of possible moves for any piece
 
-    typedef std::vector<Move> MoveList;
+    using MoveList = std::vector<Move>;
 
     Piece(PieceTypeId t, Color c);
     virtual ~Piece();
@@ -48,6 +48,7 @@ protected:
     CBitmap * image_;           // Image of piece
 
 private:
+    // NO_PIECE followed by white pieces followed by black pieces
     static Piece const * pieces_[1 + NUMBER_OF_COLORS * NUMBER_OF_PIECE_TYPES];
 };
 
@@ -122,8 +123,8 @@ class Pawn : public Piece
 {
 public:
 
-    static int const STARTING_ROW_BLACK = 1;
-    static int const STARTING_ROW_WHITE = 6;
+    static int constexpr STARTING_ROW_BLACK = 1;
+    static int constexpr STARTING_ROW_WHITE = 6;
 
     Pawn(Color c) : Piece(PieceTypeId::PAWN, c) {}
 

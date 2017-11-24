@@ -27,13 +27,9 @@ static void drawBoard(Board const & b)
         {
             Piece const * piece = b.pieceAt(row, column);
             if (piece == NO_PIECE)
-            {
                 buffer[column * 4 + 2] = ' ';
-            }
             else
-            {
                 buffer[column * 4 + 2] = piece->symbol()[0];
-            }
         }
         printf(" %1d %s\n", 8 - row, buffer);
     }

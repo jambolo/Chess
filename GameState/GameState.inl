@@ -8,8 +8,16 @@
 #include "GameState/GameState.h"
 #include "GameState/Move.h"
 
-inline GameState::GameState(Board const & board, Move const & move, int value, CastleStatus castleStatus)
+inline GameState::GameState(Board const & board,
+                            Color         whoseTurn,
+                            CastleStatus  castleStatus,
+                            int           fiftyMoveTimer,
+                            Move const &  move,
+                            int           value,
+                            bool          inCheck,
+                            int           moveNumber)
     : board_(board)
+    , whoseTurn_(whoseTurn)
     , move_(move)
     , value_(value)
     , quality_(std::numeric_limits<int>::min())

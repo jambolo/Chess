@@ -15,7 +15,7 @@ inline Position const Move::from() const
 
 inline Position const Move::to() const
 {
-    return Position(to_.row & NORMAL_MOVE_MASK, to_.column & NORMAL_MOVE_MASK);
+    return Position(to_.row, to_.column);
 }
 
 inline bool Move::isSpecial() const
@@ -25,55 +25,39 @@ inline bool Move::isSpecial() const
 
 inline bool Move::isSpecial(int move) const
 {
-    return (from_.row & ~NORMAL_MOVE_MASK) == (int)move;
+    return (from_.row & ~NORMAL_MOVE_MASK) == move;
 }
 
 inline Move Move::kingSideCastleKing(Color c)
 {
     if (c == Color::WHITE)
-    {
-        return Move(KINGSIDE_CASTLE, Color::WHITE, Position(7, 4), Position(7, 6));
-    }
+        return Move(KINGSIDE_CASTLE, Color::WHITE, { 7, 4 }, { 7, 6 });
     else
-    {
-        return Move(KINGSIDE_CASTLE, Color::BLACK, Position(0, 4), Position(0, 6));
-    }
+        return Move(KINGSIDE_CASTLE, Color::BLACK, { 0, 4 }, { 0, 6 });
 }
 
 inline Move Move::kingSideCastleRook(Color c)
 {
     if (c == Color::WHITE)
-    {
-        return Move(KINGSIDE_CASTLE, Color::WHITE, Position(7, 7), Position(7, 5));
-    }
+        return Move(KINGSIDE_CASTLE, Color::WHITE, { 7, 7 }, { 7, 5 });
     else
-    {
-        return Move(KINGSIDE_CASTLE, Color::BLACK, Position(0, 7), Position(0, 5));
-    }
+        return Move(KINGSIDE_CASTLE, Color::BLACK, { 0, 7 }, { 0, 5 });
 }
 
 inline Move Move::queenSideCastleKing(Color c)
 {
     if (c == Color::WHITE)
-    {
-        return Move(QUEENSIDE_CASTLE, Color::WHITE, Position(7, 4), Position(7, 2));
-    }
+        return Move(QUEENSIDE_CASTLE, Color::WHITE, { 7, 4 }, { 7, 2 });
     else
-    {
-        return Move(QUEENSIDE_CASTLE, Color::BLACK, Position(0, 4), Position(0, 2));
-    }
+        return Move(QUEENSIDE_CASTLE, Color::BLACK, { 0, 4 }, { 0, 2 });
 }
 
 inline Move Move::queenSideCastleRook(Color c)
 {
     if (c == Color::WHITE)
-    {
-        return Move(QUEENSIDE_CASTLE, Color::WHITE, Position(7, 0), Position(7, 3));
-    }
+        return Move(QUEENSIDE_CASTLE, Color::WHITE, { 7, 0 }, { 7, 3 });
     else
-    {
-        return Move(QUEENSIDE_CASTLE, Color::BLACK, Position(0, 0), Position(0, 3));
-    }
+        return Move(QUEENSIDE_CASTLE, Color::BLACK, { 0, 0 }, { 0, 3 });
 }
 
 #endif // !defined(Move_inl__)

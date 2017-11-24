@@ -22,9 +22,9 @@ class GameState
 {
 public:
 
-    typedef uint32_t CastleStatus;
+    using CastleStatus = uint32_t;
 
-    GameState() {}
+    GameState()        = default;
     GameState(Board const & board,
               Color         whoseTurn_,
               CastleStatus  castleStatus,
@@ -47,6 +47,9 @@ public:
 
     // Returns true if a queen-side castle is allowed
     bool queenSideCastleIsAllowed(Color c) const;
+
+    // Returns the Z hash for this state
+    ZHash zhash() const;
 
     // Updates the game state with the specified move
     void makeMove(Color color, Move const & move, int depth = 0);
@@ -113,7 +116,7 @@ private:
 // Equality operator
 bool operator ==(GameState const & x, GameState const & y);
 
-typedef std::vector<GameState> GameStateList;
+using GameStateList = std::vector<GameState>;
 
 #include "GameState/GameState.inl"
 
