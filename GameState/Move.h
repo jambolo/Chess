@@ -3,8 +3,8 @@
 #if !defined(Move_h__)
 #define Move_h__
 
-#include "gamestate/ChessTypes.h"
-#include "gamestate/Position.h"
+#include "Gamestate/ChessTypes.h"
+#include "Gamestate/Position.h"
 #include <vector>
 
 class Piece;
@@ -72,7 +72,7 @@ public:
     static bool isSquare(int dr, int dc);
 
     // Returns the move in SAN form
-    std::string Move::san() const;
+    std::string san() const;
 
     // Special move -- resignation
     static Move resign(Color color) { return Move(RESIGN, color); }

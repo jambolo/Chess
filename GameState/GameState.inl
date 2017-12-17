@@ -21,13 +21,9 @@ inline GameState::GameState(Board const & board,
     , castleStatus_(castleStatus)
     , fiftyMoveTimer_(fiftyMoveTimer)
     , move_(move)
+    , castleStatus_(castleStatus)
     , value_(value)
     , quality_(std::numeric_limits<int>::min())
-#if defined(USING_PRIORITIZED_MOVE_ORDERING)
-    , priority_(0)
-#endif // defined( USING_PRIORITIZED_MOVE_ORDERING )
-    , inCheck_(inCheck)
-    , moveNumber_(moveNumber)
     , zhash_(board)
 {
 }

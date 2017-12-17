@@ -43,9 +43,9 @@ target_compile_definitions(chess
         -D_SCL_SECURE_NO_WARNINGS
 )
 
-add_subdirectory(bitBoard)
-add_subdirectory(gamestate)
-add_subdirectory(misc)
-add_subdirectory(player)
-add_subdirectory(staticevaluator)
-add_subdirectory(zhash)
+add_subdirectory(BitBoard)
+add_subdirectory(Gamestate)
+add_subdirectory(Misc)
+add_subdirectory(Player)
+add_subdirectory(Staticevaluator)
+add_subdirectory(ZHash)

@@ -12,7 +12,7 @@ set(PRIVATE_INCLUDE_PATHS
 
 set(PUBLIC_INCLUDE_PATHS
     ${CMAKE_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/misc/include
+    ${CMAKE_SOURCE_DIR}/Misc/include
 )
 
 add_library(zhash ${SOURCES})

@@ -67,16 +67,16 @@ PieceValues const s_PieceValues[NUMBER_OF_COLORS][NUMBER_OF_PIECE_TYPES] =
     }
 };
 
-int const PROPERTY_FACTOR = 1;                                                                // The property factor is the
+int constexpr PROPERTY_FACTOR = 1;                                                                // The property factor is the
                                                                                               // reference. All other factors are
                                                                                               // relative to it.
-int const CASTLE_FACTOR   = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property * 3 / 4 / 3; // Max is 3, which is worth
+int constexpr CASTLE_FACTOR   = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property * 3 / 4 / 3; // Max is 3, which is worth
                                                                                               // about 3/4 a pawn
-int const MOBILITY_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::QUEEN].property / 144;      // Maximum is about 144 which is
+int constexpr MOBILITY_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::QUEEN].property / 144;      // Maximum is about 144 which is
                                                                                               // worth a queen
-int const POSITION_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property / 100;       // Reasonable maximum is 100,000 which
+int constexpr POSITION_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property / 100;       // Reasonable maximum is 100,000 which
                                                                                               // is worth a pawn
-int const THREAT_FACTOR   = 0;
+int constexpr THREAT_FACTOR   = 0;
 
 int _Evaluate(GameState::CastleStatus castleStatus)
 {

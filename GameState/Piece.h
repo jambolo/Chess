@@ -7,6 +7,7 @@
 //#include <memory>
 #include <vector>
 
+class CBitmap;
 class Board;
 //class CBitmap;
 class Move;

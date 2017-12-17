@@ -3,7 +3,7 @@
 #if !defined(Sequence_h__)
 #define Sequence_h__
 
-#include "gamestate/Move.h"
+#include "Gamestate/Move.h"
 #include <vector>
 
 class SequenceEntry
