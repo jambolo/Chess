@@ -28,6 +28,26 @@ inline bool Move::isSpecial(int move) const
     return (from_.row & ~NORMAL_MOVE_MASK) == move;
 }
 
+inline bool Move::isMoved(int dr, int dc)
+{
+    return dr != 0 || dc != 0;
+}
+
+inline bool Move::isDiagonal(int dr, int dc)
+{
+    return dr == dc || dr == -dc;
+}
+
+inline bool Move::inRange(int dr, int dc, int range)
+{
+    return dr > range || dr < -range || dc > range || dc < -range;
+}
+
+inline bool Move::isSquare(int dr, int dc)
+{
+    return dr == 0 || dc == 0;
+}
+
 inline Move Move::kingSideCastleKing(Color c)
 {
     if (c == Color::WHITE)

@@ -18,13 +18,20 @@ inline GameState::GameState(Board const & board,
                             int           moveNumber)
     : board_(board)
     , whoseTurn_(whoseTurn)
+    , castleStatus_(castleStatus)
+    , fiftyMoveTimer_(fiftyMoveTimer)
     , move_(move)
     , value_(value)
     , quality_(std::numeric_limits<int>::min())
-    , castleStatus_(castleStatus)
+#if defined(USING_PRIORITIZED_MOVE_ORDERING)
+    , priority_(0)
+#endif // defined( USING_PRIORITIZED_MOVE_ORDERING )
+    , inCheck_(inCheck)
+    , moveNumber_(moveNumber)
     , zhash_(board)
 {
 }
+
 
 inline bool GameState::castleIsAllowed(Color c) const
 {
@@ -42,6 +49,12 @@ inline bool GameState::queenSideCastleIsAllowed(Color c) const
 {
     unsigned mask = (c == Color::WHITE) ? WHITE_QUEENSIDE_CASTLE_UNAVAILABLE : BLACK_QUEENSIDE_CASTLE_UNAVAILABLE;
     return (castleStatus_ & mask) == 0;
+}
+
+inline bool GameState::canBeOccupied(Position const & p, Color myColor) const
+{
+    Piece const * piece = board_.pieceAt(p);
+    return (piece == NO_PIECE) || (piece->color() != myColor);
 }
 
 inline ZHash GameState::zhash() const

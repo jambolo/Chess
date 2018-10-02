@@ -59,6 +59,18 @@ public:
     // Returns true if this is en passant
     bool isEnPassant() const { return isSpecial(ENPASSANT); }
 
+    // Returns true if the difference is non-zero
+    static bool isMoved(int dr, int dc);
+    
+    // Returns true if the difference is diagonal
+    static  bool isDiagonal(int dr, int dc);
+    
+    // Returns true if the difference is with the given range
+    static bool inRange(int dr, int dc, int range);
+    
+    // Returns true if the difference is along a row or a column
+    static bool isSquare(int dr, int dc);
+
     // Returns the move in SAN form
     std::string Move::san() const;
 

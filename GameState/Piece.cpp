@@ -1,9 +1,17 @@
 #include "Piece.h"
 
-#include "gamestate/GameState.h"
-#include "gamestate/Move.h"
+#include "Bishop.h"
+#include "Board.h"
+#include "King.h"
+#include "Knight.h"
+#include "Pawn.h"
+#include "Queen.h"
+#include "Rook.h"
 
-#include "misc/Etc.h"
+// #include "gamestate/GameState.h"
+#include "gamestate/Move.h"
+// 
+// #include "misc/Etc.h"
 
 namespace
 {
@@ -132,455 +140,36 @@ char const * Piece::symbol(PieceTypeId piece)
     return (piece != PieceTypeId::INVALID) ? PIECE_TRAITS[(size_t)piece].symbol[0] : "?";
 }
 
-void King::generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const
+void Piece::generateSpanMoves(Board const &     board,
+                              Position const &  from,
+                              int               dr,
+                              int               dc,
+                              Piece const *     myPiece,
+                              Piece::MoveList & moves) const
 {
-    Board const & board = state.board_;
+    // Generate moves until the edge of the board is reached or there is a collision
 
-    moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
-
-    Position to = from;
-
-    // Up
-
-    --to.row;
-    if ((to.row >= 0) && squareCanBeOccupied(board, to, color_))
+    Position to(from.row + dr, from.column + dc);
+    while (board.isValidPosition(to))
     {
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
-
-    // Up-right
-
-    ++to.column;
-    if ((to.row >= 0) && (to.column < Board::SIZE) && squareCanBeOccupied(board, to, color_))
-    {
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
-
-    // Right
-
-    ++to.row;
-    if ((to.column < Board::SIZE) && squareCanBeOccupied(board, to, color_))
-    {
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
-
-    // Down-right
-
-    ++to.row;
-    if ((to.row < Board::SIZE) && (to.column < Board::SIZE) && squareCanBeOccupied(board, to, color_))
-    {
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
-
-    // Down
-
-    --to.column;
-    if ((to.row < Board::SIZE) && squareCanBeOccupied(board, to, color_))
-    {
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
-
-    // Down-left
-
-    --to.column;
-    if ((to.row < Board::SIZE) && (to.column >= 0) && squareCanBeOccupied(board, to, color_))
-    {
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
-
-    // Left
-
-    --to.row;
-    if ((to.column >= 0) && squareCanBeOccupied(board, to, color_))
-    {
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
-
-    // Up-left
-
-    --to.row;
-    if ((to.row >= 0) && (to.column >= 0) && squareCanBeOccupied(board, to, color_))
-    {
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
-
-    // Castles
-
-    if (state.kingSideCastleIsAllowed(color_) && !state.inCheck_)
-    {
-        //! @todo Must check all squares that the kings moves through
-        moves.emplace_back(Move::KINGSIDE_CASTLE, color_);
-    }
-
-    if (state.queenSideCastleIsAllowed(color_) && !state.inCheck_)
-    {
-        //! @todo Must check all squares that the kings moves through
-        moves.emplace_back(Move::QUEENSIDE_CASTLE, color_);
-    }
-}
-
-bool King::isValidMove(GameState const & state, Move const & move) const
-{
-    Board const & board   = state.board_;
-    Position const & from = move.from();
-    Position const & to   = move.to();
-
-    // Check castles
-
-    if (move.isKingSideCastle())
-    {
-        //! @todo Must check all squares that the kings moves through
-        return state.kingSideCastleIsAllowed(color_) && !state.inCheck_;
-    }
-
-    if (move.isQueenSideCastle())
-    {
-        //! @todo Must check all squares that the kings moves through
-        return state.queenSideCastleIsAllowed(color_) && !state.inCheck_;
-    }
-
-    // Check if the destination square can be occupied
-
-    if (!squareCanBeOccupied(board, to, color_))
-        return false;
-
-    // Check movement (exactly one square in any direction)
-
-    int dr = to.row - from.row;
-    int dc = to.column - from.column;
-
-    if (!isMoved(dr, dc) || !inRange(dr, dc, 1))
-        return false;
-
-    return true;
-}
-
-void Queen::generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const
-{
-    Board const & board = state.board_;
-
-    moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
-
-    generateSpanMoves(board, from, -1, 0, this, moves);  // up
-    generateSpanMoves(board, from, -1, 1, this, moves);  // up-right
-    generateSpanMoves(board, from, 0, 1, this, moves);   // right
-    generateSpanMoves(board, from, 1, 1, this, moves);   // down-right
-    generateSpanMoves(board, from, 1, 0, this, moves);   // down
-    generateSpanMoves(board, from, 1, -1, this, moves);  // down-left
-    generateSpanMoves(board, from, 0, -1, this, moves);  // left
-    generateSpanMoves(board, from, -1, -1, this, moves); // up-left
-}
-
-bool Queen::isValidMove(GameState const & state, Move const & move) const
-{
-    Board const & board   = state.board_;
-    Position const & from = move.from();
-    Position const & to   = move.to();
-
-    // Check if the destination square can be occupied
-
-    if (!squareCanBeOccupied(board, to, color_))
-        return false;
-
-    // Check movement (at least 1 square in 8 directions)
-
-    int dr = to.row - from.row;
-    int dc = to.column - from.column;
-
-    if (!isMoved(dr, dc) || (!isDiagonal(dr, dc) && !isSquare(dr, dc)))
-        return false;
-
-    // Check for moving through a piece
-
-    if (!board.spanIsEmpty(from, to))
-        return false;
-
-    return true;
-}
-
-void Bishop::generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const
-{
-    Board const & board = state.board_;
-
-    moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
-
-    generateSpanMoves(board, from, -1, 1, this, moves);  // up-right
-    generateSpanMoves(board, from, 1, 1, this, moves);   // down-right
-    generateSpanMoves(board, from, 1, -1, this, moves);  // down-left
-    generateSpanMoves(board, from, -1, -1, this, moves); // up-left
-}
-
-bool Bishop::isValidMove(GameState const & state, Move const & move) const
-{
-    Board const & board   = state.board_;
-    Position const & from = move.from();
-    Position const & to   = move.to();
-
-    // Check if the destination square can be occupied
-
-    if (!squareCanBeOccupied(board, to, color_))
-        return false;
-
-    // Check movement (at least 1 square diagonally)
-
-    int dr = to.row - from.row;
-    int dc = to.column - from.column;
-
-    if (!isMoved(dr, dc) || !isDiagonal(dr, dc))
-        return false;
-
-    // Check for moving through a piece
-
-    if (!board.spanIsEmpty(from, to))
-        return false;
-
-    return true;
-}
-
-void Knight::generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const
-{
-    Board const & board = state.board_;
-
-    static Position const OFFSETS[] =
-    {
-        { -2, -1 }, // up-left
-        { -2,  1 },  // up-right
-        { -1,  2 },  // right-up
-        {  1,  2 },   // right-down
-        {  2, -1 },  // down-left
-        {  2,  1 },   // down-right
-        { -1, -2 }, // left-up
-        {  1, -2 }   // left-down
-    };
-
-    moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
-
-    for (auto const & o : OFFSETS)
-    {
-        Position to(from.row + o.row, from.column + o.column);
-
-        if (board.isValidPosition(to))
+        // If this square has a piece in it then the span is finished.
+        Piece const * piece = board.pieceAt(to);
+        if (piece != NO_PIECE)
         {
-            // Check if the destination square can be occupied
-            if (squareCanBeOccupied(board, to, color_))
+            // If it is an opponent's piece, it is also a valid move, so add the capture before quitting.
+            if (piece->color() != myPiece->color())
             {
-                moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
+                moves.emplace_back(myPiece, from, to, true);
             }
+            return;
         }
+
+        // Add this move
+        moves.emplace_back(myPiece, from, to);
+
+        // Next square in span
+        to.row    += dr;
+        to.column += dc;
     }
 }
 
-bool Knight::isValidMove(GameState const & state, Move const & move) const
-{
-    Board const & board   = state.board_;
-    Position const & from = move.from();
-    Position const & to   = move.to();
-
-    // Check if the destination square can be occupied
-    if (!squareCanBeOccupied(board, to, color_))
-        return false;
-
-    // Check movement
-
-    int adr = abs(to.row - from.row);
-    int adc = abs(to.column - from.column);
-
-    if (!isMoved(adr, adc))
-        return false;
-
-    if (((adr != 2) || (adc != 1)) && ((adc != 2) || (adr != 1)))
-        return false;
-
-    return true;
-}
-
-void Rook::generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const
-{
-    Board const & board = state.board_;
-
-    moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
-
-    generateSpanMoves(board, from, -1,  0, this, moves); // up
-    generateSpanMoves(board, from,  0,  1, this, moves);  // right
-    generateSpanMoves(board, from,  1,  0, this, moves);  // down
-    generateSpanMoves(board, from,  0, -1, this, moves); // left
-}
-
-bool Rook::isValidMove(GameState const & state, Move const & move) const
-{
-    Board const & board   = state.board_;
-    Position const & from = move.from();
-    Position const & to   = move.to();
-
-    // Check if the destination square can be occupied
-
-    if (!squareCanBeOccupied(board, to, color_))
-        return false;
-
-    // Check movement (at least 1 square in 4 directions)
-
-    int dr = to.row - from.row;
-    int dc = to.column - from.column;
-
-    if (!isMoved(dc, dc) || !isSquare(dr, dc))
-        return false;
-
-    // Check for moving through a piece (note: this doesn't check for castling)
-
-    if (!board.spanIsEmpty(from, to))
-        return false;
-
-    return true;
-}
-
-void Pawn::generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const
-{
-    Board const & board = state.board_;
-
-    int direction       = (color_ == Color::BLACK) ? 1 : -1;
-
-    moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
-
-    Position to;
-
-    // Diagonal to left (must capture)
-
-    to.row    = from.row + direction;
-    to.column = from.column - 1;
-
-    if (board.isValidPosition(to))
-    {
-        Piece const * captured = board.pieceAt(to);
-
-        if ((captured != NO_PIECE) && (captured->color() != color_))
-        {
-            moves.emplace_back(this, from, to, true);
-        }
-        else
-        {
-            // Note: If a piece can be captured normally, then it is impossible for a pawn to have moved two
-            // spaces (and be open to capture by en passant).
-            // Check en passant -- if the piece next to the destination square is a pawn and the previous move was
-            // a two-space move to that square (assumed to be made by the pawn), then en passant is possible.
-
-            captured = board.pieceAt(from.row, to.column);
-
-            if ((captured != NO_PIECE) &&
-                (captured->type() == PieceTypeId::PAWN) &&
-                (state.move_.from() == Position(to.row + direction, to.column)) &&
-                (state.move_.to() == Position(from.row, to.column)))
-            {
-                moves.emplace_back(Move::ENPASSANT, color_, from, to, true);
-            }
-        }
-    }
-
-    // Diagonal to right (must capture)
-
-    to.row    = from.row + direction;
-    to.column = from.column + 1;
-
-    if (board.isValidPosition(to))
-    {
-        Piece const * captured = board.pieceAt(to);
-
-        if ((captured != NO_PIECE) && (captured->color() != color_))
-        {
-            moves.emplace_back(this, from, to, (captured != NO_PIECE));
-        }
-        else
-        {
-            // Note: If a piece can be captured normally, then it is impossible for a pawn to have moved two
-            // spaces (and be open to capture by en passant).
-            // Check en passant -- if the piece next to the destination square is a pawn and the previous move was
-            // a two-space move to that square (assumed to be made by the pawn), then en passant is possible.
-
-            captured = board.pieceAt(from.row, to.column);
-
-            if ((captured != NO_PIECE) &&
-                (captured->type() == PieceTypeId::PAWN) &&
-                (state.move_.from() == Position(to.row + direction, to.column)) &&
-                (state.move_.to() == Position(from.row, to.column)))
-            {
-                moves.emplace_back(Move::ENPASSANT, color_, from, to, true);
-            }
-        }
-    }
-
-    // Ahead 1 row (must be empty) and ahead 2 rows (must be empty)
-
-    to.row    = from.row + direction;
-    to.column = from.column;
-
-    if (board.isValidPosition(to) && (board.pieceAt(to) == NO_PIECE))
-    {
-        moves.emplace_back(this, from, to);
-
-        // Ahead 2 rows if in its original spot (must be empty)
-
-        if ((from.row == STARTING_ROW_BLACK) && (color_ == Color::BLACK) ||
-            (from.row == STARTING_ROW_WHITE) && (color_ == Color::WHITE))
-        {
-            to.row += direction;
-            if (board.pieceAt(to) == NO_PIECE)
-            {
-                moves.emplace_back(this, from, to);
-            }
-        }
-    }
-}
-
-bool Pawn::isValidMove(GameState const & state, Move const & move) const
-{
-    Board const & board   = state.board_;
-    Position const & from = move.from();
-    Position const & to   = move.to();
-
-    int direction         = (color_ == Color::BLACK) ? 1 : -1;
-
-    // Ahead 1?
-
-    if ((to.row == from.row + direction) &&
-        (to.column == from.column) &&
-        (board.pieceAt(to) == NO_PIECE))
-    {
-        return true;
-    }
-
-    // Capture diagonally?
-
-    if ((to.row == from.row + direction) &&
-        ((to.column == from.column + 1) || (to.column == from.column - 1)))
-    {
-        Piece const * captured = board.pieceAt(to);
-
-        if ((captured != NO_PIECE) && (captured->color() != color_))
-        {
-            return true;
-        }
-
-        // Check en passant
-
-        captured = board.pieceAt(from.row, to.column);
-
-        if ((captured != NO_PIECE) &&
-            (captured->type() == PieceTypeId::PAWN) &&
-            (state.move_.from() == Position(to.row + direction, to.column)) &&
-            (state.move_.to() == Position(from.row, to.column)))
-        {
-            return true;
-        }
-    }
-
-    // Ahead 2?
-
-    if ((to.row == from.row + 2 * direction) &&
-        (to.column == from.column) &&
-        (board.pieceAt(Position(from.row + direction, from.column)) == NO_PIECE) &&
-        (board.pieceAt(to) == NO_PIECE))
-    {
-        return true;
-    }
-
-    return false;
-}

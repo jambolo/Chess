@@ -48,6 +48,9 @@ public:
     // Returns true if a queen-side castle is allowed
     bool queenSideCastleIsAllowed(Color c) const;
 
+    // Returns true if a piece of the specified color can occupy the position
+    bool canBeOccupied(Position const & p, Color myColor) const;
+
     // Returns the Z hash for this state
     ZHash zhash() const;
 

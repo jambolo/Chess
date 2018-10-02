@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.4)
 
 set(SOURCES
+    Bishop.cpp
+    Bishop.h
     Board.cpp
     Board.h
     Board.inl
@@ -9,13 +11,23 @@ set(SOURCES
     GameState.cpp
     GameState.h
     GameState.inl
+    King.cpp
+    King.h
+    Knight.cpp
+    Knight.h
     Move.cpp
     Move.h
     Move.inl
+    Pawn.cpp
+    Pawn.h
     Piece.cpp
     Piece.h
     Position.cpp
     Position.h
+    Queen.cpp
+    Queen.h
+    Rook.cpp
+    Rook.h
 )
 
 set(PRIVATE_INCLUDE_PATHS

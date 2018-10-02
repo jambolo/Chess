@@ -11,6 +11,14 @@ enum class Color
 };
 static int constexpr NUMBER_OF_COLORS = (int)Color::BLACK - (int)Color::WHITE + 1;
 
+enum class Direction
+{
+    UP = -1,
+    DOWN = 1,
+    LEFT = -1,
+    RIGHT = 1
+};
+
 enum class PieceTypeId
 {
     INVALID = -1,
