@@ -4,10 +4,10 @@
 #include "Move.h"
 #include "Piece.h"
 
-#include "misc/Etc.h"
-#include "misc/exceptions.h"
-#include "staticevaluator/StaticEvaluator.h"
-#include "zhash/ZHash.h"
+#include "Misc/Etc.h"
+#include "Misc/exceptions.h"
+#include "StaticEvaluator/StaticEvaluator.h"
+#include "ZHash/ZHash.h"
 
 #include <regex>
 
@@ -133,7 +133,9 @@ std::string GameState::fen() const
 
 void GameState::makeCastleMove(Color color, Move const & move)
 {
+#if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
     CastleStatus oldStatus = castleStatus_;
+#endif // defined( INCREMENTAL_STATIC_EVALUATION_ENABLED )
 
     Move kingsMove;
     Move rooksMove;
@@ -179,7 +181,9 @@ void GameState::makeCastleMove(Color color, Move const & move)
         castleStatus_ |= BLACK_CASTLE_UNAVAILABLE;
     }
 
+#if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
     CastleStatus castleStatusChange = oldStatus ^ castleStatus_;
+#endif // defined( INCREMENTAL_STATIC_EVALUATION_ENABLED )
 
     // Update check status
     // @todo check for in check
@@ -232,8 +236,10 @@ void GameState::makeNormalMove(Color color, Move const & move)
         pAdded = NO_PIECE;
     }
 
+#if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
     // Update castle status
     CastleStatus oldStatus = castleStatus_;
+#endif // defined( INCREMENTAL_STATIC_EVALUATION_ENABLED )
 
     if (color == Color::WHITE)
     {
@@ -272,7 +278,9 @@ void GameState::makeNormalMove(Color color, Move const & move)
         }
     }
 
+#if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
     CastleStatus castleStatusChange = oldStatus ^ castleStatus_;
+#endif // defined( INCREMENTAL_STATIC_EVALUATION_ENABLED )
 
     // Update check status
     // @todo check for in check

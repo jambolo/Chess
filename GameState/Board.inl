@@ -5,8 +5,8 @@
 
 #include "Board.h"
 
-#include "Gamestate/Piece.h"
-#include "Gamestate/Position.h"
+#include "GameState/Piece.h"
+#include "GameState/Position.h"
 
 #include <cassert>
 

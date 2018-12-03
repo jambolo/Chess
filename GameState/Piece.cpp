@@ -8,8 +8,8 @@
 #include "Queen.h"
 #include "Rook.h"
 
-// #include "gamestate/GameState.h"
-#include "gamestate/Move.h"
+// #include "GameState/GameState.h"
+#include "GameState/Move.h"
 // 
 // #include "misc/Etc.h"
 
@@ -32,6 +32,8 @@ PieceTraits const PIECE_TRAITS[NUMBER_OF_PIECE_TYPES] =
     { /*IDB_BPAWN,	IDB_WPAWN,		*/{ "P", "p" } },
 };
 
+#if 0
+    
 bool squareCanBeOccupied(Board const & board, Position const & p, Color myColor)
 {
     Piece const * piece = board.pieceAt(p);
@@ -90,7 +92,8 @@ bool isSquare(int dr, int dc)
 {
     return dr == 0 || dc == 0;
 }
-
+#endif
+    
 } // anonymous namespace
 
 Piece const * Piece::pieces_[1 + NUMBER_OF_COLORS * NUMBER_OF_PIECE_TYPES] =

@@ -3,7 +3,7 @@
 #if !defined(StaticEvaluator_h__)
 #define StaticEvaluator_h__
 
-#include "GameState/Gamestate.h"
+#include "GameState/GameState.h"
 #include <limits>
 
 class Move;

@@ -88,8 +88,8 @@ void Pawn::generatePossibleMoves(GameState const & state, Position const & from,
 
         // Ahead 2 rows if in its original spot (must be empty)
 
-        if ((from.row == STARTING_ROW_BLACK) && (color_ == Color::BLACK) ||
-            (from.row == STARTING_ROW_WHITE) && (color_ == Color::WHITE))
+        if (((from.row == STARTING_ROW_BLACK) && (color_ == Color::BLACK)) ||
+            ((from.row == STARTING_ROW_WHITE) && (color_ == Color::WHITE)))
         {
             to.row += direction;
             if (board.pieceAt(to) == NO_PIECE)

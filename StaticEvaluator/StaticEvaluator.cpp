@@ -17,7 +17,7 @@ struct PieceValues
 
 // Values of each square for each color
 
-int const s_PositionValues[NUMBER_OF_COLORS][Board::SIZE][Board::SIZE] =
+int constexpr s_PositionValues[NUMBER_OF_COLORS][Board::SIZE][Board::SIZE] =
 {
     // White
     {
@@ -44,7 +44,7 @@ int const s_PositionValues[NUMBER_OF_COLORS][Board::SIZE][Board::SIZE] =
     },
 };
 
-PieceValues const s_PieceValues[NUMBER_OF_COLORS][NUMBER_OF_PIECE_TYPES] =
+PieceValues constexpr s_PieceValues[NUMBER_OF_COLORS][NUMBER_OF_PIECE_TYPES] =
 {
     // White
     {
@@ -67,18 +67,18 @@ PieceValues const s_PieceValues[NUMBER_OF_COLORS][NUMBER_OF_PIECE_TYPES] =
     }
 };
 
-int constexpr PROPERTY_FACTOR = 1;                                                                // The property factor is the
+int constexpr PROPERTY_FACTOR = 1;                                                            // The property factor is the
                                                                                               // reference. All other factors are
                                                                                               // relative to it.
 int constexpr CASTLE_FACTOR   = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property * 3 / 4 / 3; // Max is 3, which is worth
                                                                                               // about 3/4 a pawn
-int constexpr MOBILITY_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::QUEEN].property / 144;      // Maximum is about 144 which is
-                                                                                              // worth a queen
+//int constexpr MOBILITY_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::QUEEN].property / 144;      // Maximum is about 144 which is
+//                                                                                              // worth a queen
 int constexpr POSITION_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property / 100;       // Reasonable maximum is 100,000 which
                                                                                               // is worth a pawn
-int constexpr THREAT_FACTOR   = 0;
-
-int _Evaluate(GameState::CastleStatus castleStatus)
+//int constexpr THREAT_FACTOR   = 0;
+//
+int evaluate(GameState::CastleStatus castleStatus)
 {
     // A bonus is given for having castled. Likewise, a penalty is given for losing the ability to castle.
 
@@ -166,7 +166,7 @@ int StaticEvaluator::evaluate(GameState const & state)
         }
     }
 
-    int const castleStatusValue = _Evaluate(state.castleStatus_);
+    int const castleStatusValue = ::evaluate(state.castleStatus_);
 
     // Compute the overall value
 
@@ -259,7 +259,7 @@ int StaticEvaluator::incremental(Move const &            move,
 
     // Evaluate any change in castling status
 
-    value += _Evaluate(castleStatus) * CASTLE_FACTOR;
+    value += ::evaluate(castleStatus) * CASTLE_FACTOR;
 
 //#if defined( PROFILING )
 //

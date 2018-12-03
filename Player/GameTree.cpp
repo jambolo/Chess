@@ -49,9 +49,9 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 {
     int depth = 0;                                   // The depth of this ply (this is the current state,  so its depth is 0)
     int responseDepth   = depth + 1;                 // Depth of responses to this state
-    int quality         = maxDepth_ - depth;         // Quality of values at this depth (this is the depth of plies searched to get
-                                                     // the results for this ply )
-    int responseQuality = maxDepth_ - responseDepth; // Normal quality of responses to this state
+//    int quality         = maxDepth_ - depth;         // Quality of values at this depth (this is the depth of plies searched to get
+//                                                     // the results for this ply )
+//    int responseQuality = maxDepth_ - responseDepth; // Normal quality of responses to this state
 
     myColor_   = my_color;
     yourColor_ = (my_color == Color::WHITE) ? Color::BLACK : Color::WHITE;

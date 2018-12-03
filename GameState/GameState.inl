@@ -17,11 +17,10 @@ inline GameState::GameState(Board const & board,
                             bool          inCheck,
                             int           moveNumber)
     : board_(board)
-    , whoseTurn_(whoseTurn)
     , castleStatus_(castleStatus)
+    , whoseTurn_(whoseTurn)
     , fiftyMoveTimer_(fiftyMoveTimer)
     , move_(move)
-    , castleStatus_(castleStatus)
     , value_(value)
     , quality_(std::numeric_limits<int>::min())
     , zhash_(board)

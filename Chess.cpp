@@ -1,8 +1,8 @@
-#include "gamestate/ChessTypes.h"
-#include "player/ComputerPlayer.h"
+#include "GameState/ChessTypes.h"
+#include "Player/ComputerPlayer.h"
 #include <cstdio>
 
-static void drawBoard(Board const & b);
+//static void drawBoard(Board const & b);
 
 int         main(int argc, char ** argv)
 {
@@ -16,6 +16,8 @@ int         main(int argc, char ** argv)
     GameState s1 = computer.myTurn(s0);
     printf("%s", s1.move_.san().c_str());
 }
+
+#if 0
 
 static void drawBoard(Board const & b)
 {
@@ -36,3 +38,5 @@ static void drawBoard(Board const & b)
     puts("   +---+---+---+---+---+---+---+---+");
     puts("     a   b   c   d   e   f   g   h");
 }
+
+#endif

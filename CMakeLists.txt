@@ -44,7 +44,7 @@ target_compile_definitions(chess
 )
 
 add_subdirectory(BitBoard)
-add_subdirectory(Gamestate)
+add_subdirectory(GameState)
 add_subdirectory(Misc)
 add_subdirectory(Player)
 add_subdirectory(Staticevaluator)

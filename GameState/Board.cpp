@@ -3,8 +3,8 @@
 #include "Move.h"
 #include "Piece.h"
 
-#include "misc/Etc.h"
-#include "misc/exceptions.h"
+#include "Misc/Etc.h"
+#include "Misc/exceptions.h"
 
 #include <algorithm>
 #include <regex>

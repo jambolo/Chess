@@ -3,7 +3,7 @@
 #if !defined(Piece_h__)
 #define Piece_h__
 
-#include "gamestate/ChessTypes.h"
+#include "GameState/ChessTypes.h"
 //#include <memory>
 #include <vector>
 
