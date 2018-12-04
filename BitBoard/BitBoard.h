@@ -31,7 +31,7 @@ public:
     // Number of squares on a bit board
     static int const NUMBER_OF_SQUARES = 64;
 
-    BitBoard() {}
+    BitBoard() = default;
 
     explicit BitBoard(uint64_t i) : board_(i) {}
 

@@ -4,12 +4,10 @@
 #define Piece_h__
 
 #include "GameState/ChessTypes.h"
-//#include <memory>
 #include <vector>
 
 class CBitmap;
 class Board;
-//class CBitmap;
 class Move;
 class GameState;
 struct Position;
@@ -34,7 +32,6 @@ public:
     PieceTypeId     type() const   { return type_;   }
     Color           color() const  { return color_;  }
     char const *    symbol() const { return symbol_; }
-//    CBitmap const * image() const  { return image_;  }
 
     // Returns the symbol for a piece type
     static char const * symbol(PieceTypeId id);
@@ -47,7 +44,6 @@ protected:
     PieceTypeId type_;          // Type of piece
     Color color_;               // Color of piece
     char const * symbol_;       // Symbol for documentation
-//    CBitmap * image_;           // Image of piece
 
 void generateSpanMoves(Board const &     board,
                        Position const &  from,

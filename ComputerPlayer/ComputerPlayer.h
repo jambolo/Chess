@@ -16,7 +16,7 @@ public:
     ComputerPlayer(Color color, int maxDepth);
     virtual ~ComputerPlayer();
 
-    GameState myTurn(GameState const & s0);
+    virtual GameState myTurn(GameState const & s0) override;
 
 private:
 

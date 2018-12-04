@@ -1,10 +1,12 @@
-#include "GameState/ChessTypes.h"
 #include "ComputerPlayer/ComputerPlayer.h"
+#include "GameState/ChessTypes.h"
+#include "GameState/GameState.h"
+
 #include <cstdio>
 
 //static void drawBoard(Board const & b);
 
-int         main(int argc, char ** argv)
+int main(int argc, char ** argv)
 {
     GameState s0;
     if (!s0.initializeFromFen(argv[1]))
@@ -15,6 +17,8 @@ int         main(int argc, char ** argv)
     ComputerPlayer computer(Color::BLACK, 7);
     GameState s1 = computer.myTurn(s0);
     printf("%s", s1.move_.san().c_str());
+
+    return 0;
 }
 
 #if 0

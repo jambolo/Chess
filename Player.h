@@ -3,7 +3,11 @@
 #if !defined(Player_h__)
 #define Player_h__
 
+#include "GameState/ChessTypes.h"
+
+#if defined(PLAYER_ANALYSIS_ENABLED)
 #include "ComputerPlayer/GameTree.h" // for AnalysisData
+#endif // defined(PLAYER_ANALYSIS_ENABLED)
 
 class GameState;
 
