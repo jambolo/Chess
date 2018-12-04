@@ -210,6 +210,8 @@ public:
     //!
     //! @param	type			Type of piece to be moved
     //! @param	position		The piece's position
+    //! @param	friends 		The positions of friendly pieces
+    //! @param	foes			The positions of enemy pieces
     //!
     //! @return	BitBoard showing all threatened squares
     //!
@@ -241,6 +243,8 @@ public:
     //!
     //! @param	type			Type of piece to be moved
     //! @param	position		The piece's position
+    //! @param	friends 		The positions of friendly pieces
+    //! @param	foes     		The positions of enemy pieces
     //!
     //! @return	BitBoard showing all possible destination squares
     //!
