@@ -9,14 +9,14 @@ class GameState;
 
 //#define TRANSPOSITION_TABLE_ANALYSIS_ENABLED
 
-// A "transposition table" is a hash table containing the values of all the board states calculated so far.
-// Actually, not all the states are saved. The slot for each state is not unique and only one state is stored in
-// each slot, so storing a state may overwrite a different state in the same slot. This a speed and memory
-// optimization. A state is overwritten only if its "quality" is less than or equal to the "quality" of the state
+// A "transposition table" is a hash map containing the values of all the board states calculated so far.
+// Actually, as a speed and memory optimization, not all the states are saved. The slot for each state is not
+// unique and only one state is stored in each slot, so storing a state may overwrite a different state in the
+// same slot. A state is overwritten only if its "quality" is less than or equal to the "quality" of the state
 // being stored.
 //
-// A game state can be the result of different sequences of the same set of moves, albeit "transposed". This
-// technique used to cache the value of a game state regardless of the sequence of moves used to reach it, thus
+// A game state can be the result of different sequences of the same (or a different) set of moves. This
+// technique is used to cache the value of a game state regardless of the sequence of moves used to reach it, thus
 // the name "transposition" table. The purpose of the "transposition" table has been extended to become simply a
 // cache of the values of game states, so it is more aptly named "game state value cache" -- but the old name
 // persists.
@@ -76,17 +76,20 @@ private:
 
     class TableEntry
     {
-public:
+    public:
 
-        static uint32_t const UNUSED_ENTRY = (uint32_t)(ZHash::INVALID >> 32);
+        static ZHash::Z const UNUSED_ENTRY = ZHash::INVALID;
 
         void clear() { hashCode_ = UNUSED_ENTRY; }
 
-        uint32_t hashCode_;  // The state's hash code (actually just the upper half)
+        ZHash::Z hashCode_;  // The state's hash code
         int value_;          // The state's value
         int8_t q_;           // The quality of the value
         mutable int8_t age_; // The number of turns since the entry has been referenced
     };
+
+    TableEntry const & find(ZHash::Z hash) const;
+    TableEntry & find(ZHash::Z hash);
 
     TableEntry table_[SIZE];
 };
