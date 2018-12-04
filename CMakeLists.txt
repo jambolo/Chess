@@ -29,7 +29,7 @@ target_link_libraries(chess
     bitboard
     game_state
     misc
-    player
+    computer_player
     zhash
 )
 target_compile_definitions(chess
