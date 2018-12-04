@@ -2,11 +2,13 @@
 
 #include "Move.h"
 #include "Piece.h"
+#include "Position.h"
 
 #include "Misc/Etc.h"
 #include "Misc/exceptions.h"
 
 #include <algorithm>
+#include <cassert>
 #include <regex>
 
 Board::Board()
@@ -112,6 +114,50 @@ bool Board::initializeFromFen(char const * start, char const * end)
     return true;
 }
 
+bool Board::isValidPosition(Position const & p)
+{
+    return p.row >= 0 &&
+        p.row < SIZE &&
+        p.column >= 0 &&
+        p.column < SIZE;
+}
+
+Piece const * Board::pieceAt(Position const & p) const
+{
+    return pieceAt(p.row, p.column);
+}
+
+Piece const * Board::pieceAt(int r, int c) const
+{
+    return board_[r][c];
+}
+
+void Board::putPiece(Piece const * piece, Position const & p)
+{
+    putPiece(piece, p.row, p.column);
+}
+
+void Board::putPiece(Piece const * piece, int r, int c)
+{
+    board_[r][c] = piece;
+}
+
+void Board::removePiece(Position const & p)
+{
+    removePiece(p.row, p.column);
+}
+
+void Board::removePiece(int r, int c)
+{
+    board_[r][c] = NO_PIECE;
+}
+
+void Board::movePiece(Position const & from, Position const & to)
+{
+    board_[to.row][to.column] = board_[from.row][from.column];
+    board_[from.row][from.column] = NO_PIECE;
+}
+
 bool Board::spanIsEmpty(Position const & from, Position const & to) const
 {
     // Get the distance in rows and columns of the move (sign determines direction)
@@ -169,4 +215,15 @@ std::string Board::fen() const
             result += std::to_string(span);
     }
     return result;
+}
+
+void Board::clear()
+{
+    assert(NO_PIECE == 0);
+    memset(board_, 0, sizeof board_);
+}
+
+bool operator ==(Board const & x, Board const & y)
+{
+    return memcmp(x.board_, y.board_, sizeof x.board_) == 0;
 }

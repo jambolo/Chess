@@ -21,7 +21,6 @@ set(SOURCES
     Chess.cpp
     Player.cpp
     Player.h
-    Player.inl
 )
 
 add_executable(chess ${SOURCES})

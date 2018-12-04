@@ -59,8 +59,4 @@ private:
 // Returns true if the other board is the same as this one
 bool operator ==(Board const & x, Board const & y);
 
-// Inline functions
-
-#include "Board.inl"
-
 #endif // !defined(Board_h__)

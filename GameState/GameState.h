@@ -122,8 +122,7 @@ private:
 // Equality operator
 bool operator ==(GameState const & x, GameState const & y);
 
+// List of game states
 using GameStateList = std::vector<GameState>;
-
-#include "GameState/GameState.inl"
 
 #endif // !defined(GameState_h__)

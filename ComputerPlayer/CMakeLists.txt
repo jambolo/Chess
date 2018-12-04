@@ -5,8 +5,8 @@ set(SOURCES
     ComputerPlayer.h
     GameTree.cpp
     GameTree.h
+    Sequence.cpp
     Sequence.h
-    Sequence.inl
     StaticEvaluator.cpp
     StaticEvaluator.h
     TranspositionTable.cpp

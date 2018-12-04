@@ -16,7 +16,7 @@
 
 namespace
 {
-inline bool shouldDoQuiescentSearch(int previousValue, int thisValue)
+bool shouldDoQuiescentSearch(int previousValue, int thisValue)
 {
 #if defined(QUIESCENT_SEARCH_ENABLED)
 

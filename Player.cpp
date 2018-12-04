@@ -1,5 +1,10 @@
 #include "Player.h"
 
+Player::Player(Color color)
+    : myColor_(color)
+{
+}
+
 #if defined(PLAYER_ANALYSIS_ENABLED)
 
 void Player::resetAnalysisData()

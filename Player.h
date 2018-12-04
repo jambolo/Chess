@@ -44,6 +44,4 @@ protected:
     Color myColor_;
 };
 
-#include "Player.inl"
-
 #endif // !defined(Player_h__)

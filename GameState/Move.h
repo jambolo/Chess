@@ -13,9 +13,9 @@ class Move
 {
 public:
     // Values for the special moves. The values are shifted to leave room for board locations when needed
-    static int constexpr RESIGN = 1 << 3;
-    static int constexpr UNDO = 2 << 3;
-    static int constexpr RESET = 3 << 3;
+    static int constexpr RESIGN           = 1 << 3;
+    static int constexpr UNDO             = 2 << 3;
+    static int constexpr RESET            = 3 << 3;
     static int constexpr KINGSIDE_CASTLE  = 4 << 3;
     static int constexpr QUEENSIDE_CASTLE = 5 << 3;
     static int constexpr PROMOTION        = 6 << 3;
@@ -127,7 +127,5 @@ private:
 
 public:
 };
-
-#include "Move.inl"
 
 #endif // !defined(Move_h__)

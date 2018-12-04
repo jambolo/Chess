@@ -5,19 +5,16 @@ set(SOURCES
     Bishop.h
     Board.cpp
     Board.h
-    Board.inl
     ChessTypes.h
     CMakeLists.txt
     GameState.cpp
     GameState.h
-    GameState.inl
     King.cpp
     King.h
     Knight.cpp
     Knight.h
     Move.cpp
     Move.h
-    Move.inl
     Pawn.cpp
     Pawn.h
     Piece.cpp

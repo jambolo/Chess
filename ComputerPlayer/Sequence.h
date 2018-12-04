@@ -25,8 +25,6 @@ public:
     uint16_t toColumn_     : 3;
 };
 
-typedef std::vector<SequenceEntry> Sequence;
-
-#include "Sequence.inl"
+using Sequence = std::vector<SequenceEntry>;
 
 #endif // !defined(Sequence_h__)

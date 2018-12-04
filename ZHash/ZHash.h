@@ -109,7 +109,7 @@ public:
     Z enPassantValue(int color, int column) const;
 
     // Returns the hash value for changing whether the fifty-move rule now or no longer applies
-    Z fifty() const;
+    Z fiftyValue() const;
 
 private:
     
@@ -118,9 +118,5 @@ private:
     Z enPassantValues_[NUMBER_OF_COLORS][Board::SIZE];
     Z fiftyValue_;
 };
-
-// Inline functions
-
-#include "ZHash.inl"
 
 #endif // !defined(ZHash_h__)
