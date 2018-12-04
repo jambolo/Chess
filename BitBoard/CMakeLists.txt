@@ -6,12 +6,12 @@ set(SOURCES
 )
 
 set(PRIVATE_INCLUDE_PATHS
-    .
+    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/Misc/include
 )
 
 set(PUBLIC_INCLUDE_PATHS
-    ${CMAKE_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/Misc/include
+    .
 )
 
 add_library(bitboard ${SOURCES})

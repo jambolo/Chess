@@ -3,16 +3,15 @@ cmake_minimum_required (VERSION 3.4)
 set(SOURCES
     ZHash.cpp
     ZHash.h
-    ZHash.inl
 )
 
 set(PRIVATE_INCLUDE_PATHS
-    .
+    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/Misc/include
 )
 
 set(PUBLIC_INCLUDE_PATHS
-    ${CMAKE_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/Misc/include
+    .
 )
 
 add_library(zhash ${SOURCES})

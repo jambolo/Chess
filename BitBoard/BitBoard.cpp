@@ -16,6 +16,7 @@
 
 #include "BitBoard.h"
 
+#include "GameState/Piece.h"
 #include "GameState/Position.h"
 
 #include <cassert>
