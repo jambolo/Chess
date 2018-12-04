@@ -3,7 +3,7 @@
 #if !defined(Player_h__)
 #define Player_h__
 
-#include "Player/GameTree.h" // for AnalysisData
+#include "ComputerPlayer/GameTree.h" // for AnalysisData
 
 class GameState;
 

@@ -5,9 +5,9 @@
 
 #include "GameState/GameState.h"
 #include "GameState/Move.h"
-#include "StaticEvaluator/StaticEvaluator.h"
+#include "StaticEvaluator.h"
 
-#include "Player/TranspositionTable.h"
+#include "TranspositionTable.h"
 
 //#define GAME_TREE_ANALYSIS_ENABLED
 //#define USING_TRANSPOSITION_TABLE

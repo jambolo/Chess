@@ -1,5 +1,5 @@
 #include "GameState/ChessTypes.h"
-#include "Player/ComputerPlayer.h"
+#include "ComputerPlayer/ComputerPlayer.h"
 #include <cstdio>
 
 //static void drawBoard(Board const & b);

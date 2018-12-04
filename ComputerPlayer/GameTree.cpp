@@ -3,7 +3,7 @@
 #include "GameState/GameState.h"
 #include "GameState/Move.h"
 #include "GameState/Piece.h"
-#include "StaticEvaluator/StaticEvaluator.h"
+#include "StaticEvaluator.h"
 #include "TranspositionTable.h"
 
 #include "Misc/Random.h"

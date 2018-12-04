@@ -30,7 +30,6 @@ target_link_libraries(chess
     game_state
     misc
     player
-    static_evaluator
     zhash
 )
 target_compile_definitions(chess
@@ -46,6 +45,5 @@ target_compile_definitions(chess
 add_subdirectory(BitBoard)
 add_subdirectory(GameState)
 add_subdirectory(Misc)
-add_subdirectory(Player)
-add_subdirectory(Staticevaluator)
+add_subdirectory(ComputerPlayer)
 add_subdirectory(ZHash)

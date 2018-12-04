@@ -3,7 +3,7 @@
 #include "GameState/Board.h"
 #include "GameState/GameState.h"
 #include "GameTree.h"
-#include "StaticEvaluator/StaticEvaluator.h"
+#include "StaticEvaluator.h"
 #include "TranspositionTable.h"
 
 //#include <mmsystem.h>

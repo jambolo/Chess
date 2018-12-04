@@ -6,8 +6,11 @@
 
 #include "Misc/Etc.h"
 #include "Misc/exceptions.h"
-#include "StaticEvaluator/StaticEvaluator.h"
 #include "ZHash/ZHash.h"
+
+#if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
+#include "ComputerPlayer/StaticEvaluator.h"
+#endif // defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
 
 #include <regex>
 

@@ -7,17 +7,19 @@ set(SOURCES
     GameTree.h
     Sequence.h
     Sequence.inl
+    StaticEvaluator.cpp
+    StaticEvaluator.h
     TranspositionTable.cpp
     TranspositionTable.h
 )
 
 set(PRIVATE_INCLUDE_PATHS
-    .
+    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/Misc/include
 )
 
 set(PUBLIC_INCLUDE_PATHS
-    ${CMAKE_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/Misc/include
+    .
 )
 
 add_library(player ${SOURCES})

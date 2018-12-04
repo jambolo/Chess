@@ -5,8 +5,11 @@
 
 #include "Board.h"
 #include "Move.h"
-#include "Player/Sequence.h"
 #include "ZHash/ZHash.h"
+
+#if defined(GAME_STATE_ANALYSIS_ENABLED)
+#include "ComputerPlayer/Sequence.h"
+#endif // defined(GAME_STATE_ANALYSIS_ENABLED)
 
 #include <queue>
 #include <vector>
