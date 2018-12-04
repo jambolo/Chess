@@ -24,37 +24,56 @@
 class Piece;
 struct Position;
 
-//! Zobrist Hash Coding.
+//! Zobrist Hashing Calculator.
+//!
+//! Zobrist Hashing is used to encode the state of a chess game in a single number. There is a risk of two unrelated states
+//! having the same value. In this implementation the value has 63 bits and the risk of collision is assumed to be extremely
+//! low, though that assumption could be horribly wrong.
+//!
+//! There are 6 components of state. This implementation of Zorbrist hashing incorporates most of them.
+//!     1. Piece placement
+//!     2. Active color (this is ignored because it is not useful and it interferes with the null-move heuristic)
+//!     3. Castling availability
+//!     4. En-passant possibility
+//!     5. Fifty-move rule
+//!     6. Number of moves (this is ignored because it is not useful and it interferes with transposition optimization)
+
 class ZHash
 {
 public:
 
-    // Type of the hash value
-    typedef uint64_t Z;
+    //! Type of a hash value
+    using Z = uint64_t;
 
-    // An impossible value which will always be "undefined"
-    static Z const INVALID = 0xFFFFFFFFFFFFFFFF;
+    //! An impossible value which will always be "undefined"
+    static Z constexpr INVALID = 0xFFFFFFFFFFFFFFFF;
+    
+    //! The value of an empty board
+    static Z constexpr EMPTY = 0;
 
     // Constructor
-    explicit ZHash(Z z = 0);
+    explicit ZHash(Z z = EMPTY);
 
     // Constructor
-    explicit ZHash(Board const & board, int castle = 0, Color ePColor = Color::INVALID, int ePColumn = -1);
+    explicit ZHash(Board const & board, unsigned castleStatus = 0, Color ePColor = Color::INVALID, int ePColumn = -1, bool fiftyMoveRule = false);
 
-    // Conversion to Z
-    operator Z() const { return value_; }
+    //! Returns the current value.
+    Z value() const { return value_; }
 
-    // Adds a piece. Returns the new value
-    ZHash & add(Piece const & piece, Position const & position);
+    //! Adds a piece. Returns the new value
+    ZHash add(Piece const & piece, Position const & position);
 
-    // Removes a piece. Returns the new value
-    ZHash & remove(Piece const & piece, Position const & position);
+    //! Removes a piece. Returns the new value.
+    ZHash remove(Piece const & piece, Position const & position);
 
-    // Changes the status of the ability to perform a castle. Returns the new value
-    ZHash & castle(int which);
+    //! Changes the ability to perform a castle. Returns the new value.
+    ZHash castle(unsigned mask);
 
-    // Changes en passant status. Returns the new value
-    ZHash & enPassant(Color color, int column);
+    //! Changes en passant status. Returns the new value.
+    ZHash enPassant(Color color, int column);
+    
+    //! Changes the state of the fifty-move rule (it either now applies to the next move or it doesn't)
+    ZHash fifty();
 
     // Returns true if the value is undefined (i.e. not a legal Z value)
     bool isUndefined() const;
@@ -67,7 +86,7 @@ private:
 
     Z value_; // The hash value
 
-    static ZValueTable const zValueTable_; // The hash code table
+    static ZValueTable const zValueTable_; // The hash values for each incremental state change
 };
 
 // Equality operator
@@ -77,22 +96,27 @@ class ZHash::ZValueTable
 {
 public:
 
+    // Conatructor
     ZValueTable();
 
-    // Returns the appropriate value for a piece on the board
+    // Returns the hash value for a piece on the board
     Z pieceValue(int color, int type, int row, int column) const;
 
-    // Returns the appropriate value for en passant
+    // Returns the hash value for a particular castle availability
+    Z castleValue(int which) const;
+    
+    // Returns the hash value for en passant
     Z enPassantValue(int color, int column) const;
 
-    // Returns the appropriate value for a particular castle
-    Z castleValue(int which) const;
+    // Returns the hash value for changing whether the fifty-move rule now or no longer applies
+    Z fifty() const;
 
 private:
-
+    
     Z pieceValues_[NUMBER_OF_COLORS][Board::SIZE][Board::SIZE][NUMBER_OF_PIECE_TYPES];
+    Z castleValues_[4];
     Z enPassantValues_[NUMBER_OF_COLORS][Board::SIZE];
-    Z castleValues_[NUMBER_OF_CASTLE_BITS]; // Castles and availabilities
+    Z fiftyValue_;
 };
 
 // Inline functions

@@ -30,9 +30,9 @@ inline uint64_t generateRandomZ(RandomMT & rng)
     // Z is 63 bits and RandomMT is 32 bits so we have to concatenate two numbers together to make a Z value.
     return ((uint64_t(rng()) << 32) | rng()) & 0x7fffffffffffffff;
 }
-}
+} // anonymous namespace
 
-ZHash::ZHash(Board const & board, int castleStatus /* = 0*/, Color ePColor /* = INVALID*/, int ePColumn /* = -1*/)
+ZHash::ZHash(Board const & board, unsigned castleStatus /* = 0*/, Color ePColor /* = INVALID*/, int ePColumn /* = -1*/, bool fiftyMoveRule /* = false */)
 {
     value_ = 0;
 
@@ -48,19 +48,16 @@ ZHash::ZHash(Board const & board, int castleStatus /* = 0*/, Color ePColor /* = 
         }
     }
 
-    for (int i = 0; i < NUMBER_OF_CASTLE_BITS; ++i)
-    {
-        int mask = 1 << i;
-        if ((castleStatus & mask) != 0)
-        {
-            castle(i);
-        }
-    }
+    if (castleStatus != 0)
+        castle(castleStatus);
 
     if ((ePColor != Color::INVALID) && (ePColumn >= 0))
     {
         enPassant(ePColor, ePColumn);
     }
+    
+    if (fiftyMoveRule)
+        fifty();
 }
 
 ZHash::ZValueTable::ZValueTable()
@@ -83,6 +80,13 @@ ZHash::ZValueTable::ZValueTable()
         }
     }
 
+    // Generate castle values
+    
+    for (auto & v : castleValues_)
+    {
+        v = generateRandomZ(rng);
+    }
+    
     // Generate en passant values
 
     for (int i = 0; i < NUMBER_OF_COLORS; ++i)
@@ -92,11 +96,8 @@ ZHash::ZValueTable::ZValueTable()
             enPassantValues_[i][j] = generateRandomZ(rng);
         }
     }
+    
+    // Generate fifty-move rule value
 
-    // Generate castle values
-
-    for (auto & v : castleValues_)
-    {
-        v = generateRandomZ(rng);
-    }
+    fiftyValue_ = generateRandomZ(rng);
 }

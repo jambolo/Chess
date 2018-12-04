@@ -22,7 +22,7 @@
 #include "GameState/Board.h"
 #include "ZHash.h"
 
-inline ZHash::ZHash(Z z /* = 0 */)
+inline ZHash::ZHash(Z z /* = EMPTY */)
     : value_(z)
 {
 }
@@ -32,31 +32,44 @@ inline bool operator ==(ZHash const & x, ZHash const & y)
     return x.value_ == y.value_;
 }
 
-inline ZHash & ZHash::add(Piece const & piece, Position const & position)
+inline ZHash ZHash::add(Piece const & piece, Position const & position)
 {
     value_ ^= zValueTable_.pieceValue((int)piece.color(), (int)piece.type(), position.row, position.column);
 
     return *this;
 }
 
-inline ZHash & ZHash::remove(Piece const & piece, Position const & position)
+inline ZHash ZHash::remove(Piece const & piece, Position const & position)
 {
     value_ ^= zValueTable_.pieceValue((int)piece.color(), (int)piece.type(), position.row, position.column);
 
     return *this;
 }
 
-inline ZHash & ZHash::castle(int castle)
+inline ZHash ZHash::castle(unsigned mask)
 {
-    value_ ^= zValueTable_.castleValue(castle);
+    assert(NUMBER_OF_CASTLE_BITS == 8);
+    assert(CASTLE_AVAILABILITY_MASK == 0xf0);
+    for (int i = 0; i < 4; ++i)
+    {
+        if (mask & (0x10 << i))
+            value_ ^= zValueTable_.castleValue(i);
+    }
 
     return *this;
 }
 
-inline ZHash & ZHash::enPassant(Color color, int column)
+inline ZHash ZHash::enPassant(Color color, int column)
 {
     value_ ^= zValueTable_.enPassantValue((int)color, column);
+    
+    return *this;
+}
 
+inline ZHash ZHash::fifty()
+{
+    value_ ^= zValueTable_.fifty();
+    
     return *this;
 }
 
@@ -71,14 +84,18 @@ inline ZHash::Z ZHash::ZValueTable::pieceValue(int color, int type, int row, int
     return pieceValues_[color][row][column][type];
 }
 
-inline ZHash::Z ZHash::ZValueTable::enPassantValue(int color, int column) const
-{
-    return enPassantValues_[color][column];
-}
-
 inline ZHash::Z ZHash::ZValueTable::castleValue(int castle) const
 {
     return castleValues_[castle];
 }
 
+inline ZHash::Z ZHash::ZValueTable::enPassantValue(int color, int column) const
+{
+    return enPassantValues_[color][column];
+}
+
+inline ZHash::Z ZHash::ZValueTable::fifty() const
+{
+    return fiftyValue_;
+}
 #endif // !defined(ZHash_inl__)
