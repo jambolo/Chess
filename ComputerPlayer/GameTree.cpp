@@ -15,7 +15,7 @@ namespace
 {
 bool shouldDoQuiescentSearch(int previousValue, int thisValue)
 {
-#if defined(QUIESCENT_SEARCH_ENABLED)
+#if defined(FEATURE_QUIESCENT_SEARCH)
 
     int const QUIESCENT_THRESHOLD = 1000;
 
@@ -24,16 +24,16 @@ bool shouldDoQuiescentSearch(int previousValue, int thisValue)
 
     return abs(previousValue - thisValue) >= QUIESCENT_THRESHOLD;
 
-#else   // defined( QUIESCENT_SEARCH_ENABLED )
+#else   // defined( FEATURE_QUIESCENT_SEARCH )
 
     return false;
 
-#endif  // defined( QUIESCENT_SEARCH_ENABLED )
+#endif  // defined( FEATURE_QUIESCENT_SEARCH )
 }
 } // anonymous namespace
 
 GameTree::GameTree(TranspositionTable * pTTable, int maxDepth)
-#if defined(USING_TRANSPOSITION_TABLE)
+#if defined(FEATURE_TRANSPOSITION_TABLE)
     : transpositionTable_(pTTable)
     , maxDepth_(maxDepth)
 #else
@@ -64,26 +64,26 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 
     GameState best_move;
     int       best_score = std::numeric_limits<int>::min();
-#if defined(GAME_TREE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_TREE_ANALYSIS)
     int worst_score = std::numeric_limits<int>::max();
-#endif // defined( GAME_TREE_ANALYSIS_ENABLED )
+#endif // defined( FEATURE_GAME_TREE_ANALYSIS )
 
     for (auto & myMove : myMoves)
     {
         // Revise the value of the move by searching the tree of all possible responses
         opponentsAlphaBeta(&myMove, best_score, std::numeric_limits<int>::max(), responseDepth);
-#if defined(PRINTING_GAME_TREE_NODE_INFO)
+#if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
         printStateInfo(myMove, depth, best_score, std::numeric_limits<int>::max());
 #endif
 
-#if defined(GAME_TREE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_TREE_ANALYSIS)
 
         // If this is the lowest score then save that for analysis
 
         if (myMove.value_ < worst_score)
             worst_score = myMove.value_;
 
-#endif  // defined( GAME_TREE_ANALYSIS_ENABLED )
+#endif  // defined( FEATURE_GAME_TREE_ANALYSIS )
 
         // If this is the highest value so far, then save it (if checkmate, then there is no need to continue looking for better).
         if (myMove.value_ > best_score)
@@ -99,26 +99,26 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
     if (best_score < -StaticEvaluator::RESIGNATION_THRESHOLD)
         best_move.move_ = Move::resign(my_color);
 
-#if defined(GAME_TREE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_TREE_ANALYSIS)
 
     // Update analysis data
     analysisData_.worstValue = worst_score;
-#if defined(USING_TRANSPOSITION_TABLE)
+#if defined(FEATURE_TRANSPOSITION_TABLE)
     analysisData_.tTableAnalysisData = transpositionTable_->analysisData_;
 #endif
     analysisData_.gameStateAnalysisData = best_move.analysisData_;
 
-#endif // defined( GAME_TREE_ANALYSIS_ENABLED )
+#endif // defined( FEATURE_GAME_TREE_ANALYSIS )
 
-#if defined(USING_TRANSPOSITION_TABLE)
-#if defined(TRANSPOSITION_TABLE_ANALYSIS_ENABLED)
+#if defined(FEATURE_TRANSPOSITION_TABLE)
+#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
     transpositionTable_->resetAnalysisData();
-#endif // defined( GAME_TREE_ANALYSIS_ENABLED )
+#endif // defined( FEATURE_GAME_TREE_ANALYSIS )
 #endif
 
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
     best_move.resetAnalysisData();
-#endif // defined( GAME_STATE_ANALYSIS_ENABLED )
+#endif // defined( FEATURE_GAME_STATE_ANALYSIS )
 
     // Return the best move
     return best_move;
@@ -146,9 +146,9 @@ void GameTree::myAlphaBeta(GameState * state, int alpha, int beta, int depth)
     int  best_value = std::numeric_limits<int>::min(); // Initialize to worst
     bool pruned     = false;
 
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
     GameState * pBestResponse = 0;
-#endif // defined( GAME_STATE_ANALYSIS_ENABLED )
+#endif // defined( FEATURE_GAME_STATE_ANALYSIS )
 
     for (auto & response : responses)
     {
@@ -163,11 +163,11 @@ void GameTree::myAlphaBeta(GameState * state, int alpha, int beta, int depth)
              (shouldDoQuiescentSearch(state->value_, response.value_) && (responseDepth < MAX_DEPTH))))
         {
             opponentsAlphaBeta(&response, alpha, beta, responseDepth);
-#if defined(PRINTING_GAME_TREE_NODE_INFO)
+#if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
             printStateInfo(response, depth, alpha, beta);
 #endif
         }
-#if defined(PRINTING_GAME_TREE_NODE_INFO)
+#if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
         else
         {
             printStateInfo(response, depth, alpha, beta);
@@ -180,9 +180,9 @@ void GameTree::myAlphaBeta(GameState * state, int alpha, int beta, int depth)
             // Save it
             best_value = response.value_;
 
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
             pBestResponse = &response;
-#endif      // defined( GAME_STATE_ANALYSIS_ENABLED )
+#endif      // defined( FEATURE_GAME_STATE_ANALYSIS )
 
             // If this is a checkmate, then there is no reason to look for anything better
             if (best_value == MY_CHECKMATE_VALUE)
@@ -202,9 +202,9 @@ void GameTree::myAlphaBeta(GameState * state, int alpha, int beta, int depth)
                 // Beta cutoff
                 pruned = true;
 
-#if defined(GAME_TREE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_TREE_ANALYSIS)
                 ++analysisData_.betaHitCount;
-#endif          // defined( GAME_TREE_ANALYSIS_ENABLED )
+#endif          // defined( FEATURE_GAME_TREE_ANALYSIS )
 
                 break;
             }
@@ -228,16 +228,16 @@ void GameTree::myAlphaBeta(GameState * state, int alpha, int beta, int depth)
     state->value_   = best_value;
     state->quality_ = quality;
 
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
 
     // Save the expected sequence
     memcpy(&state->analysisData_.expected,
            &pBestResponse->analysisData_.expected,
            sizeof(state->analysisData_.expected));
 
-#endif // defined( GAME_STATE_ANALYSIS_ENABLED )
+#endif // defined( FEATURE_GAME_STATE_ANALYSIS )
 
-#if defined(USING_TRANSPOSITION_TABLE)
+#if defined(FEATURE_TRANSPOSITION_TABLE)
     // Save the value of the state in the T-table if the ply was not pruned. Pruning results in an incorrect value
     // because the search is not complete. Also, the value is stored only if its quality is better than the quality
     // of the value in the table.
@@ -269,9 +269,9 @@ void GameTree::opponentsAlphaBeta(GameState * state, int alpha, int beta, int de
     int  best_value = std::numeric_limits<int>::max(); // Initialize to worst
     bool pruned     = false;
 
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
     GameState * pBestResponse = 0;
-#endif // defined( GAME_STATE_ANALYSIS_ENABLED )
+#endif // defined( FEATURE_GAME_STATE_ANALYSIS )
 
     for (auto & response : responses)
     {
@@ -286,11 +286,11 @@ void GameTree::opponentsAlphaBeta(GameState * state, int alpha, int beta, int de
              (shouldDoQuiescentSearch(state->value_, response.value_) && (responseDepth < MAX_DEPTH))))
         {
             myAlphaBeta(&response, alpha, beta, responseDepth);
-#if defined(PRINTING_GAME_TREE_NODE_INFO)
+#if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
             printStateInfo(response, depth, alpha, beta);
 #endif
         }
-#if defined(PRINTING_GAME_TREE_NODE_INFO)
+#if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
         else
         {
             printStateInfo(response, depth, alpha, beta);
@@ -303,9 +303,9 @@ void GameTree::opponentsAlphaBeta(GameState * state, int alpha, int beta, int de
             // Save it
             best_value = response.value_;
 
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
             pBestResponse = &response;
-#endif      // defined( GAME_STATE_ANALYSIS_ENABLED )
+#endif      // defined( FEATURE_GAME_STATE_ANALYSIS )
 
             // If this is a checkmate, then there is no reason to look for anything better
             if (best_value == OPPONENT_CHECKMATE_VALUE)
@@ -325,9 +325,9 @@ void GameTree::opponentsAlphaBeta(GameState * state, int alpha, int beta, int de
                 // Alpha cutoff
                 pruned = true;
 
-#if defined(GAME_TREE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_TREE_ANALYSIS)
                 ++analysisData_.alphaHitCount;
-#endif          // defined( GAME_TREE_ANALYSIS_ENABLED )
+#endif          // defined( FEATURE_GAME_TREE_ANALYSIS )
 
                 break;
             }
@@ -351,16 +351,16 @@ void GameTree::opponentsAlphaBeta(GameState * state, int alpha, int beta, int de
     state->value_   = best_value;
     state->quality_ = quality;
 
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
 
     // Save the expected sequence
     memcpy(&state->analysisData_.expected,
            &pBestResponse->analysisData_.expected,
            sizeof(state->analysisData_.expected));
 
-#endif // defined( GAME_STATE_ANALYSIS_ENABLED )
+#endif // defined( FEATURE_GAME_STATE_ANALYSIS )
 
-#if defined(USING_TRANSPOSITION_TABLE)
+#if defined(FEATURE_TRANSPOSITION_TABLE)
     // Save the value of the state in the T-table if the ply was not pruned. Pruning results in an incorrect value
     // because the search is not complete. Also, the value is stored only if its quality is better than the quality
     // of the value in the table.
@@ -403,13 +403,13 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
                     // Compute a preliminary value for the state
                     evaluate(&new_state, depth);
 
-#if defined(USING_PRIORITIZED_MOVE_ORDERING)
+#if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
 
                     // Determine the new state's priority
                     prioritize(&new_state, depth);
 #endif
 
-#if defined(GAME_TREE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_TREE_ANALYSIS)
                     ++analysisData_.aGeneratedStateCounts[depth];
 #endif
 
@@ -426,7 +426,7 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
         std::sort(states.begin(), states.end(), [] (GameState const & g0, GameState const & g1)
                   {
                       // Sort the elements in descending order, first by priority, then by value.
-#if defined(USING_PRIORITIZED_MOVE_ORDERING)
+#if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
 
                       if (g0.priority_ > g1.priority_)
                           return true;
@@ -434,7 +434,7 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
                       if (g0.priority_ < g1.priority_)
                           return false;
 
-#endif      // defined( USING_PRIORITIZED_MOVE_ORDERING )
+#endif      // defined( FEATURE_PRIORITIZED_MOVE_ORDERING )
 
                       return g0.value_ > g1.value_;
                   }
@@ -445,7 +445,7 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
         std::sort(states.begin(), states.end(), [](GameState const & g0, GameState const & g1)
                   {
                       // Sort the elements in descending order, first by priority, then by value.
-#if defined(USING_PRIORITIZED_MOVE_ORDERING)
+#if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
 
                       if (g0.priority_ > g1.priority_)
                           return true;
@@ -453,7 +453,7 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
                       if (g0.priority_ < g1.priority_)
                           return false;
 
-#endif      // defined( USING_PRIORITIZED_MOVE_ORDERING )
+#endif      // defined( FEATURE_PRIORITIZED_MOVE_ORDERING )
 
                       return g0.value_ < g1.value_;
                   }
@@ -463,7 +463,7 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
 
 void GameTree::evaluate(GameState * pState, int depth)
 {
-#if defined(USING_TRANSPOSITION_TABLE)
+#if defined(FEATURE_TRANSPOSITION_TABLE)
     // SEF optimization:
     //
     // Since any value of any state in the T-table has already been computed by search and/or SEF, it has a quality
@@ -477,17 +477,17 @@ void GameTree::evaluate(GameState * pState, int depth)
         // Use the value from the T-table
     }
     else
-#endif // if defined(USING_TRANSPOSITION_TABLE)
+#endif // if defined(FEATURE_TRANSPOSITION_TABLE)
     {
-#if defined(GAME_TREE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_TREE_ANALYSIS)
         ++analysisData_.aEvaluationCounts[depth];
-#endif  // defined( GAME_TREE_ANALYSIS_ENABLED )
+#endif  // defined( FEATURE_GAME_TREE_ANALYSIS )
 
-#if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
+#if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
 
         // Note: The static value was already computed during move generation
 
-#if defined(INCREMENTAL_STATIC_EVALUATION_VALIDATION_ENABLED)
+#if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION_VALIDATION)
         int absoluteValue = StaticEvaluator::evaluate(*pState);
 
         if (myColor_ == Color::BLACK)
@@ -495,9 +495,9 @@ void GameTree::evaluate(GameState * pState, int depth)
 
         ASSERT(pState->value_ == absoluteValue);
 
-#endif         // defined( INCREMENTAL_STATIC_EVALUATION_VALIDATION_ENABLED )
+#endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION_VALIDATION )
 
-#else   // defined( INCREMENTAL_STATIC_EVALUATION_ENABLED )
+#else   // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
 
         int value = StaticEvaluator::evaluate(*pState);
 
@@ -509,16 +509,16 @@ void GameTree::evaluate(GameState * pState, int depth)
         pState->value_   = value;
         pState->quality_ = SEF_QUALITY;
 
-#endif  // defined( INCREMENTAL_STATIC_EVALUATION_ENABLED )
+#endif  // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
 
-#if defined(USING_TRANSPOSITION_TABLE)
+#if defined(FEATURE_TRANSPOSITION_TABLE)
         // Save the value of the state in the T-table
         transpositionTable_->update(*pState);
 #endif
     }
 }
 
-#if defined(USING_PRIORITIZED_MOVE_ORDERING)
+#if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
 
 void GameTree::prioritize(GameState * pState, int depth)
 {
@@ -539,9 +539,9 @@ void GameTree::prioritize(GameState * pState, int depth)
     pState->priority_ = (pState->quality_ > quality) ? PRIORITY_HIGH : PRIORITY_LOW;
 }
 
-#endif // defined( USING_PRIORITIZED_MOVE_ORDERING )
+#endif // defined( FEATURE_PRIORITIZED_MOVE_ORDERING )
 
-#if defined(GAME_TREE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_TREE_ANALYSIS)
 
 void GameTree::resetAnalysisData()
 {
@@ -571,9 +571,9 @@ GameTree::AnalysisData::AnalysisData()
     worstValue    = 0;
 }
 
-#endif // defined( GAME_TREE_ANALYSIS_ENABLED )
+#endif // defined( FEATURE_GAME_TREE_ANALYSIS )
 
-#if defined(PRINTING_GAME_TREE_NODE_INFO)
+#if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
 void GameTree::printStateInfo(GameState const & state, int depth, int alpha, int beta)
 {
     for (int i = 0; i < depth; ++i)
@@ -585,4 +585,4 @@ void GameTree::printStateInfo(GameState const & state, int depth, int alpha, int
             state.move_.notation().c_str(), state.value_, state.quality_, alpha, beta);
 }
 
-#endif // if defined(PRINTING_GAME_TREE_NODE_INFO)
+#endif // if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)

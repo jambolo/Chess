@@ -32,16 +32,16 @@ GameState ComputerPlayer::myTurn(GameState const & s0)
 
 //    uint32_t elapsed_time = timeGetTime() - start_time;
 
-#if defined(PLAYER_ANALYSIS_ENABLED)
+#if defined(FEATURE_PLAYER_ANALYSIS)
 
     // Update analysis data
 
     analysisData_.time  = 0; // elapsed_time;
     analysisData_.value = new_state.value_;
-#if defined(GAME_TREE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_TREE_ANALYSIS)
     analysisData_.gameTreeAnalysisData = game_tree.analysisData_;
 #endif
-#endif // defined( PLAYER_ANALYSIS_ENABLED )
+#endif // defined( FEATURE_PLAYER_ANALYSIS )
 
     return new_state;
 }

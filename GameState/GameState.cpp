@@ -9,9 +9,9 @@
 #include "Misc/Etc.h"
 #include "ZHash/ZHash.h"
 
-#if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
+#if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
 #include "ComputerPlayer/StaticEvaluator.h"
-#endif // defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
+#endif // defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
 
 #include <regex>
 
@@ -43,19 +43,19 @@ void GameState::initialize()
     makeMove(Color::WHITE, Move::reset());
     value_   = 0;
     quality_ = std::numeric_limits<int8_t>::min();
-#if defined(USING_PRIORITIZED_MOVE_ORDERING)
+#if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
     priority_ = 0;
 #endif
     inCheck_    = false;
     moveNumber_ = 1;
     zhash_      = ZHash(board_);
 
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
     analysisData_.reset();
 #endif
 }
 
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
 
 void GameState::resetAnalysisData()
 {
@@ -67,7 +67,7 @@ void GameState::AnalysisData::reset()
     memset(expected, -1, sizeof(expected));
 }
 
-#endif // defined( GAME_STATE_ANALYSIS_ENABLED )
+#endif // defined( FEATURE_GAME_STATE_ANALYSIS )
 
 bool GameState::initializeFromFen(char const * fen)
 {
@@ -144,7 +144,7 @@ ZHash GameState::zhash() const
 
 void GameState::makeMove(Color color, Move const & move, int depth /*= 0*/)
 {
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
     // Add this move to the sequence
     assert(depth > 0);
     int const sequenceIndex = depth - 1;
@@ -163,9 +163,9 @@ void GameState::makeMove(Color color, Move const & move, int depth /*= 0*/)
             }
         }
     }
-#else // if defined(GAME_STATE_ANALYSIS_ENABLED)
+#else // if defined(FEATURE_GAME_STATE_ANALYSIS)
     (void)depth;
-#endif // if defined(GAME_STATE_ANALYSIS_ENABLED)
+#endif // if defined(FEATURE_GAME_STATE_ANALYSIS)
 
     // Save the move
     move_ = move;
@@ -253,10 +253,10 @@ void GameState::makeNormalMove(Color color, Move const & move)
     else
         pAdded = NO_PIECE;
 
-#if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
+#if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     // Update castle status
     CastleStatus oldStatus = castleStatus_;
-#endif // defined( INCREMENTAL_STATIC_EVALUATION_ENABLED )
+#endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
 
     if (color == Color::WHITE)
     {
@@ -287,23 +287,23 @@ void GameState::makeNormalMove(Color color, Move const & move)
         }
     }
 
-#if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
+#if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     CastleStatus castleStatusChange = oldStatus ^ castleStatus_;
-#endif // defined( INCREMENTAL_STATIC_EVALUATION_ENABLED )
+#endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
 
     // Update check status
     // @todo check for in check
 
-#if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
+#if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     value_ += StaticEvaluator::incremental(move, castleStatusChange, pMoved, &capturedPosition, pCaptured, pAdded);
-#endif // defined( INCREMENTAL_STATIC_EVALUATION_ENABLED )
+#endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
 }
 
 void GameState::makeCastleMove(Color color, Move const & move)
 {
-#if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
+#if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     CastleStatus oldStatus = castleStatus_;
-#endif // defined( INCREMENTAL_STATIC_EVALUATION_ENABLED )
+#endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
 
     Move kingsMove;
     Move rooksMove;
@@ -349,16 +349,16 @@ void GameState::makeCastleMove(Color color, Move const & move)
         castleStatus_ |= BLACK_CASTLE_UNAVAILABLE;
     }
 
-#if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
+#if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     CastleStatus castleStatusChange = oldStatus ^ castleStatus_;
-#endif // defined( INCREMENTAL_STATIC_EVALUATION_ENABLED )
+#endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
 
     // Update check status
     // @todo check for in check
 
-#if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
+#if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     value_ += StaticEvaluator::incremental(move, castleStatusChange);
-#endif // defined( INCREMENTAL_STATIC_EVALUATION_ENABLED )
+#endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
 }
 
 Piece const * GameState::promote(Color color, Position const & position)

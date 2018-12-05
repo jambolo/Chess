@@ -23,7 +23,7 @@ public:
     static int constexpr MY_CHECKMATE_VALUE       = StaticEvaluator::CHECKMATE_VALUE;
     static int constexpr OPPONENT_CHECKMATE_VALUE = -StaticEvaluator::CHECKMATE_VALUE;
 
-#if defined(GAME_TREE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_TREE_ANALYSIS)
 
     // Resets all analysis data
     void resetAnalysisData();
@@ -37,10 +37,10 @@ public:
         int worstValue;
         int alphaHitCount;
         int betaHitCount;
-#if defined(USING_TRANSPOSITION_TABLE) && defined(TRANSPOSITION_TABLE_ANALYSIS_ENABLED)
+#if defined(FEATURE_TRANSPOSITION_TABLE) && defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
         TranspositionTable::AnalysisData tTableAnalysisData;
 #endif
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
         GameState::AnalysisData gameStateAnalysisData;
 #endif
         AnalysisData();
@@ -49,7 +49,7 @@ public:
 
     mutable AnalysisData analysisData_;
 
-#endif // defined( GAME_TREE_ANALYSIS_ENABLED )
+#endif // defined( FEATURE_GAME_TREE_ANALYSIS )
 
 private:
 
@@ -64,7 +64,7 @@ private:
     // Static evaluation function
     void evaluate(GameState * pstate, int depth);
 
-#if defined(USING_PRIORITIZED_MOVE_ORDERING)
+#if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
 
     // Computes a search priority for the state
     void prioritize(GameState * pstate, int depth);
@@ -74,13 +74,13 @@ private:
     // Generate a list of all possible states in response to the specified one
     void generateStates(GameState const & state, bool my_move, int depth, GameStateList & states);
 
-#if defined(PRINTING_GAME_TREE_NODE_INFO)
+#if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
     void printStateInfo(GameState const & state, int depth, int alpha, int beta);
 #endif
 
     Color myColor_;                           // My color
     Color yourColor_;                         // My opponent's color
-#if defined(USING_TRANSPOSITION_TABLE)
+#if defined(FEATURE_TRANSPOSITION_TABLE)
     TranspositionTable * transpositionTable_; // Transposition table
 #endif
     int maxDepth_;                            // How deep to seach

@@ -44,7 +44,7 @@ public:
     // Bump the age of entries so that they are eventually replaced by newer entries.
     void age();
 
-#if defined(TRANSPOSITION_TABLE_ANALYSIS_ENABLED)
+#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
 
     // Resets all analysis data
     void resetAnalysisData();
@@ -68,7 +68,7 @@ public:
 
     mutable AnalysisData analysisData_;
 
-#endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
+#endif // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
 
 private:
 

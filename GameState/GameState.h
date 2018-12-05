@@ -7,9 +7,9 @@
 #include "Move.h"
 #include "ZHash/ZHash.h"
 
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
 #include "ComputerPlayer/Sequence.h"
-#endif // defined(GAME_STATE_ANALYSIS_ENABLED)
+#endif // defined(FEATURE_GAME_STATE_ANALYSIS)
 
 #include <queue>
 #include <vector>
@@ -59,7 +59,7 @@ public:
     // Returns the FEN string for the state
     std::string fen() const;
 
-#if defined(GAME_STATE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
 
     static int const EXPECTED_SEQUENCE_SIZE = 10;
 
@@ -77,7 +77,7 @@ public:
 
     mutable AnalysisData analysisData_;
 
-#endif // defined( GAME_STATE_ANALYSIS_ENABLED )
+#endif // defined( FEATURE_GAME_STATE_ANALYSIS )
 
     Board board_;               // The board
     CastleStatus castleStatus_; // Which side has castled and which castles are still possible
@@ -88,9 +88,9 @@ public:
     Move move_;                 // The move that resulted in this state
     int value_;                 // Value of the game state
     int quality_;               // Quality of the value
-#if defined(USING_PRIORITIZED_MOVE_ORDERING)
+#if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
     int priority_;              // Priority of this state (determines sorting order)
-#endif // defined( USING_PRIORITIZED_MOVE_ORDERING )
+#endif // defined( FEATURE_PRIORITIZED_MOVE_ORDERING )
     bool inCheck_;              // True if the king is in check
     int moveNumber_;            // Move number
     ZHash zhash_;               // Hash code for this state

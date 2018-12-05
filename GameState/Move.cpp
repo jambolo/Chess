@@ -73,7 +73,7 @@ bool Move::isSquare(int dr, int dc)
 
 std::string Move::notation() const
 {
-#if defined(NOTATION_LONG)
+#if defined(FEATURE_NOTATION_LONG)
     std::string result;
     if (isSpecial())
     {
@@ -146,6 +146,7 @@ std::string Move::notation() const
         }
         result += to().notation();
     }
+#endif
     return result;
 }
 
