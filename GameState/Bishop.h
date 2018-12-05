@@ -9,7 +9,7 @@ class Bishop : public Piece
 {
 public:
 
-    Bishop(Color c) : Piece(PieceTypeId::BISHOP, c) {}
+    explicit Bishop(Color c) : Piece(PieceTypeId::BISHOP, c) {}
 
     // Generates all legal moves for this piece
     virtual void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const override;

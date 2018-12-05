@@ -9,7 +9,7 @@ class Queen : public Piece
 {
 public:
 
-    Queen(Color c) : Piece(PieceTypeId::QUEEN, c) {}
+    explicit Queen(Color c) : Piece(PieceTypeId::QUEEN, c) {}
 
     // Generates all legal moves for this piece
     virtual void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const override;

@@ -9,7 +9,7 @@ class Rook : public Piece
 {
 public:
 
-    Rook(Color c) : Piece(PieceTypeId::ROOK, c) {}
+    explicit Rook(Color c) : Piece(PieceTypeId::ROOK, c) {}
 
     // Generates all legal moves for this piece
     virtual void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const override;

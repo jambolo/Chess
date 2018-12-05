@@ -12,7 +12,7 @@ public:
     static int constexpr STARTING_ROW_BLACK = 1;
     static int constexpr STARTING_ROW_WHITE = 6;
 
-    Pawn(Color c) : Piece(PieceTypeId::PAWN, c) {}
+    explicit Pawn(Color c) : Piece(PieceTypeId::PAWN, c) {}
 
     // Generates all legal moves for this piece
     virtual void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const override;

@@ -53,6 +53,10 @@ protected:
                            Piece::MoveList & moves) const;
 
 private:
+    // Non-copyable
+    Piece(const Piece&) = delete;
+    const Piece& operator=(const Piece&) = delete;
+    
     // NO_PIECE followed by white pieces followed by black pieces
     static Piece const * pieces_[1 + NUMBER_OF_COLORS * NUMBER_OF_PIECE_TYPES];
 };
