@@ -72,7 +72,7 @@ public:
     static bool isSquare(int dr, int dc);
 
     // Returns the move in SAN form
-    std::string san() const;
+    std::string notation() const;
 
     // Special move -- resignation
     static Move resign(Color color) { return Move(RESIGN, color); }

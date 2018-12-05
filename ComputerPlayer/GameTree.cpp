@@ -11,9 +11,6 @@
 #include <functional>
 #include <limits>
 
-// #define QUIESCENT_SEARCH_ENABLED
-// #define INCREMENTAL_STATIC_EVALUATION_VALIDATION_ENABLED
-
 namespace
 {
 bool shouldDoQuiescentSearch(int previousValue, int thisValue)
@@ -585,7 +582,7 @@ void GameTree::printStateInfo(GameState const & state, int depth, int alpha, int
     }
 
     fprintf(stderr, "%6s, value = %11d, quality = %11d, alpha = %11d, beta = %11d\n",
-            state.move_.san().c_str(), state.value_, state.quality_, alpha, beta);
+            state.move_.notation().c_str(), state.value_, state.quality_, alpha, beta);
 }
 
 #endif // if defined(PRINTING_GAME_TREE_NODE_INFO)

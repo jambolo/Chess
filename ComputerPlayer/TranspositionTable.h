@@ -7,8 +7,6 @@
 
 class GameState;
 
-// #define TRANSPOSITION_TABLE_ANALYSIS_ENABLED
-
 // A "transposition table" is a hash map containing the values of all the board states calculated so far.
 // Actually, as a speed and memory optimization, not all the states are saved. The slot for each state is not
 // unique and only one state is stored in each slot, so storing a state may overwrite a different state in the

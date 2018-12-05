@@ -36,8 +36,6 @@ Move::Move(int              special,
     from_.row |= special;
 }
 
-// #define LONG_FORM
-
 Position const Move::from() const
 {
     return Position(from_.row & NORMAL_MOVE_MASK, from_.column);
@@ -73,8 +71,43 @@ bool Move::isSquare(int dr, int dc)
     return dr == 0 || dc == 0;
 }
 
-std::string Move::san() const
+std::string Move::notation() const
 {
+#if defined(NOTATION_LONG)
+    std::string result;
+    if (isSpecial())
+    {
+        if (isKingSideCastle())
+        {
+            result = "0-0";
+}
+        else if (isQueenSideCastle())
+        {
+            result = "0-0-0";
+        }
+        else if (isPromotion())
+        {
+            result = to().notation() + "=Q";
+        }
+        else if (isEnPassant())
+        {
+            result += char(from().column + 'a');
+            result += 'x';
+            result += to().notation();
+        }
+        else if (isResignation())
+        {
+            result = (piece_->color() == Color::WHITE) ? "1-0" : "0-1";
+        }
+    }
+    else
+    {
+        if (piece_->type() != PieceTypeId::PAWN)
+            result = Piece::symbol(piece_->type());
+        result += from().notation();
+        result += capture_ ? 'x' : '-';
+        result += to().notation();
+#else
     std::string result;
     if (isSpecial())
     {
@@ -88,13 +121,13 @@ std::string Move::san() const
         }
         else if (isPromotion())
         {
-            result = to().san() + "=Q";
+            result = to().notation() + "=Q";
         }
         else if (isEnPassant())
         {
             result += char(from().column + 'a');
             result += 'x';
-            result += to().san();
+            result += to().notation();
         }
         else if (isResignation())
         {
@@ -103,13 +136,6 @@ std::string Move::san() const
     }
     else
     {
-#if defined(LONG_FORM)
-        if (piece_->type() != PieceTypeId::PAWN)
-            result = Piece::symbol(piece_->type());
-        result += from().san();
-        result += capture_ ? 'x' : '-';
-        result += to().san();
-#else
         if (piece_->type() != PieceTypeId::PAWN)
             result = Piece::symbol(piece_->type());
         if (capture_)
@@ -118,8 +144,7 @@ std::string Move::san() const
                 result += char(from().column + 'a');
             result += 'x';
         }
-        result += to().san();
-#endif  // LONG_FORM
+        result += to().notation();
     }
     return result;
 }

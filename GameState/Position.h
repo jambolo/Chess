@@ -24,8 +24,8 @@ struct Position
 
     bool initializeFromFen(char const * start, char const * end);
 
-    // Returns the SAN for this position
-    std::string san() const;
+    // Returns the notation for this position
+    std::string notation() const;
 };
 
 inline bool operator ==(Position const & a, Position const & b)

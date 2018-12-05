@@ -11,8 +11,6 @@
 
 class GameState;
 
-// #define PLAYER_ANALYSIS_ENABLED
-
 class Player
 {
 public:

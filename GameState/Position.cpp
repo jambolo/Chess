@@ -9,7 +9,7 @@ bool Position::initializeFromFen(char const * start, char const * end)
     return true;
 }
 
-std::string Position::san() const
+std::string Position::notation() const
 {
     std::string result;
     if (row < 0 || row > 7 || column < 0 || column > 7)

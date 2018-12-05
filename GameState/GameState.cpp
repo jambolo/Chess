@@ -209,7 +209,7 @@ std::string GameState::fen() const
     result += ' ';
     result += castleStatusToFen();
     result += ' ';
-    result += enPassant_.san();
+    result += enPassant_.notation();
     result += ' ';
     result += std::to_string(fiftyMoveTimer_);
     result += ' ';

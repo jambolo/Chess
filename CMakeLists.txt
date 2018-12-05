@@ -11,7 +11,9 @@ if(DOXYGEN_FOUND)
     )
 endif(DOXYGEN_FOUND)
 
-option(BUILD_SHARED_LIBS "Build libraries as DLLs" FALSE)
+option(BUILD_SHARED_LIBS       "Build libraries as DLLs"                    FALSE)
+option(PLAYER_ANALYSIS_ENABLED "ComputerPlayer analysis is enabled if true" FALSE)
+
 
 #set(Chess_VERSION_MAJOR 0)
 #set(Chess_VERSION_MINOR 1)
@@ -40,6 +42,10 @@ target_compile_definitions(chess
         -D_SECURE_SCL=0
         -D_SCL_SECURE_NO_WARNINGS
 )
+
+if(PLAYER_ANALYSIS_ENABLED)
+    target_compile_definitions(computer_player PUBLIC PLAYER_ANALYSIS_ENABLED=1)
+endif()
 
 add_subdirectory(BitBoard)
 add_subdirectory(GameState)

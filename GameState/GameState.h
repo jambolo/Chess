@@ -17,10 +17,6 @@
 class Move;
 class Piece;
 
-// #define GAME_STATE_ANALYSIS_ENABLED
-// #define USING_PRIORITIZED_MOVE_ORDERING
-// #define INCREMENTAL_STATIC_EVALUATION_ENABLED
-
 class GameState
 {
 public:

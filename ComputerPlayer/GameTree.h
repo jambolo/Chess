@@ -9,10 +9,6 @@
 
 #include "TranspositionTable.h"
 
-// #define GAME_TREE_ANALYSIS_ENABLED
-// #define USING_TRANSPOSITION_TABLE
-// #define PRINTING_GAME_TREE_NODE_INFO
-
 class GameTree
 {
 public:

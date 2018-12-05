@@ -16,7 +16,7 @@ int main(int argc, char ** argv)
     }
     ComputerPlayer computer(Color::BLACK, 7);
     GameState      s1 = computer.myTurn(s0);
-    printf("%s", s1.move_.san().c_str());
+    printf("%s", s1.move_.notation().c_str());
 
     return 0;
 }
