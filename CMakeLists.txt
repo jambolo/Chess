@@ -44,7 +44,7 @@ target_compile_definitions(chess
 )
 
 if(PLAYER_ANALYSIS_ENABLED)
-    target_compile_definitions(computer_player PUBLIC PLAYER_ANALYSIS_ENABLED=1)
+    target_compile_definitions(chess PUBLIC PLAYER_ANALYSIS_ENABLED=1)
 endif()
 
 add_subdirectory(BitBoard)

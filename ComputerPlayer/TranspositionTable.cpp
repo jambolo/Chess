@@ -147,7 +147,7 @@ void TranspositionTable::update(GameState const & state)
 
         if (isUnused)
             ++analysisData_.usage;
-        else if (entry.hashCode_ == upperHashCode)
+        else if (entry.hashCode_ == hash)
             ++analysisData_.refreshed;
         else
             ++analysisData_.overwritten;
