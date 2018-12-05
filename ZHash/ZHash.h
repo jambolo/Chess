@@ -20,9 +20,13 @@
 #define ZHash_h__
 
 #include "GameState/Board.h"
+#include "GameState/ChessTypes.h"
+#include <cstdint>
 
 class Piece;
 struct Position;
+class Board;
+enum class Color;
 
 //! Zobrist Hashing Calculator.
 //!
@@ -43,7 +47,7 @@ class ZHash
 public:
 
     //! Type of a hash value
-    using Z = uint64_t;
+    using Z = std::uint64_t;
 
     //! An impossible value which will always be "undefined"
     static Z constexpr INVALID = 0xFFFFFFFFFFFFFFFF;

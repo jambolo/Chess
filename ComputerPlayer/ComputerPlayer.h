@@ -3,7 +3,7 @@
 #if !defined(ComputerPlayer_h__)
 #define ComputerPlayer_h__
 
-#include "Player.h"
+#include "Player/Player.h"
 
 enum class Color;
 class GameState;

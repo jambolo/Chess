@@ -4,14 +4,10 @@
 #include "Board.h"
 #include "King.h"
 #include "Knight.h"
+#include "Move.h"
 #include "Pawn.h"
 #include "Queen.h"
 #include "Rook.h"
-
-// #include "GameState/GameState.h"
-#include "GameState/Move.h"
-//
-// #include "misc/Etc.h"
 
 namespace
 {

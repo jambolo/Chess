@@ -7,13 +7,8 @@ set(SOURCES
 
 set(PRIVATE_INCLUDE_PATHS
     ${CMAKE_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/Misc/include
-)
-
-set(PUBLIC_INCLUDE_PATHS
-    .
 )
 
 add_library(zhash ${SOURCES})
-target_include_directories(zhash PRIVATE ${PRIVATE_INCLUDE_PATHS} PUBLIC ${PUBLIC_INCLUDE_PATHS})
-target_link_libraries(zhash misc)
+target_include_directories(zhash PRIVATE ${PRIVATE_INCLUDE_PATHS})
+target_link_libraries(zhash game_state misc)

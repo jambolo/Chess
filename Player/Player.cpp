@@ -5,7 +5,7 @@ Player::Player(Color color)
 {
 }
 
-#if defined(PLAYER_ANALYSIS_ENABLED)
+#if defined(FEATURE_PLAYER_ANALYSIS)
 
 void Player::resetAnalysisData()
 {
@@ -16,7 +16,7 @@ void Player::AnalysisData::reset()
 {
     time  = 0;
     value = 0;
-#if defined(GAME_TREE_ANALYSIS_ENABLED)
+#if defined(FEATURE_GAME_TREE_ANALYSIS)
     gameTreeAnalysisData.reset();
 #endif
 }
@@ -28,4 +28,4 @@ Player::AnalysisData::AnalysisData()
     reset();
 }
 
-#endif // defined(PLAYER_ANALYSIS_ENABLED)
+#endif // defined(FEATURE_PLAYER_ANALYSIS)

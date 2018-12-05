@@ -5,9 +5,9 @@
 
 #include "GameState/ChessTypes.h"
 
-#if defined(PLAYER_ANALYSIS_ENABLED)
-#include "ComputerPlayer/GameTree.h" // for AnalysisData
-#endif // defined(PLAYER_ANALYSIS_ENABLED)
+//#if defined(FEATURE_PLAYER_ANALYSIS)
+//#include "ComputerPlayer/GameTree.h" // for AnalysisData
+//#endif // defined(FEATURE_PLAYER_ANALYSIS)
 
 class GameState;
 
@@ -19,7 +19,7 @@ public:
     // Returns my next move
     virtual GameState myTurn(GameState const & s0) = 0;
 
-#if defined(PLAYER_ANALYSIS_ENABLED)
+#if defined(FEATURE_PLAYER_ANALYSIS)
 
     // Resets all analysis data
     void resetAnalysisData();
@@ -30,16 +30,16 @@ public:
     {
         int time;
         int value;
-#if defined(GAME_TREE_ANALYSIS_ENABLED)
-        GameTree::AnalysisData gameTreeAnalysisData;
-#endif
+//#if defined(FEATURE_GAME_TREE_ANALYSIS)
+//        GameTree::AnalysisData gameTreeAnalysisData;
+//#endif
         AnalysisData();
         void reset();
     };
 
     mutable AnalysisData analysisData_;
 
-#endif // defined( PLAYER_ANALYSIS_ENABLED )
+#endif // defined( FEATURE_PLAYER_ANALYSIS )
 
 protected:
 
