@@ -21,9 +21,9 @@ void Queen::generatePossibleMoves(GameState const & state, Position const & from
 
 bool Queen::isValidMove(GameState const & state, Move const & move) const
 {
-    Board const & board   = state.board_;
-    Position const & from = move.from();
-    Position const & to   = move.to();
+    Board const &    board = state.board_;
+    Position const & from  = move.from();
+    Position const & to    = move.to();
 
     // Check if the destination square can be occupied
 

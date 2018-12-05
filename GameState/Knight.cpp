@@ -16,7 +16,7 @@ void Knight::generatePossibleMoves(GameState const & state, Position const & fro
         { 2 * (int)Direction::DOWN, 1 * (int)Direction::LEFT  },
         { 2 * (int)Direction::DOWN, 1 * (int)Direction::RIGHT },
         { 1 * (int)Direction::UP,   2 * (int)Direction::LEFT  },
-        { 1 * (int)Direction::DOWN, 2 * (int)Direction::LEFT  } 
+        { 1 * (int)Direction::DOWN, 2 * (int)Direction::LEFT  }
     };
 
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
@@ -29,9 +29,7 @@ void Knight::generatePossibleMoves(GameState const & state, Position const & fro
         {
             // Check if the destination square can be occupied
             if (state.canBeOccupied(to, color_))
-            {
                 moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-            }
         }
     }
 }

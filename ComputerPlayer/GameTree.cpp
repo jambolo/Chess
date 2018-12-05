@@ -11,8 +11,8 @@
 #include <functional>
 #include <limits>
 
-//#define QUIESCENT_SEARCH_ENABLED
-//#define INCREMENTAL_STATIC_EVALUATION_VALIDATION_ENABLED
+// #define QUIESCENT_SEARCH_ENABLED
+// #define INCREMENTAL_STATIC_EVALUATION_VALIDATION_ENABLED
 
 namespace
 {
@@ -47,9 +47,10 @@ GameTree::GameTree(TranspositionTable * pTTable, int maxDepth)
 
 GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 {
-    int depth = 0;                                   // The depth of this ply (this is the current state,  so its depth is 0)
-    int responseDepth   = depth + 1;                 // Depth of responses to this state
-//    int quality         = maxDepth_ - depth;         // Quality of values at this depth (this is the depth of plies searched to get
+    int depth         = 0;                           // The depth of this ply (this is the current state,  so its depth is 0)
+    int responseDepth = depth + 1;                   // Depth of responses to this state
+//    int quality         = maxDepth_ - depth;         // Quality of values at this depth (this is the depth of plies searched to
+// get
 //                                                     // the results for this ply )
 //    int responseQuality = maxDepth_ - responseDepth; // Normal quality of responses to this state
 
@@ -65,7 +66,7 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
     // Find the best of the responses... I want to find the state with the highest score
 
     GameState best_move;
-    int best_score  = std::numeric_limits<int>::min();
+    int       best_score = std::numeric_limits<int>::min();
 #if defined(GAME_TREE_ANALYSIS_ENABLED)
     int worst_score = std::numeric_limits<int>::max();
 #endif // defined( GAME_TREE_ANALYSIS_ENABLED )
@@ -83,9 +84,7 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
         // If this is the lowest score then save that for analysis
 
         if (myMove.value_ < worst_score)
-        {
             worst_score = myMove.value_;
-        }
 
 #endif  // defined( GAME_TREE_ANALYSIS_ENABLED )
 
@@ -95,24 +94,20 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
             best_score = myMove.value_;
             best_move  = myMove;
             if (myMove.value_ == MY_CHECKMATE_VALUE)
-            {
                 break;
-            }
         }
     }
 
     // If the value of my best move is really bad, then just resign
     if (best_score < -StaticEvaluator::RESIGNATION_THRESHOLD)
-    {
         best_move.move_ = Move::resign(my_color);
-    }
 
 #if defined(GAME_TREE_ANALYSIS_ENABLED)
 
     // Update analysis data
     analysisData_.worstValue = worst_score;
 #if defined(USING_TRANSPOSITION_TABLE)
-    analysisData_.tTableAnalysisData    = transpositionTable_->analysisData_;
+    analysisData_.tTableAnalysisData = transpositionTable_->analysisData_;
 #endif
     analysisData_.gameStateAnalysisData = best_move.analysisData_;
 
@@ -151,8 +146,8 @@ void GameTree::myAlphaBeta(GameState * state, int alpha, int beta, int depth)
     generateStates(*state, true, responseDepth, responses);
 
     // Evaluate each of my responses and choose the one with the highest score
-    int best_value = std::numeric_limits<int>::min(); // Initialize to worst
-    bool pruned    = false;
+    int  best_value = std::numeric_limits<int>::min(); // Initialize to worst
+    bool pruned     = false;
 
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
     GameState * pBestResponse = 0;
@@ -194,9 +189,7 @@ void GameTree::myAlphaBeta(GameState * state, int alpha, int beta, int depth)
 
             // If this is a checkmate, then there is no reason to look for anything better
             if (best_value == MY_CHECKMATE_VALUE)
-            {
                 break;
-            }
 
             // alpha-beta pruning (beta cutoff check) Here's how it works:
             //
@@ -229,9 +222,7 @@ void GameTree::myAlphaBeta(GameState * state, int alpha, int beta, int depth)
             // worse value for me. So, keep track of the value of my best move so far.
 
             if (best_value > alpha)
-            {
                 alpha = best_value;
-            }
         }
     }
 
@@ -254,9 +245,8 @@ void GameTree::myAlphaBeta(GameState * state, int alpha, int beta, int depth)
     // because the search is not complete. Also, the value is stored only if its quality is better than the quality
     // of the value in the table.
     if (!pruned)
-    {
         transpositionTable_->update(*state);
-    }
+
 #endif
 }
 
@@ -279,8 +269,8 @@ void GameTree::opponentsAlphaBeta(GameState * state, int alpha, int beta, int de
     generateStates(*state, false, responseDepth, responses);
 
     // Evaluate each of his responses and choose the one with the lowest score
-    int best_value = std::numeric_limits<int>::max(); // Initialize to worst
-    bool pruned    = false;
+    int  best_value = std::numeric_limits<int>::max(); // Initialize to worst
+    bool pruned     = false;
 
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
     GameState * pBestResponse = 0;
@@ -322,9 +312,7 @@ void GameTree::opponentsAlphaBeta(GameState * state, int alpha, int beta, int de
 
             // If this is a checkmate, then there is no reason to look for anything better
             if (best_value == OPPONENT_CHECKMATE_VALUE)
-            {
                 break;
-            }
 
             // alpha-beta pruning (alpha cutoff check) Here's how it works:
             //
@@ -357,9 +345,7 @@ void GameTree::opponentsAlphaBeta(GameState * state, int alpha, int beta, int de
             // make a move with worse value for him. So, keep track of the value of my opponent's best move so far.
 
             if (best_value < beta)
-            {
                 beta = best_value;
-            }
         }
     }
 
@@ -382,9 +368,8 @@ void GameTree::opponentsAlphaBeta(GameState * state, int alpha, int beta, int de
     // because the search is not complete. Also, the value is stored only if its quality is better than the quality
     // of the value in the table.
     if (!pruned)
-    {
         transpositionTable_->update(*state);
-    }
+
 #endif
 }
 
@@ -392,8 +377,8 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
 {
     int const MAX_POSSIBLE_STATES = 147;
 
-    Board const & board           = s0.board_;                          // Convenience
-    Color current_color           = my_move ? myColor_ : yourColor_;
+    Board const & board         = s0.board_;                            // Convenience
+    Color         current_color = my_move ? myColor_ : yourColor_;
 
     // Preallocate enough space to hold all the generated states
     states.reserve(MAX_POSSIBLE_STATES);
@@ -442,48 +427,40 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
     if (my_move)
     {
         std::sort(states.begin(), states.end(), [] (GameState const & g0, GameState const & g1)
-        {
-            // Sort the elements in descending order, first by priority, then by value.
+                  {
+                      // Sort the elements in descending order, first by priority, then by value.
 #if defined(USING_PRIORITIZED_MOVE_ORDERING)
 
-            if (g0.priority_ > g1.priority_)
-            {
-                return true;
-            }
+                      if (g0.priority_ > g1.priority_)
+                          return true;
 
-            if (g0.priority_ < g1.priority_)
-            {
-                return false;
-            }
+                      if (g0.priority_ < g1.priority_)
+                          return false;
 
-#endif      //defined( USING_PRIORITIZED_MOVE_ORDERING )
+#endif      // defined( USING_PRIORITIZED_MOVE_ORDERING )
 
-            return g0.value_ > g1.value_;
-        }
-                 );
+                      return g0.value_ > g1.value_;
+                  }
+        );
     }
     else
     {
         std::sort(states.begin(), states.end(), [](GameState const & g0, GameState const & g1)
-        {
-            // Sort the elements in descending order, first by priority, then by value.
+                  {
+                      // Sort the elements in descending order, first by priority, then by value.
 #if defined(USING_PRIORITIZED_MOVE_ORDERING)
 
-            if (g0.priority_ > g1.priority_)
-            {
-                return true;
-            }
+                      if (g0.priority_ > g1.priority_)
+                          return true;
 
-            if (g0.priority_ < g1.priority_)
-            {
-                return false;
-            }
+                      if (g0.priority_ < g1.priority_)
+                          return false;
 
-#endif      //defined( USING_PRIORITIZED_MOVE_ORDERING )
+#endif      // defined( USING_PRIORITIZED_MOVE_ORDERING )
 
-            return g0.value_ < g1.value_;
-        }
-                 );
+                      return g0.value_ < g1.value_;
+                  }
+        );
     }
 }
 
@@ -517,9 +494,7 @@ void GameTree::evaluate(GameState * pState, int depth)
         int absoluteValue = StaticEvaluator::evaluate(*pState);
 
         if (myColor_ == Color::BLACK)
-        {
             value = -value;
-        }
 
         ASSERT(pState->value_ == absoluteValue);
 
@@ -532,9 +507,7 @@ void GameTree::evaluate(GameState * pState, int depth)
         // Black has negative value so if I am black then I need to negate the value. This is to make the value in terms
         // of me or my opponent, rather than color.
         if (myColor_ == Color::BLACK)
-        {
             value = -value;
-        }
 
         pState->value_   = value;
         pState->quality_ = SEF_QUALITY;

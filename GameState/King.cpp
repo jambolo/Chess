@@ -15,65 +15,49 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
 
     --to.row;
     if ((to.row >= 0) && state.canBeOccupied(to, color_))
-    {
         moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
 
     // Up-right
 
     ++to.column;
     if ((to.row >= 0) && (to.column < Board::SIZE) && state.canBeOccupied(to, color_))
-    {
         moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
 
     // Right
 
     ++to.row;
     if ((to.column < Board::SIZE) && state.canBeOccupied(to, color_))
-    {
         moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
 
     // Down-right
 
     ++to.row;
     if ((to.row < Board::SIZE) && (to.column < Board::SIZE) && state.canBeOccupied(to, color_))
-    {
         moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
 
     // Down
 
     --to.column;
     if ((to.row < Board::SIZE) && state.canBeOccupied(to, color_))
-    {
         moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
 
     // Down-left
 
     --to.column;
     if ((to.row < Board::SIZE) && (to.column >= 0) && state.canBeOccupied(to, color_))
-    {
         moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
 
     // Left
 
     --to.row;
     if ((to.column >= 0) && state.canBeOccupied(to, color_))
-    {
         moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
 
     // Up-left
 
     --to.row;
     if ((to.row >= 0) && (to.column >= 0) && state.canBeOccupied(to, color_))
-    {
         moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-    }
 
     // Castles
 

@@ -5,8 +5,8 @@
 #include "Move.h"
 #include "Piece.h"
 
-#include "Misc/Etc.h"
 #include "Misc/exceptions.h"
+#include "Misc/Etc.h"
 #include "ZHash/ZHash.h"
 
 #if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
@@ -16,13 +16,13 @@
 #include <regex>
 
 GameState::GameState(Board const & board,
-    Color         whoseTurn,
-    CastleStatus  castleStatus,
-    int           fiftyMoveTimer,
-    Move const &  move,
-    int           value,
-    bool          inCheck,
-    int           moveNumber)
+                     Color         whoseTurn,
+                     CastleStatus  castleStatus,
+                     int           fiftyMoveTimer,
+                     Move const &  move,
+                     int           value,
+                     bool          inCheck,
+                     int           moveNumber)
     : board_(board)
     , castleStatus_(castleStatus)
     , whoseTurn_(whoseTurn)
@@ -37,18 +37,18 @@ GameState::GameState(Board const & board,
 void GameState::initialize()
 {
     board_.initialize();
-    whoseTurn_ = Color::WHITE;
-    castleStatus_ = 0;
+    whoseTurn_      = Color::WHITE;
+    castleStatus_   = 0;
     fiftyMoveTimer_ = 0;
     makeMove(Color::WHITE, Move::reset());
-    value_ = 0;
+    value_   = 0;
     quality_ = std::numeric_limits<int8_t>::min();
 #if defined(USING_PRIORITIZED_MOVE_ORDERING)
     priority_ = 0;
 #endif
-    inCheck_ = false;
+    inCheck_    = false;
     moveNumber_ = 1;
-    zhash_ = ZHash(board_);
+    zhash_      = ZHash(board_);
 
 #if defined(GAME_STATE_ANALYSIS_ENABLED)
     analysisData_.reset();
@@ -225,16 +225,12 @@ void GameState::makeNormalMove(Color color, Move const & move)
     // Capture a piece
 
     Piece const * pCaptured;
-    Position capturedPosition;
+    Position      capturedPosition;
 
     if (move.isEnPassant())
-    {
         capturedPosition = Position(move.from().row, move.to().column);
-    }
     else
-    {
         capturedPosition = move.to();
-    }
 
     pCaptured = board_.pieceAt(capturedPosition);
     if (pCaptured != NO_PIECE)
@@ -253,13 +249,9 @@ void GameState::makeNormalMove(Color color, Move const & move)
     Piece const * pAdded;
 
     if (move.isPromotion())
-    {
         pAdded = promote(color, move.to());
-    }
     else
-    {
         pAdded = NO_PIECE;
-    }
 
 #if defined(INCREMENTAL_STATIC_EVALUATION_ENABLED)
     // Update castle status
@@ -275,13 +267,9 @@ void GameState::makeNormalMove(Color color, Move const & move)
         else if (pMoved->type() == PieceTypeId::ROOK)
         {
             if ((move.from().row == Board::SIZE - 1) && (move.from().column == 0))
-            {
                 castleStatus_ |= WHITE_QUEENSIDE_CASTLE_UNAVAILABLE;
-            }
             else if ((move.from().row == Board::SIZE - 1) && (move.from().column == Board::SIZE - 1))
-            {
                 castleStatus_ |= WHITE_KINGSIDE_CASTLE_UNAVAILABLE;
-            }
         }
     }
     else
@@ -293,13 +281,9 @@ void GameState::makeNormalMove(Color color, Move const & move)
         else if (pMoved->type() == PieceTypeId::ROOK)
         {
             if ((move.from().row == 0) && (move.from().column == 0))
-            {
                 castleStatus_ |= BLACK_KINGSIDE_CASTLE_UNAVAILABLE;
-            }
             else if ((move.from().row == 0) && (move.from().column == Board::SIZE - 1))
-            {
                 castleStatus_ |= BLACK_QUEENSIDE_CASTLE_UNAVAILABLE;
-            }
         }
     }
 
@@ -470,5 +454,5 @@ bool operator ==(GameState const & x, GameState const & y)
 
     //! @todo	Actually this is not correct because en passant validity and fifty-move state are part of the state, too
     return x.board_ == y.board_ &&
-        (x.castleStatus_ & CASTLE_AVAILABILITY_MASK) == (y.castleStatus_ & CASTLE_AVAILABILITY_MASK);
+           (x.castleStatus_ & CASTLE_AVAILABILITY_MASK) == (y.castleStatus_ & CASTLE_AVAILABILITY_MASK);
 }

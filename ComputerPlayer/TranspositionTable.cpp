@@ -21,7 +21,7 @@ bool TranspositionTable::check(GameState const & state, int * pReturnedValue, in
     ++analysisData_.checkCount;
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
-    ZHash::Z hash = state.zhash_.value();
+    ZHash::Z           hash  = state.zhash_.value();
     TableEntry const & entry = table_[hash % SIZE];
 
     // A hit occurs if the states are the same.
@@ -44,9 +44,8 @@ bool TranspositionTable::check(GameState const & state, int * pReturnedValue, in
     {
 #if defined(TRANSPOSITION_TABLE_ANALYSIS_ENABLED)
         if (entry.hashCode_ != TableEntry::UNUSED_ENTRY)
-        {
             ++analysisData_.collisionCount;
-        }
+
 #endif  // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
     }
 
@@ -59,7 +58,7 @@ bool TranspositionTable::check(GameState const & state, int minQ, int * pReturne
     ++analysisData_.checkCount;
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
-    ZHash::Z hash = state.zhash_.value();
+    ZHash::Z           hash  = state.zhash_.value();
     TableEntry const & entry = table_[hash % SIZE];
 
     // A hit occurs if the states are the same, and the minimum quality is <= the quality of the stored state. The
@@ -86,9 +85,8 @@ bool TranspositionTable::check(GameState const & state, int minQ, int * pReturne
     {
 #if defined(TRANSPOSITION_TABLE_ANALYSIS_ENABLED)
         if (entry.hashCode_ != TableEntry::UNUSED_ENTRY)
-        {
             ++analysisData_.collisionCount;
-        }
+
 #endif  // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
     }
 
@@ -101,7 +99,7 @@ void TranspositionTable::forceUpdate(GameState const & state)
     ++analysisData_.updateCount;
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
-    ZHash::Z hash = state.zhash_.value();
+    ZHash::Z     hash  = state.zhash_.value();
     TableEntry & entry = table_[hash % SIZE];
 
 #if defined(TRANSPOSITION_TABLE_ANALYSIS_ENABLED)
@@ -109,17 +107,11 @@ void TranspositionTable::forceUpdate(GameState const & state)
     // For tracking the number of used entries
 
     if (entry.hashCode_ == TableEntry::UNUSED_ENTRY)
-    {
         ++analysisData_.usage;
-    }
     else if (entry.hashCode_ == hash)
-    {
         ++analysisData_.refreshed;
-    }
     else
-    {
         ++analysisData_.overwritten;
-    }
 
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
@@ -138,7 +130,7 @@ void TranspositionTable::update(GameState const & state)
     ++analysisData_.updateCount;
 #endif // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
-    ZHash::Z hash = state.zhash_.value();
+    ZHash::Z     hash  = state.zhash_.value();
     TableEntry & entry = table_[hash % SIZE];
     assert(hash != TableEntry::UNUSED_ENTRY);
 
@@ -154,17 +146,11 @@ void TranspositionTable::update(GameState const & state)
         // For tracking the number of used entries
 
         if (isUnused)
-        {
             ++analysisData_.usage;
-        }
         else if (entry.hashCode_ == upperHashCode)
-        {
             ++analysisData_.refreshed;
-        }
         else
-        {
             ++analysisData_.overwritten;
-        }
 
 #endif  // defined( TRANSPOSITION_TABLE_ANALYSIS_ENABLED )
 
@@ -214,9 +200,9 @@ void TranspositionTable::resetAnalysisData()
 
 void TranspositionTable::AnalysisData::reset()
 {
-    checkCount     = 0;
-    updateCount    = 0;
-    hitCount       = 0;
+    checkCount  = 0;
+    updateCount = 0;
+    hitCount    = 0;
 //	usage			= 0;	// never reset
     collisionCount = 0;
     rejected       = 0;

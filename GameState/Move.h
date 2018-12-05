@@ -24,9 +24,9 @@ public:
     Move() = default;
     Move(Piece const * piece, Position const & from, Position const & to, bool capture = false);
     Move(int              special,
-         Color            color = Color::INVALID,
-         Position const & from = Position(),
-         Position const & to = Position(),
+         Color            color   = Color::INVALID,
+         Position const & from    = Position(),
+         Position const & to      = Position(),
          bool             capture = false);
 
     // Returns the from position
@@ -61,13 +61,13 @@ public:
 
     // Returns true if the difference is non-zero
     static bool isMoved(int dr, int dc);
-    
+
     // Returns true if the difference is diagonal
-    static  bool isDiagonal(int dr, int dc);
-    
+    static bool isDiagonal(int dr, int dc);
+
     // Returns true if the difference is with the given range
     static bool inRange(int dr, int dc, int range);
-    
+
     // Returns true if the difference is along a row or a column
     static bool isSquare(int dr, int dc);
 

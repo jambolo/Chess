@@ -27,11 +27,11 @@ public:
     virtual void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const = 0;
 
     // Returns true if the move is valid
-    virtual bool    isValidMove(GameState const & state, Move const & move) const = 0;
+    virtual bool isValidMove(GameState const & state, Move const & move) const = 0;
 
-    PieceTypeId     type() const   { return type_;   }
-    Color           color() const  { return color_;  }
-    char const *    symbol() const { return symbol_; }
+    PieceTypeId  type() const   { return type_;   }
+    Color        color() const  { return color_;  }
+    char const * symbol() const { return symbol_; }
 
     // Returns the symbol for a piece type
     static char const * symbol(PieceTypeId id);
@@ -45,12 +45,12 @@ protected:
     Color color_;               // Color of piece
     char const * symbol_;       // Symbol for documentation
 
-void generateSpanMoves(Board const &     board,
-                       Position const &  from,
-                       int               dr,
-                       int               dc,
-                       Piece const *     myPiece,
-                       Piece::MoveList & moves) const;
+    void generateSpanMoves(Board const &     board,
+                           Position const &  from,
+                           int               dr,
+                           int               dc,
+                           Piece const *     myPiece,
+                           Piece::MoveList & moves) const;
 
 private:
     // NO_PIECE followed by white pieces followed by black pieces

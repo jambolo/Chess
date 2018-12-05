@@ -6,8 +6,6 @@
 #include "StaticEvaluator.h"
 #include "TranspositionTable.h"
 
-//#include <mmsystem.h>
-
 ComputerPlayer::ComputerPlayer(Color color, int maxDepth)
     : Player(color)
     , maxDepth_(maxDepth)
@@ -28,7 +26,7 @@ GameState ComputerPlayer::myTurn(GameState const & s0)
 
     // Calculate the best move from here
 
-    GameTree game_tree(transpositionTable_, maxDepth_);
+    GameTree  game_tree(transpositionTable_, maxDepth_);
     GameState new_state = game_tree.myBestMove(s0, myColor_);
     transpositionTable_->age();
 

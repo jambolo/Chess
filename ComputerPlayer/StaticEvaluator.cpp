@@ -21,26 +21,26 @@ int constexpr s_PositionValues[NUMBER_OF_COLORS][Board::SIZE][Board::SIZE] =
 {
     // White
     {
-        {0, 1, 2, 3, 3, 2, 1, 0},
-        {1, 2, 3, 4, 4, 3, 2, 1},
-        {2, 3, 4, 5, 5, 4, 3, 2},
-        {3, 4, 5, 6, 6, 5, 4, 3},
-        {3, 4, 5, 6, 6, 5, 4, 3},
-        {2, 3, 4, 5, 5, 4, 3, 2},
-        {1, 2, 3, 4, 4, 3, 2, 1},
-        {0, 1, 2, 3, 3, 2, 1, 0},
+        { 0, 1, 2, 3, 3, 2, 1, 0 },
+        { 1, 2, 3, 4, 4, 3, 2, 1 },
+        { 2, 3, 4, 5, 5, 4, 3, 2 },
+        { 3, 4, 5, 6, 6, 5, 4, 3 },
+        { 3, 4, 5, 6, 6, 5, 4, 3 },
+        { 2, 3, 4, 5, 5, 4, 3, 2 },
+        { 1, 2, 3, 4, 4, 3, 2, 1 },
+        { 0, 1, 2, 3, 3, 2, 1, 0 },
     },
 
     // Black
     {
-        {-0, -1, -2, -3, -3, -2, -1, -0},
-        {-1, -2, -3, -4, -4, -3, -2, -1},
-        {-2, -3, -4, -5, -5, -4, -3, -2},
-        {-3, -4, -5, -6, -6, -5, -4, -3},
-        {-3, -4, -5, -6, -6, -5, -4, -3},
-        {-2, -3, -4, -5, -5, -4, -3, -2},
-        {-1, -2, -3, -4, -4, -3, -2, -1},
-        {-0, -1, -2, -3, -3, -2, -1, -0},
+        { -0, -1, -2, -3, -3, -2, -1, -0 },
+        { -1, -2, -3, -4, -4, -3, -2, -1 },
+        { -2, -3, -4, -5, -5, -4, -3, -2 },
+        { -3, -4, -5, -6, -6, -5, -4, -3 },
+        { -3, -4, -5, -6, -6, -5, -4, -3 },
+        { -2, -3, -4, -5, -5, -4, -3, -2 },
+        { -1, -2, -3, -4, -4, -3, -2, -1 },
+        { -0, -1, -2, -3, -3, -2, -1, -0 },
     },
 };
 
@@ -70,13 +70,15 @@ PieceValues constexpr s_PieceValues[NUMBER_OF_COLORS][NUMBER_OF_PIECE_TYPES] =
 int constexpr PROPERTY_FACTOR = 1;                                                            // The property factor is the
                                                                                               // reference. All other factors are
                                                                                               // relative to it.
-int constexpr CASTLE_FACTOR   = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property * 3 / 4 / 3; // Max is 3, which is worth
-                                                                                              // about 3/4 a pawn
-//int constexpr MOBILITY_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::QUEEN].property / 144;      // Maximum is about 144 which is
+int constexpr CASTLE_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property * 3 / 4 / 3;   // Max is 3, which is worth
+// about 3/4 a pawn
+// int constexpr MOBILITY_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::QUEEN].property / 144;      // Maximum is about 144 which
+// is
 //                                                                                              // worth a queen
-int constexpr POSITION_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property / 100;       // Reasonable maximum is 100,000 which
-                                                                                              // is worth a pawn
-//int constexpr THREAT_FACTOR   = 0;
+int constexpr POSITION_FACTOR = s_PieceValues[0][(size_t)PieceTypeId::PAWN].property / 100;       // Reasonable maximum is 100,000
+                                                                                                  // which
+// is worth a pawn
+// int constexpr THREAT_FACTOR   = 0;
 //
 int evaluate(GameState::CastleStatus castleStatus)
 {
@@ -84,21 +86,13 @@ int evaluate(GameState::CastleStatus castleStatus)
 
     int value = 0;
     if (castleStatus & BLACK_CASTLE)
-    {
         value += -2;
-    }
     else if ((castleStatus & BLACK_CASTLE_UNAVAILABLE) == BLACK_CASTLE_UNAVAILABLE)
-    {
         value -= -1;
-    }
     if (castleStatus & WHITE_CASTLE)
-    {
         value += 2;
-    }
     else if ((castleStatus & WHITE_CASTLE_UNAVAILABLE) == WHITE_CASTLE_UNAVAILABLE)
-    {
         value -= 1;
-    }
 
     return value;
 }
@@ -133,14 +127,12 @@ int StaticEvaluator::evaluate(GameState const & state)
 
             if (p != NO_PIECE)
             {
-                Color color      = p->color();
-                PieceTypeId type = p->type();
+                Color       color = p->color();
+                PieceTypeId type  = p->type();
 
                 // Compute the checkmate value
                 if (type == PieceTypeId::KING)
-                {
                     checkmate_value += (color == Color::WHITE) ? CHECKMATE_VALUE : -CHECKMATE_VALUE;
-                }
 
                 // Compute the property value
                 property_value += s_PieceValues[(int)color][(int)type].property;
@@ -186,14 +178,14 @@ int StaticEvaluator::evaluate(GameState const & state)
         ;
     }
 
-//#if defined( PROFILING )
+// #if defined( PROFILING )
 //
 //	// Randomize the value slightly so that equivalent moves have different
 //	// values and profiling results of ordering methods are more realistic
 //
 //	value += ( state.GetHashCode() & 0x7 ) - 4;
 //
-//#endif // defined( PROFILING )
+// #endif // defined( PROFILING )
 
     return value;
 }
@@ -212,16 +204,12 @@ int StaticEvaluator::incremental(Move const &            move,
     // These special moves don't do anything
 
     if (move.isResignation() || move.isUndo() || move.isStartingPosition())
-    {
         return 0;
-    }
 
     // Check for checkmate (note: this assumes there is at least one king on the board)
 
     if (pRemoved && (pRemoved->type() == PieceTypeId::KING))
-    {
         return (pRemoved->color() == Color::WHITE) ? -CHECKMATE_VALUE : CHECKMATE_VALUE;
-    }
 
     int value = 0;
 
@@ -261,14 +249,14 @@ int StaticEvaluator::incremental(Move const &            move,
 
     value += ::evaluate(castleStatus) * CASTLE_FACTOR;
 
-//#if defined( PROFILING )
+// #if defined( PROFILING )
 //
 //	// Randomize the value slightly so that equivalent moves have different
 //	// values and profiling results of ordering methods are more realistic
 //
 //	value += ( state.GetHashCode() & 0x7 ) - 4;
 //
-//#endif // defined( PROFILING )
+// #endif // defined( PROFILING )
 
     return value;
 }

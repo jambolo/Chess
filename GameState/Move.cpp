@@ -6,7 +6,6 @@
 
 #include <cassert>
 
-
 Move::Move(Piece const * piece, Position const & from, Position const & to, bool capture /*= false*/)
     : piece_(piece)
     , from_(from)
@@ -37,7 +36,7 @@ Move::Move(int              special,
     from_.row |= special;
 }
 
-//#define LONG_FORM
+// #define LONG_FORM
 
 Position const Move::from() const
 {
@@ -73,7 +72,6 @@ bool Move::isSquare(int dr, int dc)
 {
     return dr == 0 || dc == 0;
 }
-
 
 std::string Move::san() const
 {

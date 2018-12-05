@@ -210,7 +210,7 @@ public:
     //!
     //! @param	type			Type of piece to be moved
     //! @param	position		The piece's position
-    //! @param	friends 		The positions of friendly pieces
+    //! @param	friends         The positions of friendly pieces
     //! @param	foes			The positions of enemy pieces
     //!
     //! @return	BitBoard showing all threatened squares
@@ -243,8 +243,8 @@ public:
     //!
     //! @param	type			Type of piece to be moved
     //! @param	position		The piece's position
-    //! @param	friends 		The positions of friendly pieces
-    //! @param	foes     		The positions of enemy pieces
+    //! @param	friends         The positions of friendly pieces
+    //! @param	foes            The positions of enemy pieces
     //!
     //! @return	BitBoard showing all possible destination squares
     //!
@@ -273,13 +273,13 @@ private:
     static uint64_t index(int r, int c) { return r * 8 + c; }
 
     //! Returns the row and column for the given index
-    static void     rowAndColumn(int index, int & r, int & c) { r = index / 8; c = index % 8; }
+    static void rowAndColumn(int index, int & r, int & c) { r = index / 8; c = index % 8; }
 
-    static uint64_t mask(int r, int c)                        { return (uint64_t)1 << index(r, c); }
-    static uint64_t leftMask(int n)                           { return 0x0101010101010101 * (((uint64_t)1 << n) - 1); }
-    static uint64_t rightMask(int n)                          { return ~leftMask(8 - n); }
-    static uint64_t lowerMask(int n)                          { return ((uint64_t)1 << (8 * n)) - 1; }
-    static uint64_t upperMask(int n)                          { return ~lowerMask(8 - n); }
+    static uint64_t mask(int r, int c) { return (uint64_t)1 << index(r, c); }
+    static uint64_t leftMask(int n)    { return 0x0101010101010101 * (((uint64_t)1 << n) - 1); }
+    static uint64_t rightMask(int n)   { return ~leftMask(8 - n); }
+    static uint64_t lowerMask(int n)   { return ((uint64_t)1 << (8 * n)) - 1; }
+    static uint64_t upperMask(int n)   { return ~lowerMask(8 - n); }
 
     uint64_t board_;
 };

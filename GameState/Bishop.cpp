@@ -5,24 +5,23 @@
 #include "GameState.h"
 #include "Move.h"
 
-
 void Bishop::generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const
 {
     Board const & board = state.board_;
 
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
 
-    generateSpanMoves(board, from, (int)Direction::UP, (int)Direction::RIGHT, this, moves);  
+    generateSpanMoves(board, from, (int)Direction::UP, (int)Direction::RIGHT, this, moves);
     generateSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::RIGHT, this, moves);
-    generateSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::LEFT, this, moves); 
-    generateSpanMoves(board, from, (int)Direction::UP, (int)Direction::LEFT, this, moves);   
+    generateSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::LEFT, this, moves);
+    generateSpanMoves(board, from, (int)Direction::UP, (int)Direction::LEFT, this, moves);
 }
 
 bool Bishop::isValidMove(GameState const & state, Move const & move) const
 {
-    Board const & board   = state.board_;
-    Position const & from = move.from();
-    Position const & to   = move.to();
+    Board const &    board = state.board_;
+    Position const & from  = move.from();
+    Position const & to    = move.to();
 
     // Check if the destination square can be occupied
 

@@ -7,7 +7,7 @@
 
 class GameState;
 
-//#define TRANSPOSITION_TABLE_ANALYSIS_ENABLED
+// #define TRANSPOSITION_TABLE_ANALYSIS_ENABLED
 
 // A "transposition table" is a hash map containing the values of all the board states calculated so far.
 // Actually, as a speed and memory optimization, not all the states are saved. The slot for each state is not
@@ -76,7 +76,7 @@ private:
 
     class TableEntry
     {
-    public:
+public:
 
         static ZHash::Z const UNUSED_ENTRY = ZHash::INVALID;
 
@@ -89,7 +89,7 @@ private:
     };
 
     TableEntry const & find(ZHash::Z hash) const;
-    TableEntry & find(ZHash::Z hash);
+    TableEntry &       find(ZHash::Z hash);
 
     TableEntry table_[SIZE];
 };

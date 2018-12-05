@@ -7,7 +7,7 @@ void Pawn::generatePossibleMoves(GameState const & state, Position const & from,
 {
     Board const & board = state.board_;
 
-    int direction       = (color_ == Color::BLACK) ? (int)Direction::DOWN : (int)Direction::UP;
+    int direction = (color_ == Color::BLACK) ? (int)Direction::DOWN : (int)Direction::UP;
 
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
 
@@ -93,20 +93,18 @@ void Pawn::generatePossibleMoves(GameState const & state, Position const & from,
         {
             to.row += direction;
             if (board.pieceAt(to) == NO_PIECE)
-            {
                 moves.emplace_back(this, from, to);
-            }
         }
     }
 }
 
 bool Pawn::isValidMove(GameState const & state, Move const & move) const
 {
-    Board const & board   = state.board_;
-    Position const & from = move.from();
-    Position const & to   = move.to();
+    Board const &    board = state.board_;
+    Position const & from  = move.from();
+    Position const & to    = move.to();
 
-    int direction         = (color_ == Color::BLACK) ? (int)Direction::DOWN : (int)Direction::UP;
+    int direction = (color_ == Color::BLACK) ? (int)Direction::DOWN : (int)Direction::UP;
 
     // Ahead 1?
 
@@ -125,9 +123,7 @@ bool Pawn::isValidMove(GameState const & state, Move const & move) const
         Piece const * captured = board.pieceAt(to);
 
         if ((captured != NO_PIECE) && (captured->color() != color_))
-        {
             return true;
-        }
 
         // Check en passant
 

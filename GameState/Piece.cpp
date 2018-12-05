@@ -10,7 +10,7 @@
 
 // #include "GameState/GameState.h"
 #include "GameState/Move.h"
-// 
+//
 // #include "misc/Etc.h"
 
 namespace
@@ -33,7 +33,7 @@ PieceTraits const PIECE_TRAITS[NUMBER_OF_PIECE_TYPES] =
 };
 
 #if 0
-    
+
 bool squareCanBeOccupied(Board const & board, Position const & p, Color myColor)
 {
     Piece const * piece = board.pieceAt(p);
@@ -58,9 +58,7 @@ void generateSpanMoves(Board const &     board,
         {
             // If it is an opponent's piece, it is also a valid move, so add the capture before quitting.
             if (piece->color() != myPiece->color())
-            {
                 moves.emplace_back(myPiece, from, to, true);
-            }
             return;
         }
 
@@ -92,8 +90,7 @@ bool isSquare(int dr, int dc)
 {
     return dr == 0 || dc == 0;
 }
-#endif
-    
+#endif // if 0
 } // anonymous namespace
 
 Piece const * Piece::pieces_[1 + NUMBER_OF_COLORS * NUMBER_OF_PIECE_TYPES] =
@@ -161,9 +158,7 @@ void Piece::generateSpanMoves(Board const &     board,
         {
             // If it is an opponent's piece, it is also a valid move, so add the capture before quitting.
             if (piece->color() != myPiece->color())
-            {
                 moves.emplace_back(myPiece, from, to, true);
-            }
             return;
         }
 
@@ -175,4 +170,3 @@ void Piece::generateSpanMoves(Board const &     board,
         to.column += dc;
     }
 }
-

@@ -4,8 +4,8 @@
 #include "Piece.h"
 #include "Position.h"
 
-#include "Misc/Etc.h"
 #include "Misc/exceptions.h"
+#include "Misc/Etc.h"
 
 #include <algorithm>
 #include <cassert>
@@ -117,9 +117,9 @@ bool Board::initializeFromFen(char const * start, char const * end)
 bool Board::isValidPosition(Position const & p)
 {
     return p.row >= 0 &&
-        p.row < SIZE &&
-        p.column >= 0 &&
-        p.column < SIZE;
+           p.row < SIZE &&
+           p.column >= 0 &&
+           p.column < SIZE;
 }
 
 Piece const * Board::pieceAt(Position const & p) const
@@ -154,7 +154,7 @@ void Board::removePiece(int r, int c)
 
 void Board::movePiece(Position const & from, Position const & to)
 {
-    board_[to.row][to.column] = board_[from.row][from.column];
+    board_[to.row][to.column]     = board_[from.row][from.column];
     board_[from.row][from.column] = NO_PIECE;
 }
 

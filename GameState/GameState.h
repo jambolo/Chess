@@ -17,9 +17,9 @@
 class Move;
 class Piece;
 
-//#define GAME_STATE_ANALYSIS_ENABLED
-//#define USING_PRIORITIZED_MOVE_ORDERING
-//#define INCREMENTAL_STATIC_EVALUATION_ENABLED
+// #define GAME_STATE_ANALYSIS_ENABLED
+// #define USING_PRIORITIZED_MOVE_ORDERING
+// #define INCREMENTAL_STATIC_EVALUATION_ENABLED
 
 class GameState
 {
@@ -27,7 +27,7 @@ public:
 
     using CastleStatus = uint32_t;
 
-    GameState()        = default;
+    GameState() = default;
     GameState(Board const & board,
               Color         whoseTurn_,
               CastleStatus  castleStatus,
@@ -112,11 +112,11 @@ private:
     // Updates the game state with a pawn promotion (after moving). Returns the new piece.
     Piece const * promote(Color color, Position const & position);
 
-    bool          whoseTurnFromFen(char const * start, char const * end);
-    bool          castleStatusFromFen(char const * start, char const * end);
-    bool          fiftyMoveTimerFromFen(char const * start, char const * end);
-    bool          moveNumberFromFen(char const * start, char const * end);
-    std::string   castleStatusToFen() const;
+    bool        whoseTurnFromFen(char const * start, char const * end);
+    bool        castleStatusFromFen(char const * start, char const * end);
+    bool        fiftyMoveTimerFromFen(char const * start, char const * end);
+    bool        moveNumberFromFen(char const * start, char const * end);
+    std::string castleStatusToFen() const;
 };
 
 // Equality operator

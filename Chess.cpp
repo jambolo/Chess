@@ -4,7 +4,7 @@
 
 #include <cstdio>
 
-//static void drawBoard(Board const & b);
+// static void drawBoard(Board const & b);
 
 int main(int argc, char ** argv)
 {
@@ -15,7 +15,7 @@ int main(int argc, char ** argv)
         exit(1);
     }
     ComputerPlayer computer(Color::BLACK, 7);
-    GameState s1 = computer.myTurn(s0);
+    GameState      s1 = computer.myTurn(s0);
     printf("%s", s1.move_.san().c_str());
 
     return 0;
@@ -43,4 +43,4 @@ static void drawBoard(Board const & b)
     puts("     a   b   c   d   e   f   g   h");
 }
 
-#endif
+#endif // if 0
