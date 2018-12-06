@@ -20,7 +20,6 @@ GameState::GameState(Board const & board,
                      CastleStatus  castleStatus,
                      int           fiftyMoveTimer,
                      Move const &  move,
-                     int           value,
                      bool          inCheck,
                      int           moveNumber)
     : board_(board)
@@ -28,8 +27,7 @@ GameState::GameState(Board const & board,
     , whoseTurn_(whoseTurn)
     , fiftyMoveTimer_(fiftyMoveTimer)
     , move_(move)
-    , value_(value)
-    , quality_(std::numeric_limits<int>::min())
+    , inCheck_(inCheck)
     , zhash_(board)
 {
 }
@@ -41,11 +39,6 @@ void GameState::initialize()
     castleStatus_   = 0;
     fiftyMoveTimer_ = 0;
     makeMove(Color::WHITE, Move::reset());
-    value_   = 0;
-    quality_ = std::numeric_limits<int8_t>::min();
-#if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
-    priority_ = 0;
-#endif
     inCheck_    = false;
     moveNumber_ = 1;
     zhash_      = ZHash(board_);

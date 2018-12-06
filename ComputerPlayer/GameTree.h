@@ -3,10 +3,10 @@
 #if !defined(GameTree_h__)
 #define GameTree_h__
 
+
 #include "GameState/GameState.h"
 #include "GameState/Move.h"
 #include "StaticEvaluator.h"
-
 #include "TranspositionTable.h"
 
 class GameTree
@@ -53,16 +53,28 @@ public:
 
 private:
 
-    static int constexpr SEF_QUALITY = -std::numeric_limits<int>::max() + 1;
+    struct EvaluatedGameState
+    {
+        GameState state_;
+        int value_;       // Value of the game state
+        int quality_;     // Quality of the value
+#if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
+        int priority_;    // Higher priority states should be searched first
+#endif
+    };
+    
+    using EvaluatedGameStateList = std::vector<EvaluatedGameState>;
+
+    static int constexpr SEF_QUALITY = 0;
 
     // Sets the value of the given state to my best response
-    void myAlphaBeta(GameState * s0, int alpha, int beta, int depth);
+    void myAlphaBeta(EvaluatedGameState * s0, int alpha, int beta, int depth);
 
     // Sets the value of the given state to my opponent's best response
-    void opponentsAlphaBeta(GameState * s0, int alpha, int beta, int depth);
+    void opponentsAlphaBeta(EvaluatedGameState * s0, int alpha, int beta, int depth);
 
     // Static evaluation function
-    void evaluate(GameState * pstate, int depth);
+    void evaluate(GameState const & state, int depth, int * pValue, int * pQuality);
 
 #if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
 
@@ -72,7 +84,7 @@ private:
 #endif
 
     // Generate a list of all possible states in response to the specified one
-    void generateStates(GameState const & state, bool my_move, int depth, GameStateList & states);
+    void generateStates(GameState const & state, bool my_move, int depth, EvaluatedGameStateList & states);
 
 #if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
     void printStateInfo(GameState const & state, int depth, int alpha, int beta);

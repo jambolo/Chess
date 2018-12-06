@@ -29,7 +29,7 @@ bool TranspositionTable::check(GameState const & state, int * pReturnedValue, in
     bool hit = false;
 
     assert(hash != TableEntry::UNUSED_ENTRY);
-    if (entry.hashCode_ == hash)
+    if (entry.hash_ == hash)
     {
 #if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
         ++analysisData_.hitCount;
@@ -67,7 +67,7 @@ bool TranspositionTable::check(GameState const & state, int minQ, int * pReturne
 
     bool hit = false;
 
-    if (entry.hashCode_ == hash)
+    if (entry.hash_ == hash)
     {
 #if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
         ++analysisData_.hitCount;
@@ -93,7 +93,7 @@ bool TranspositionTable::check(GameState const & state, int minQ, int * pReturne
     return hit;
 }
 
-void TranspositionTable::forceUpdate(GameState const & state)
+void TranspositionTable::forceUpdate(GameState const & state, int value, int quality)
 {
 #if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
     ++analysisData_.updateCount;
@@ -117,14 +117,14 @@ void TranspositionTable::forceUpdate(GameState const & state)
 
     // Store the state, value and quality
 
-    assert(state.quality_ < 256);
-    entry.hashCode_ = hash;
-    entry.value_    = state.value_;
-    entry.q_        = state.quality_;
+    assert(quality < 256);
+    entry.hash_ = hash;
+    entry.value_    = value;
+    entry.q_        = quality;
     entry.age_      = 0;
 }
 
-void TranspositionTable::update(GameState const & state)
+void TranspositionTable::update(GameState const & state, int value, int quality)
 {
 #if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
     ++analysisData_.updateCount;
@@ -134,12 +134,12 @@ void TranspositionTable::update(GameState const & state)
     TableEntry & entry = table_[hash % SIZE];
     assert(hash != TableEntry::UNUSED_ENTRY);
 
-    bool isUnused = (entry.hashCode_ == TableEntry::UNUSED_ENTRY);
+    bool isUnused = (entry.hash_ == TableEntry::UNUSED_ENTRY);
 
     // If the entry is unused or if the new quality >= the stored quality, then store the new state. It is better
     // to replace values of equal quality in order to dispose of old entries that may no longer be relevant.
 
-    if (isUnused || (state.quality_ >= entry.q_))
+    if (isUnused || (quality >= entry.q_))
     {
 #if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
 
@@ -156,10 +156,10 @@ void TranspositionTable::update(GameState const & state)
 
         // Store the state, value and quality
 
-        entry.hashCode_ = hash;
-        entry.value_    = state.value_;
-        entry.q_        = state.quality_;
-        entry.age_      = 0;
+        entry.hash_  = hash;
+        entry.value_ = value;
+        entry.q_     = quality;
+        entry.age_   = 0;
     }
     else
     {
@@ -176,12 +176,12 @@ void TranspositionTable::age()
 {
     for (auto & entry : table_)
     {
-        if (entry.hashCode_ != TableEntry::UNUSED_ENTRY)
+        if (entry.hash_ != TableEntry::UNUSED_ENTRY)
         {
             ++entry.age_;
             if (entry.age_ > MAX_AGE)
             {
-                entry.hashCode_ = TableEntry::UNUSED_ENTRY;
+                entry.hash_ = TableEntry::UNUSED_ENTRY;
 
 #if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
                 --analysisData_.usage;

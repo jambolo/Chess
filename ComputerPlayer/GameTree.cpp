@@ -1,6 +1,5 @@
 #include "GameTree.h"
 
-#include "GameState/GameState.h"
 #include "GameState/Move.h"
 #include "GameState/Piece.h"
 #include "StaticEvaluator.h"
@@ -17,11 +16,10 @@ bool shouldDoQuiescentSearch(int previousValue, int thisValue)
 {
 #if defined(FEATURE_QUIESCENT_SEARCH)
 
-    int const QUIESCENT_THRESHOLD = 1000;
-
     // In the normal case, we would not search. However, if the situation is unsettled and we haven't reached the
     // true depth limit, then we should search the next ply.
 
+    int const QUIESCENT_THRESHOLD = 1000;
     return abs(previousValue - thisValue) >= QUIESCENT_THRESHOLD;
 
 #else   // defined( FEATURE_QUIESCENT_SEARCH )
@@ -44,26 +42,26 @@ GameTree::GameTree(TranspositionTable * pTTable, int maxDepth)
 
 GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 {
-    int depth         = 0;                           // The depth of this ply (this is the current state,  so its depth is 0)
-    int responseDepth = depth + 1;                   // Depth of responses to this state
-//    int quality         = maxDepth_ - depth;         // Quality of values at this depth (this is the depth of plies searched to
-// get
-//                                                     // the results for this ply )
-//    int responseQuality = maxDepth_ - responseDepth; // Normal quality of responses to this state
+    int const DEPTH          = 0;                          // The depth of this ply (this is the current state, so its depth is 0)
+    int const RESPONSE_DEPTH = 1;                          // Depth of my responses to this state
+//    int quality              = maxDepth_ - DEPTH;          // Quality of values at this depth (this is the depth of plies searched to
+//                                                           // get the results for this ply)
+//    int responseQuality      = maxDepth_ - RESPONSE_DEPTH; // Normal quality of responses to this state
 
     myColor_   = my_color;
     yourColor_ = (my_color == Color::WHITE) ? Color::BLACK : Color::WHITE;
 
-    GameStateList myMoves;
+    EvaluatedGameStateList myMoves;
 
     // Generate a list of all my possible responses to the specified state.
     // The responses have a preliminary value and are sorted by priority and highest value.
-    generateStates(s0, true, responseDepth, myMoves);
+    generateStates(s0, true, RESPONSE_DEPTH, myMoves);
 
     // Find the best of the responses... I want to find the state with the highest score
 
-    GameState best_move;
-    int       best_score = std::numeric_limits<int>::min();
+    EvaluatedGameState best_move;
+    best_move.value_ = std::numeric_limits<int>::min();
+    
 #if defined(FEATURE_GAME_TREE_ANALYSIS)
     int worst_score = std::numeric_limits<int>::max();
 #endif // defined( FEATURE_GAME_TREE_ANALYSIS )
@@ -71,9 +69,9 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
     for (auto & myMove : myMoves)
     {
         // Revise the value of the move by searching the tree of all possible responses
-        opponentsAlphaBeta(&myMove, best_score, std::numeric_limits<int>::max(), responseDepth);
+        opponentsAlphaBeta(&myMove, best_move.value_, std::numeric_limits<int>::max(), RESPONSE_DEPTH);
 #if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
-        printStateInfo(myMove, depth, best_score, std::numeric_limits<int>::max());
+        printStateInfo(myMove, DEPTH, best_move.value_, std::numeric_limits<int>::max());
 #endif
 
 #if defined(FEATURE_GAME_TREE_ANALYSIS)
@@ -86,18 +84,17 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 #endif  // defined( FEATURE_GAME_TREE_ANALYSIS )
 
         // If this is the highest value so far, then save it (if checkmate, then there is no need to continue looking for better).
-        if (myMove.value_ > best_score)
+        if (myMove.value_ > best_move.value_)
         {
-            best_score = myMove.value_;
             best_move  = myMove;
-            if (myMove.value_ == MY_CHECKMATE_VALUE)
+            if (best_move.value_ == MY_CHECKMATE_VALUE)
                 break;
         }
     }
 
     // If the value of my best move is really bad, then just resign
-    if (best_score < -StaticEvaluator::RESIGNATION_THRESHOLD)
-        best_move.move_ = Move::resign(my_color);
+    if (best_move.value_ < -StaticEvaluator::RESIGNATION_THRESHOLD)
+        best_move.state_.move_ = Move::resign(my_color);
 
 #if defined(FEATURE_GAME_TREE_ANALYSIS)
 
@@ -121,26 +118,25 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 #endif // defined( FEATURE_GAME_STATE_ANALYSIS )
 
     // Return the best move
-    return best_move;
+    return best_move.state_;
 }
 
 // Evaluate the state based on all my possible responses. The response I will make is the one with the highest
-// value, so that is the value of the state.
+// value.
 
-void GameTree::myAlphaBeta(GameState * state, int alpha, int beta, int depth)
+void GameTree::myAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int depth)
 {
     int responseDepth = depth + 1;                      // Depth of responses to this state
     int quality       = maxDepth_ - depth;              // Quality of values at this depth (this is the depth of plies searched to
-                                                        // get
-                                                        // the results for this ply )
+                                                        // get the results for this ply)
     int minResponseQuality = maxDepth_ - responseDepth; // Minimum acceptable quality of responses to this state
 
     // Generate a list of my possible responses to this state sorted descending by value. They are sorted in
     // descending order hoping that a beta cutoff will occur early.
     // Note: Preliminary values of the generated states are retrieved from the transposition table or computed by
     // the static evaluation function.
-    GameStateList responses;
-    generateStates(*state, true, responseDepth, responses);
+    EvaluatedGameStateList responses;
+    generateStates(state->state_, true, responseDepth, responses);
 
     // Evaluate each of my responses and choose the one with the highest score
     int  best_value = std::numeric_limits<int>::min(); // Initialize to worst
@@ -153,8 +149,7 @@ void GameTree::myAlphaBeta(GameState * state, int alpha, int beta, int depth)
     for (auto & response : responses)
     {
         // The quality of a value is basically the depth of the search tree below it. The reason for checking the quality is that
-        // some
-        // of the responses have not been fully searched.
+        // some of the responses have not been fully searched.
         // If the quality of the preliminary value is not as good as the minimum quality and we haven't
         // reached the maximum depth, then do a search. Otherwise, the response's quality is as good as the quality of a search,
         // so use the response as is.
@@ -190,12 +185,9 @@ void GameTree::myAlphaBeta(GameState * state, int alpha, int beta, int depth)
 
             // alpha-beta pruning (beta cutoff check) Here's how it works:
             //
-            // I am looking for the highest value. The 'beta' passed into this function is the value of my
-            // opponent's best move found so far. If the value of this response is higher than the beta, then my opponent will not
-            // make
-            // the move that allows me to choose this response (and its higher value). And since the rest of the responses can only
-            // result in a higher value (because I choose the highest value), there is no reason to continue considering any more
-            // responses.
+            // I am looking for the highest value. The 'beta' is the value of my opponent's best move found so far. If the value
+            // of this response is higher than the beta, then my opponent will not make the move that allows me to choose this
+            // response because it has already found a move with the value of the beta that is better.
 
             if (best_value > beta)
             {
@@ -216,7 +208,7 @@ void GameTree::myAlphaBeta(GameState * state, int alpha, int beta, int depth)
             // this is a better move for me. The alpha value is passed to my opponent's move evaluator so that if
             // it finds a response with a lower value than the alpha, it won't bother continuing because it knows
             // that I already have a better move and will choose it instead of allowing him to make a move with
-            // worse value for me. So, keep track of the value of my best move so far.
+            // worse value for me.
 
             if (best_value > alpha)
                 alpha = best_value;
@@ -250,7 +242,7 @@ void GameTree::myAlphaBeta(GameState * state, int alpha, int beta, int depth)
 // Evaluate the state based on the values of all my opponent's possible responses. The move my opponent will
 // make is the one with the lowest value, so that is the value of S0.
 
-void GameTree::opponentsAlphaBeta(GameState * state, int alpha, int beta, int depth)
+void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int depth)
 {
     int responseDepth = depth + 1;                      // Depth of responses to this state
     int quality       = maxDepth_ - depth;              // Quality of values at this depth (this is the depth of plies searched to
@@ -262,25 +254,23 @@ void GameTree::opponentsAlphaBeta(GameState * state, int alpha, int beta, int de
     // in ascending order hoping that a alpha cutoff will occur early.
     // Note: Preliminary values of the generated states are retrieved from the transposition table or computed by
     // the static evaluation function.
-    GameStateList responses;
-    generateStates(*state, false, responseDepth, responses);
+    EvaluatedGameStateList responses;
+    generateStates(state->state_, false, responseDepth, responses);
 
     // Evaluate each of his responses and choose the one with the lowest score
     int  best_value = std::numeric_limits<int>::max(); // Initialize to worst
     bool pruned     = false;
 
 #if defined(FEATURE_GAME_STATE_ANALYSIS)
-    GameState * pBestResponse = 0;
+    EvaluatedGameState * pBestResponse = 0;
 #endif // defined( FEATURE_GAME_STATE_ANALYSIS )
 
     for (auto & response : responses)
     {
         // The quality of a value is basically the depth of the search tree below it. The reason for checking the quality is that
-        // some
-        // of the responses have not been fully searched.
-        // If the quality of the preliminary value is not as good as the minimum quality and we haven't
-        // reached the maximum depth, then do a search. Otherwise, the response's quality is as good as the quality of a search,
-        // so use the response as is.
+        // some of the responses have not been fully searched. If the quality of the preliminary value is not as good as the
+        // minimum quality and we haven't reached the maximum depth, then do a search. Otherwise, the response's quality is as
+        // good as the quality of a search, so use the response as is.
         if ((response.quality_ < minResponseQuality) &&
             ((responseDepth < maxDepth_) ||
              (shouldDoQuiescentSearch(state->value_, response.value_) && (responseDepth < MAX_DEPTH))))
@@ -313,12 +303,10 @@ void GameTree::opponentsAlphaBeta(GameState * state, int alpha, int beta, int de
 
             // alpha-beta pruning (alpha cutoff check) Here's how it works:
             //
-            // My opponent is looking for the lowest value. The 'alpha' passed into this function is the value of
-            // my best move found so far. If the value of this response is lower than the alpha, then my opponent
-            // obviously prefers it and will choose it. However, because I already can make a move with the value
-            // of the alpha, I will choose that move, not the move that allows my opponent to choose this response
-            // (and its lower value). Since the rest of the responses can only result in a lower value (because my
-            // opponent chooses the lowest value), there is no reason to continue considering these responses.
+            // My opponent is looking for the lowest value. The 'alpha' is the value of my best move found so far.
+            // If the value of this response is lower than the alpha, then I should abandon this move because it
+            // allows my opponent to make a move that is worse for me than the move I have already found with a
+            // value of the alpha.
 
             if (best_value < alpha)
             {
@@ -339,7 +327,7 @@ void GameTree::opponentsAlphaBeta(GameState * state, int alpha, int beta, int de
             // obviously this is a better move for my opponent. The beta value is passed to my move evaluator so
             // that if it finds a response with a higher value than the beta, it won't bother continuing because
             // it knows that my opponent already has a better move and will choose it instead of allowing me to
-            // make a move with worse value for him. So, keep track of the value of my opponent's best move so far.
+            // make a move with worse value for him.
 
             if (best_value < beta)
                 beta = best_value;
@@ -370,7 +358,7 @@ void GameTree::opponentsAlphaBeta(GameState * state, int alpha, int beta, int de
 #endif
 }
 
-void GameTree::generateStates(GameState const & s0, bool my_move, int depth, GameStateList & states)
+void GameTree::generateStates(GameState const & s0, bool my_move, int depth, EvaluatedGameStateList & states)
 {
     int const MAX_POSSIBLE_STATES = 147;
 
@@ -397,16 +385,16 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
                 // Convert the moves into new states and put the new states into the state list
                 for (auto const & move : moves)
                 {
-                    GameState new_state(s0);
-                    new_state.makeMove(current_color, move, depth);
+                    EvaluatedGameState new_state{ s0, 0, 0 };
+                    new_state.state_.makeMove(current_color, move, depth);
 
                     // Compute a preliminary value for the state
-                    evaluate(&new_state, depth);
+                    evaluate(new_state.state_, depth, &new_state.value_, &new_state.quality_);
 
 #if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
 
                     // Determine the new state's priority
-                    prioritize(&new_state, depth);
+                    new_state.priority_ = prioritize(new_state, depth);
 #endif
 
 #if defined(FEATURE_GAME_TREE_ANALYSIS)
@@ -423,7 +411,7 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
     // Now sort the moves in descending (my moves) or ascending (opponent's moves) value
     if (my_move)
     {
-        std::sort(states.begin(), states.end(), [] (GameState const & g0, GameState const & g1)
+        std::sort(states.begin(), states.end(), [] (EvaluatedGameState const & g0, EvaluatedGameState const & g1)
                   {
                       // Sort the elements in descending order, first by priority, then by value.
 #if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
@@ -442,7 +430,7 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
     }
     else
     {
-        std::sort(states.begin(), states.end(), [](GameState const & g0, GameState const & g1)
+        std::sort(states.begin(), states.end(), [](EvaluatedGameState const & g0, EvaluatedGameState const & g1)
                   {
                       // Sort the elements in descending order, first by priority, then by value.
 #if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
@@ -461,7 +449,7 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Gam
     }
 }
 
-void GameTree::evaluate(GameState * pState, int depth)
+void GameTree::evaluate(GameState const & state, int depth, int * pValue, int * pQuality)
 {
 #if defined(FEATURE_TRANSPOSITION_TABLE)
     // SEF optimization:
@@ -472,7 +460,7 @@ void GameTree::evaluate(GameState * pState, int depth)
     // lookup is so much faster than the SEF.
 
     // If it is in the T-table then use that value, otherwise compute the value using SEF.
-    if (transpositionTable_->check(*pState, &pState->value_, &pState->quality_))
+    if (transpositionTable_->check(state, pValue, pQuality))
     {
         // Use the value from the T-table
     }
@@ -493,34 +481,34 @@ void GameTree::evaluate(GameState * pState, int depth)
         if (myColor_ == Color::BLACK)
             value = -value;
 
-        ASSERT(pState->value_ == absoluteValue);
+        ASSERT(state.value_ == absoluteValue);
 
 #endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION_VALIDATION )
 
 #else   // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
 
-        int value = StaticEvaluator::evaluate(*pState);
+        int value = StaticEvaluator::evaluate(state);
 
         // Black has negative value so if I am black then I need to negate the value. This is to make the value in terms
         // of me or my opponent, rather than color.
         if (myColor_ == Color::BLACK)
             value = -value;
 
-        pState->value_   = value;
-        pState->quality_ = SEF_QUALITY;
+        *pValue   = value;
+        *pQuality = SEF_QUALITY;
 
 #endif  // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
 
 #if defined(FEATURE_TRANSPOSITION_TABLE)
         // Save the value of the state in the T-table
-        transpositionTable_->update(*pState);
+        transpositionTable_->update(*pState, *pValue, *pQuality);
 #endif
     }
 }
 
 #if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
 
-void GameTree::prioritize(GameState * pState, int depth)
+int GameTree::prioritize(EvaluatedGameState const & state, int depth)
 {
     int const quality = maxDepth_ - depth;
 
@@ -536,7 +524,7 @@ void GameTree::prioritize(GameState * pState, int depth)
     int const PRIORITY_HIGH = 1;
     int const PRIORITY_LOW  = 0;
 
-    pState->priority_ = (pState->quality_ > quality) ? PRIORITY_HIGH : PRIORITY_LOW;
+    return (state.quality_ > quality) ? PRIORITY_HIGH : PRIORITY_LOW;
 }
 
 #endif // defined( FEATURE_PRIORITIZED_MOVE_ORDERING )

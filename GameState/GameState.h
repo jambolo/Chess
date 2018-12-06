@@ -29,7 +29,6 @@ public:
               CastleStatus  castleStatus,
               int           fiftyMoveTimer,
               Move const &  move,
-              int           value,
               bool          inCheck,
               int           moveNumber);
 
@@ -84,16 +83,10 @@ public:
     Color whoseTurn_;           // Whose turn
     int fiftyMoveTimer_;        // Fifty move rule countdown
     Position enPassant_;        // En passant target if any
-
     Move move_;                 // The move that resulted in this state
-    int value_;                 // Value of the game state
-    int quality_;               // Quality of the value
-#if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
-    int priority_;              // Priority of this state (determines sorting order)
-#endif // defined( FEATURE_PRIORITIZED_MOVE_ORDERING )
     bool inCheck_;              // True if the king is in check
     int moveNumber_;            // Move number
-    ZHash zhash_;               // Hash code for this state
+    ZHash zhash_;               // Zobrist hash for this state
 
 private:
 

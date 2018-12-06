@@ -36,10 +36,10 @@ public:
     bool check(GameState const & state, int minQ, int * pReturnedValue) const;
 
     // Puts the state into the table
-    void forceUpdate(GameState const & state);
+    void forceUpdate(GameState const & state, int value, int quality);
 
     // Puts the state into the table, if its quality is high enough
-    void update(GameState const & state);
+    void update(GameState const & state, int value, int quality);
 
     // Bump the age of entries so that they are eventually replaced by newer entries.
     void age();
@@ -78,9 +78,9 @@ public:
 
         static ZHash::Z const UNUSED_ENTRY = ZHash::INVALID;
 
-        void clear() { hashCode_ = UNUSED_ENTRY; }
+        void clear() { hash_ = UNUSED_ENTRY; }
 
-        ZHash::Z hashCode_;  // The state's hash code
+        ZHash::Z hash_;      // The state's hash
         int value_;          // The state's value
         int8_t q_;           // The quality of the value
         mutable int8_t age_; // The number of turns since the entry has been referenced
