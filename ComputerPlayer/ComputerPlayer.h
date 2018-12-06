@@ -4,6 +4,7 @@
 #define ComputerPlayer_h__
 
 #include "Player/Player.h"
+#include <memory>
 
 enum class Color;
 class GameState;
@@ -14,13 +15,13 @@ class ComputerPlayer : public Player
 public:
 
     ComputerPlayer(Color color, int maxDepth);
-    virtual ~ComputerPlayer();
+    virtual ~ComputerPlayer() = default;
 
     virtual GameState myTurn(GameState const & s0) override;
 
 private:
 
-    TranspositionTable * transpositionTable_;
+    std::shared_ptr<TranspositionTable> transpositionTable_;
     int maxDepth_;
 };
 

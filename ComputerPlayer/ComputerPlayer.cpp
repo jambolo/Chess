@@ -8,14 +8,9 @@
 
 ComputerPlayer::ComputerPlayer(Color color, int maxDepth)
     : Player(color)
+    , transpositionTable_(new TranspositionTable)
     , maxDepth_(maxDepth)
 {
-    transpositionTable_ = new TranspositionTable;
-}
-
-ComputerPlayer::~ComputerPlayer()
-{
-    delete transpositionTable_;
 }
 
 GameState ComputerPlayer::myTurn(GameState const & s0)

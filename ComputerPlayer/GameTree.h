@@ -8,6 +8,7 @@
 #include "GameState/Move.h"
 #include "StaticEvaluator.h"
 #include "TranspositionTable.h"
+#include <memory>
 
 class GameTree
 {
@@ -15,7 +16,7 @@ public:
 
     static int const MAX_DEPTH = 10;
 
-    GameTree(TranspositionTable * pTTable, int maxDepth);
+    GameTree(std::shared_ptr<TranspositionTable> tt, int maxDepth);
 
     // Search for my best move and return it
     GameState myBestMove(GameState const & state, Color my_color);
@@ -93,7 +94,7 @@ private:
     Color myColor_;                           // My color
     Color yourColor_;                         // My opponent's color
 #if defined(FEATURE_TRANSPOSITION_TABLE)
-    TranspositionTable * transpositionTable_; // Transposition table
+    std::shared_ptr<TranspositionTable> transpositionTable_; // Transposition table (persistant)
 #endif
     int maxDepth_;                            // How deep to seach
 };

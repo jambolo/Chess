@@ -30,9 +30,9 @@ bool shouldDoQuiescentSearch(int previousValue, int thisValue)
 }
 } // anonymous namespace
 
-GameTree::GameTree(TranspositionTable * pTTable, int maxDepth)
+GameTree::GameTree(std::shared_ptr<TranspositionTable> tt, int maxDepth)
 #if defined(FEATURE_TRANSPOSITION_TABLE)
-    : transpositionTable_(pTTable)
+    : transpositionTable_(tt)
     , maxDepth_(maxDepth)
 #else
     : maxDepth_(maxDepth)

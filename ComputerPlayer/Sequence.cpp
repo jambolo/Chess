@@ -17,19 +17,19 @@ SequenceEntry::SequenceEntry(Color color, PieceTypeId piece, Move const & move)
 {
 }
 
-Move SequenceEntry::GetMove() const
+Move SequenceEntry::move() const
 {
     return Move(Piece::get(static_cast<PieceTypeId>(pieceTypeId_), static_cast<Color>(color_)),
                 Position(fromRow_, fromColumn_),
                 Position(toRow_, toColumn_));
 }
 
-Color SequenceEntry::GetColor() const
+Color SequenceEntry::color() const
 {
     return static_cast <Color>(color_);
 }
 
-PieceTypeId SequenceEntry::GetPieceTypeId() const
+PieceTypeId SequenceEntry::piece() const
 {
-    return (pieceTypeId_ != 7) ? static_cast <PieceTypeId>(pieceTypeId_) : PieceTypeId::INVALID;
+    return (pieceTypeId_ != 7) ? static_cast<PieceTypeId>(pieceTypeId_) : PieceTypeId::INVALID;
 }

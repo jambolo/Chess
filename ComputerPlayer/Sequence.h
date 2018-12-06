@@ -13,10 +13,11 @@ public:
     SequenceEntry();
     SequenceEntry(Color color, PieceTypeId piece, Move const & move);
 
-    Move        GetMove() const;
-    Color       GetColor() const;
-    PieceTypeId GetPieceTypeId() const;
-
+    Move        move() const;
+    Color       color() const;
+    PieceTypeId piece() const;
+    
+private:
     uint16_t color_        : 1;
     uint16_t pieceTypeId_  : 3; // Note: 7 is PieceTypeId::INVALID
     uint16_t fromRow_      : 3;
