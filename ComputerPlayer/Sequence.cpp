@@ -19,8 +19,8 @@ SequenceEntry::SequenceEntry(Color color, PieceTypeId piece, Move const & move)
 
 Move SequenceEntry::GetMove() const
 {
-    return Move(Piece::piece(static_cast<PieceTypeId>(pieceTypeId_), static_cast<Color>(color_)), Position(fromRow_,
-                                                                                                           fromColumn_),
+    return Move(Piece::get(static_cast<PieceTypeId>(pieceTypeId_), static_cast<Color>(color_)),
+                Position(fromRow_, fromColumn_),
                 Position(toRow_, toColumn_));
 }
 

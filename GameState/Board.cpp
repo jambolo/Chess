@@ -20,39 +20,39 @@ void Board::initialize()
 {
     clear();
 
-    putPiece(Piece::piece(PieceTypeId::ROOK,   Color::BLACK), { 0, 0 });
-    putPiece(Piece::piece(PieceTypeId::KNIGHT, Color::BLACK), { 0, 1 });
-    putPiece(Piece::piece(PieceTypeId::BISHOP, Color::BLACK), { 0, 2 });
-    putPiece(Piece::piece(PieceTypeId::QUEEN,  Color::BLACK), { 0, 3 });
-    putPiece(Piece::piece(PieceTypeId::KING,   Color::BLACK), { 0, 4 });
-    putPiece(Piece::piece(PieceTypeId::BISHOP, Color::BLACK), { 0, 5 });
-    putPiece(Piece::piece(PieceTypeId::KNIGHT, Color::BLACK), { 0, 6 });
-    putPiece(Piece::piece(PieceTypeId::ROOK,   Color::BLACK), { 0, 7 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 0 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 1 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 2 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 3 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 4 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 5 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 6 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::BLACK), { 1, 7 });
+    putPiece(Piece::get(PieceTypeId::ROOK,   Color::BLACK), { 0, 0 });
+    putPiece(Piece::get(PieceTypeId::KNIGHT, Color::BLACK), { 0, 1 });
+    putPiece(Piece::get(PieceTypeId::BISHOP, Color::BLACK), { 0, 2 });
+    putPiece(Piece::get(PieceTypeId::QUEEN,  Color::BLACK), { 0, 3 });
+    putPiece(Piece::get(PieceTypeId::KING,   Color::BLACK), { 0, 4 });
+    putPiece(Piece::get(PieceTypeId::BISHOP, Color::BLACK), { 0, 5 });
+    putPiece(Piece::get(PieceTypeId::KNIGHT, Color::BLACK), { 0, 6 });
+    putPiece(Piece::get(PieceTypeId::ROOK,   Color::BLACK), { 0, 7 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::BLACK), { 1, 0 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::BLACK), { 1, 1 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::BLACK), { 1, 2 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::BLACK), { 1, 3 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::BLACK), { 1, 4 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::BLACK), { 1, 5 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::BLACK), { 1, 6 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::BLACK), { 1, 7 });
 
-    putPiece(Piece::piece(PieceTypeId::ROOK,   Color::WHITE), { 7, 0 });
-    putPiece(Piece::piece(PieceTypeId::KNIGHT, Color::WHITE), { 7, 1 });
-    putPiece(Piece::piece(PieceTypeId::BISHOP, Color::WHITE), { 7, 2 });
-    putPiece(Piece::piece(PieceTypeId::QUEEN,  Color::WHITE), { 7, 3 });
-    putPiece(Piece::piece(PieceTypeId::KING,   Color::WHITE), { 7, 4 });
-    putPiece(Piece::piece(PieceTypeId::BISHOP, Color::WHITE), { 7, 5 });
-    putPiece(Piece::piece(PieceTypeId::KNIGHT, Color::WHITE), { 7, 6 });
-    putPiece(Piece::piece(PieceTypeId::ROOK,   Color::WHITE), { 7, 7 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 0 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 1 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 2 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 3 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 4 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 5 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 6 });
-    putPiece(Piece::piece(PieceTypeId::PAWN,   Color::WHITE), { 6, 7 });
+    putPiece(Piece::get(PieceTypeId::ROOK,   Color::WHITE), { 7, 0 });
+    putPiece(Piece::get(PieceTypeId::KNIGHT, Color::WHITE), { 7, 1 });
+    putPiece(Piece::get(PieceTypeId::BISHOP, Color::WHITE), { 7, 2 });
+    putPiece(Piece::get(PieceTypeId::QUEEN,  Color::WHITE), { 7, 3 });
+    putPiece(Piece::get(PieceTypeId::KING,   Color::WHITE), { 7, 4 });
+    putPiece(Piece::get(PieceTypeId::BISHOP, Color::WHITE), { 7, 5 });
+    putPiece(Piece::get(PieceTypeId::KNIGHT, Color::WHITE), { 7, 6 });
+    putPiece(Piece::get(PieceTypeId::ROOK,   Color::WHITE), { 7, 7 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::WHITE), { 6, 0 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::WHITE), { 6, 1 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::WHITE), { 6, 2 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::WHITE), { 6, 3 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::WHITE), { 6, 4 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::WHITE), { 6, 5 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::WHITE), { 6, 6 });
+    putPiece(Piece::get(PieceTypeId::PAWN,   Color::WHITE), { 6, 7 });
 }
 
 bool Board::initializeFromFen(char const * start, char const * end)
@@ -90,18 +90,18 @@ bool Board::initializeFromFen(char const * start, char const * end)
                 Piece const * piece = NO_PIECE;
                 switch (c)
                 {
-                    case 'B': piece = Piece::piece(PieceTypeId::BISHOP, Color::WHITE); break;
-                    case 'K': piece = Piece::piece(PieceTypeId::KING, Color::WHITE);   break;
-                    case 'N': piece = Piece::piece(PieceTypeId::KNIGHT, Color::WHITE); break;
-                    case 'P': piece = Piece::piece(PieceTypeId::PAWN, Color::WHITE);   break;
-                    case 'Q': piece = Piece::piece(PieceTypeId::QUEEN, Color::WHITE);  break;
-                    case 'R': piece = Piece::piece(PieceTypeId::ROOK, Color::WHITE);   break;
-                    case 'b': piece = Piece::piece(PieceTypeId::BISHOP, Color::BLACK); break;
-                    case 'k': piece = Piece::piece(PieceTypeId::KING, Color::BLACK);   break;
-                    case 'n': piece = Piece::piece(PieceTypeId::KNIGHT, Color::BLACK); break;
-                    case 'p': piece = Piece::piece(PieceTypeId::PAWN, Color::BLACK);   break;
-                    case 'q': piece = Piece::piece(PieceTypeId::QUEEN, Color::BLACK);  break;
-                    case 'r': piece = Piece::piece(PieceTypeId::ROOK, Color::BLACK);   break;
+                    case 'B': piece = Piece::get(PieceTypeId::BISHOP, Color::WHITE); break;
+                    case 'K': piece = Piece::get(PieceTypeId::KING, Color::WHITE);   break;
+                    case 'N': piece = Piece::get(PieceTypeId::KNIGHT, Color::WHITE); break;
+                    case 'P': piece = Piece::get(PieceTypeId::PAWN, Color::WHITE);   break;
+                    case 'Q': piece = Piece::get(PieceTypeId::QUEEN, Color::WHITE);  break;
+                    case 'R': piece = Piece::get(PieceTypeId::ROOK, Color::WHITE);   break;
+                    case 'b': piece = Piece::get(PieceTypeId::BISHOP, Color::BLACK); break;
+                    case 'k': piece = Piece::get(PieceTypeId::KING, Color::BLACK);   break;
+                    case 'n': piece = Piece::get(PieceTypeId::KNIGHT, Color::BLACK); break;
+                    case 'p': piece = Piece::get(PieceTypeId::PAWN, Color::BLACK);   break;
+                    case 'q': piece = Piece::get(PieceTypeId::QUEEN, Color::BLACK);  break;
+                    case 'r': piece = Piece::get(PieceTypeId::ROOK, Color::BLACK);   break;
                     default: throw ConstructorFailedException();
                 }
                 putPiece(piece, Position(row, column));

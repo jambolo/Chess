@@ -143,7 +143,7 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int 
     bool pruned     = false;
 
 #if defined(FEATURE_GAME_STATE_ANALYSIS)
-    GameState * pBestResponse = 0;
+    GameState * pBestResponse = nullptr;
 #endif // defined( FEATURE_GAME_STATE_ANALYSIS )
 
     for (auto & response : responses)
@@ -262,7 +262,7 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, int alpha, int bet
     bool pruned     = false;
 
 #if defined(FEATURE_GAME_STATE_ANALYSIS)
-    EvaluatedGameState * pBestResponse = 0;
+    EvaluatedGameState * pBestResponse = nullptr;
 #endif // defined( FEATURE_GAME_STATE_ANALYSIS )
 
     for (auto & response : responses)

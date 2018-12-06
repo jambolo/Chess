@@ -25,13 +25,13 @@ Move::Move(int              special,
 {
     switch (special)
     {
-        case RESIGN:             piece_ = Piece::piece(PieceTypeId::KING, color);  break;
-        case UNDO:               piece_ = nullptr;                                 break;
-        case RESET:              piece_ = nullptr;                                 break;
-        case KINGSIDE_CASTLE:    piece_ = Piece::piece(PieceTypeId::KING, color);  break;
-        case QUEENSIDE_CASTLE:   piece_ = Piece::piece(PieceTypeId::KING, color);  break;
-        case PROMOTION:          piece_ = Piece::piece(PieceTypeId::PAWN, color);  break;
-        case ENPASSANT:          piece_ = Piece::piece(PieceTypeId::PAWN, color);  break;
+        case RESIGN:             piece_ = Piece::get(PieceTypeId::KING, color);  break;
+        case UNDO:               piece_ = nullptr;                               break;
+        case RESET:              piece_ = nullptr;                               break;
+        case KINGSIDE_CASTLE:    piece_ = Piece::get(PieceTypeId::KING, color);  break;
+        case QUEENSIDE_CASTLE:   piece_ = Piece::get(PieceTypeId::KING, color);  break;
+        case PROMOTION:          piece_ = Piece::get(PieceTypeId::PAWN, color);  break;
+        case ENPASSANT:          piece_ = Piece::get(PieceTypeId::PAWN, color);  break;
     }
     from_.row |= special;
 }

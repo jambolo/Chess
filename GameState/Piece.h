@@ -16,12 +16,14 @@ class Piece
 {
 public:
 
-    static int constexpr MAX_POSSIBLE_MOVES = 28;           // The maximum number of possible moves for any piece
+    static int constexpr MAX_POSSIBLE_MOVES = 28; // The maximum number of possible moves for any piece
 
     using MoveList = std::vector<Move>;
 
     Piece(PieceTypeId t, Color c);
     virtual ~Piece();
+    Piece(const Piece&) = delete;            // Non-copyable
+    Piece& operator=(const Piece&) = delete; // Non-copyable
 
     // Generates all legal moves for this piece
     virtual void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const = 0;
@@ -37,7 +39,7 @@ public:
     static char const * symbol(PieceTypeId id);
 
     // Returns the piece corresponding to the specified type and color
-    static Piece const * piece(PieceTypeId id, Color color);
+    static Piece const * get(PieceTypeId id, Color color);
 
 protected:
 
@@ -53,9 +55,7 @@ protected:
                            Piece::MoveList & moves) const;
 
 private:
-    // Non-copyable
-    Piece(const Piece&) = delete;
-    const Piece& operator=(const Piece&) = delete;
+
     
     // NO_PIECE followed by white pieces followed by black pieces
     static Piece const * pieces_[1 + NUMBER_OF_COLORS * NUMBER_OF_PIECE_TYPES];
@@ -63,7 +63,7 @@ private:
 
 Piece const * const NO_PIECE = nullptr;
 
-inline Piece const * Piece::piece(PieceTypeId id, Color color)
+inline Piece const * Piece::get(PieceTypeId id, Color color)
 {
     return (id != PieceTypeId::INVALID) ? pieces_[1 + (int)color * NUMBER_OF_PIECE_TYPES + (int)id] : NO_PIECE;
 }
