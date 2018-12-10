@@ -33,6 +33,7 @@ Move::Move(int              special,
         case PROMOTION:          piece_ = Piece::get(PieceTypeId::PAWN, color);  break;
         case ENPASSANT:          piece_ = Piece::get(PieceTypeId::PAWN, color);  break;
     }
+    from_.row &= NORMAL_MOVE_MASK;
     from_.row |= special;
 }
 

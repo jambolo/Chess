@@ -13,13 +13,13 @@ class Move
 {
 public:
     // Values for the special moves. The values are shifted to leave room for board locations when needed
-    static int constexpr RESIGN           = 1 << 3;
-    static int constexpr UNDO             = 2 << 3;
-    static int constexpr RESET            = 3 << 3;
-    static int constexpr KINGSIDE_CASTLE  = 4 << 3;
-    static int constexpr QUEENSIDE_CASTLE = 5 << 3;
-    static int constexpr PROMOTION        = 6 << 3;
-    static int constexpr ENPASSANT        = 7 << 3;
+    static int constexpr RESIGN           = 1 << 4;
+    static int constexpr UNDO             = 2 << 4;
+    static int constexpr RESET            = 3 << 4;
+    static int constexpr KINGSIDE_CASTLE  = 4 << 4;
+    static int constexpr QUEENSIDE_CASTLE = 5 << 4;
+    static int constexpr PROMOTION        = 6 << 4;
+    static int constexpr ENPASSANT        = 7 << 4;
 
     Move() = default;
     Move(Piece const * piece, Position const & from, Position const & to, bool capture = false);
@@ -115,7 +115,7 @@ public:
 
 private:
 
-    static int constexpr NORMAL_MOVE_MASK = 0x7;
+    static int constexpr NORMAL_MOVE_MASK = 0x07;
 
     // Returns true if this is the specified special move
     bool isSpecial(int move) const;
