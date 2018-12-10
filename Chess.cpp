@@ -14,7 +14,7 @@ int main(int argc, char ** argv)
         fprintf(stderr, "Unable to parse input: %s\n", argv[1]);
         exit(1);
     }
-    ComputerPlayer computer(Color::BLACK, 7);
+    ComputerPlayer computer(s0.whoseTurn_, 7);
     GameState      s1 = computer.myTurn(s0);
     printf("%s", s1.move_.notation().c_str());
 
