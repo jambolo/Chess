@@ -26,7 +26,7 @@ set(PRIVATE_INCLUDE_PATHS
 
 add_library(computer_player ${SOURCES})
 target_include_directories(computer_player PRIVATE ${PRIVATE_INCLUDE_PATHS})
-target_link_libraries(computer_player game_state zhash misc)
+target_link_libraries(computer_player player game_state zhash)
 
 if(FEATURE_GAME_TREE_ANALYSIS)
     target_compile_definitions(computer_player PUBLIC FEATURE_GAME_TREE_ANALYSIS=1)

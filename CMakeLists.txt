@@ -19,22 +19,18 @@ option(FEATURE_PLAYER_ANALYSIS "ComputerPlayer analysis is enabled if true" FALS
 #set(Chess_VERSION_MINOR 1)
 #configure_file("${PROJECT_SOURCE_DIR}/Version.h.in" "${PROJECT_BINARY_DIR}/Version.h")
 
-set(SOURCES
+set(CHESS_SOURCES
     Chess.cpp
 )
 
-set(PRIVATE_INCLUDE_PATHS
+set(CHESS_PRIVATE_INCLUDE_PATHS
     ${CMAKE_SOURCE_DIR}
 )
 
-add_executable(chess ${SOURCES})
+add_executable(chess ${CHESS_SOURCES})
 target_link_libraries(chess
-    bitboard
     computer_player
     game_state
-    misc
-    player
-    zhash
 )
 target_compile_definitions(chess
     PRIVATE
@@ -45,7 +41,7 @@ target_compile_definitions(chess
         -D_SECURE_SCL=0
         -D_SCL_SECURE_NO_WARNINGS
 )
-target_include_directories(chess PRIVATE ${PRIVATE_INCLUDE_PATHS})
+target_include_directories(chess PRIVATE ${CHESS_PRIVATE_INCLUDE_PATHS})
 
 if(FEATURE_PLAYER_ANALYSIS)
     target_compile_definitions(chess PUBLIC FEATURE_PLAYER_ANALYSIS=1)
