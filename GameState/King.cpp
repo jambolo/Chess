@@ -6,71 +6,91 @@
 void King::generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const
 {
     Board const & board = state.board_;
-
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
 
-    Position to = from;
+    // Normal moves
+    
+    {
+        Position to = from;
 
-    // Up
+        // Up
 
-    --to.row;
-    if ((to.row >= 0) && state.canBeOccupied(to, color_))
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
+        --to.row;
+        if ((to.row >= 0) && state.canBeOccupied(to, color_))
+            moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
 
-    // Up-right
+        // Up-right
 
-    ++to.column;
-    if ((to.row >= 0) && (to.column < Board::SIZE) && state.canBeOccupied(to, color_))
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
+        ++to.column;
+        if ((to.row >= 0) && (to.column < Board::SIZE) && state.canBeOccupied(to, color_))
+            moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
 
-    // Right
+        // Right
 
-    ++to.row;
-    if ((to.column < Board::SIZE) && state.canBeOccupied(to, color_))
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
+        ++to.row;
+        if ((to.column < Board::SIZE) && state.canBeOccupied(to, color_))
+            moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
 
-    // Down-right
+        // Down-right
 
-    ++to.row;
-    if ((to.row < Board::SIZE) && (to.column < Board::SIZE) && state.canBeOccupied(to, color_))
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
+        ++to.row;
+        if ((to.row < Board::SIZE) && (to.column < Board::SIZE) && state.canBeOccupied(to, color_))
+            moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
 
-    // Down
+        // Down
 
-    --to.column;
-    if ((to.row < Board::SIZE) && state.canBeOccupied(to, color_))
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
+        --to.column;
+        if ((to.row < Board::SIZE) && state.canBeOccupied(to, color_))
+            moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
 
-    // Down-left
+        // Down-left
 
-    --to.column;
-    if ((to.row < Board::SIZE) && (to.column >= 0) && state.canBeOccupied(to, color_))
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
+        --to.column;
+        if ((to.row < Board::SIZE) && (to.column >= 0) && state.canBeOccupied(to, color_))
+            moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
 
-    // Left
+        // Left
 
-    --to.row;
-    if ((to.column >= 0) && state.canBeOccupied(to, color_))
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
+        --to.row;
+        if ((to.column >= 0) && state.canBeOccupied(to, color_))
+            moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
 
-    // Up-left
+        // Up-left
 
-    --to.row;
-    if ((to.row >= 0) && (to.column >= 0) && state.canBeOccupied(to, color_))
-        moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
-
+        --to.row;
+        if ((to.row >= 0) && (to.column >= 0) && state.canBeOccupied(to, color_))
+            moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
+    }
+    
     // Castles
 
     if (state.kingSideCastleIsAllowed(color_) && !state.inCheck_)
     {
-        //! @todo Must check all squares that the kings moves through
-        moves.emplace_back(Move::KINGSIDE_CASTLE, color_);
+        // All squares must be empty and un-threatened
+        //! @todo Must check all squares that the kings moves through for being threatened
+        bool castleOk = true;
+        if ((state.board_.pieceAt(from.row, from.column+1) != NO_PIECE) ||
+            (state.board_.pieceAt(from.row, from.column+2) != NO_PIECE))
+        {
+            castleOk = false;
+        }
+        if (castleOk)
+            moves.push_back(Move(Move::KINGSIDE_CASTLE, color_));
     }
 
     if (state.queenSideCastleIsAllowed(color_) && !state.inCheck_)
     {
-        //! @todo Must check all squares that the kings moves through
-        moves.emplace_back(Move::QUEENSIDE_CASTLE, color_);
+        // All squares must be empty and un-threatened
+        //! @todo Must check all squares that the kings moves through for being threatened
+        bool castleOk = true;
+        if ((state.board_.pieceAt(from.row, from.column-1) != NO_PIECE) ||
+            (state.board_.pieceAt(from.row, from.column-2) != NO_PIECE) ||
+            (state.board_.pieceAt(from.row, from.column-3) != NO_PIECE))
+        {
+            castleOk = false;
+        }
+        if (castleOk)
+            moves.emplace_back(Move::QUEENSIDE_CASTLE, color_, Position(), Position(), false);
     }
 }
 
@@ -83,14 +103,36 @@ bool King::isValidMove(GameState const & state, Move const & move) const
 
     if (move.isKingSideCastle())
     {
-        //! @todo Must check all squares that the kings moves through
-        return state.kingSideCastleIsAllowed(color_) && !state.inCheck_;
+        if (!state.kingSideCastleIsAllowed(color_) || state.inCheck_)
+            return false;
+        
+        // All squares must be empty and un-threatened
+        //! @todo Must check all squares that the kings moves through for being threatened
+        bool castleValid = true;
+        if ((state.board_.pieceAt(from.row, from.column+1) != NO_PIECE) ||
+            (state.board_.pieceAt(from.row, from.column+2) != NO_PIECE))
+        {
+            castleValid = false;
+        }
+        return castleValid;
     }
 
     if (move.isQueenSideCastle())
     {
         //! @todo Must check all squares that the kings moves through
-        return state.queenSideCastleIsAllowed(color_) && !state.inCheck_;
+        if (!state.queenSideCastleIsAllowed(color_) || state.inCheck_)
+            return false;
+        
+        // All squares must be empty and un-threatened
+        //! @todo Must check all squares that the kings moves through for being threatened
+        bool castleValid = true;
+        if ((state.board_.pieceAt(from.row, from.column-1) != NO_PIECE) ||
+            (state.board_.pieceAt(from.row, from.column-2) != NO_PIECE) ||
+            (state.board_.pieceAt(from.row, from.column-3) != NO_PIECE))
+        {
+            castleValid = false;
+        }
+        return castleValid;
     }
 
     // Check if the destination square can be occupied
