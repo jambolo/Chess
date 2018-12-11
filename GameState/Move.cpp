@@ -81,18 +81,21 @@ std::string Move::notation() const
         if (isKingSideCastle())
         {
             result = "0-0";
-}
+        }
         else if (isQueenSideCastle())
         {
             result = "0-0-0";
         }
         else if (isPromotion())
         {
-            result = to().notation() + "=Q";
+            result += from().notation();
+            result += capture_ ? 'x' : '-';
+            result += to().notation();
+            result += "Q";
         }
         else if (isEnPassant())
         {
-            result += char(from().column + 'a');
+            result = from().notation();
             result += 'x';
             result += to().notation();
         }
@@ -108,7 +111,9 @@ std::string Move::notation() const
         result += from().notation();
         result += capture_ ? 'x' : '-';
         result += to().notation();
+    }
 #else
+    // Standard Algebraic Notation
     std::string result;
     if (isSpecial())
     {
@@ -122,7 +127,7 @@ std::string Move::notation() const
         }
         else if (isPromotion())
         {
-            result = to().notation() + "=Q";
+            result = to().notation() + "Q";
         }
         else if (isEnPassant())
         {
@@ -142,7 +147,7 @@ std::string Move::notation() const
         if (capture_)
         {
             if (piece_->type() == PieceTypeId::PAWN)
-                result += char(from().column + 'a');
+                result += from().notation()[0];
             result += 'x';
         }
         result += to().notation();
