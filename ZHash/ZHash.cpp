@@ -51,7 +51,7 @@ ZHash::ZHash(Board const & board, unsigned castleStatus /* = 0*/, Color ePColor 
             Piece const * const pPiece = board.pieceAt(i, j);
             if (pPiece != NO_PIECE)
             {
-                add(*pPiece, Position(i, j));
+                add(pPiece, Position(i, j));
             }
         }
     }
@@ -69,16 +69,16 @@ ZHash::ZHash(Board const & board, unsigned castleStatus /* = 0*/, Color ePColor 
 }
 
 
-ZHash ZHash::add(Piece const & piece, Position const & position)
+ZHash ZHash::add(Piece const * piece, Position const & position)
 {
-    value_ ^= zValueTable_.pieceValue((int)piece.color(), (int)piece.type(), position.row, position.column);
+    value_ ^= zValueTable_.pieceValue((int)piece->color(), (int)piece->type(), position.row, position.column);
 
     return *this;
 }
 
-ZHash ZHash::remove(Piece const & piece, Position const & position)
+ZHash ZHash::remove(Piece const * piece, Position const & position)
 {
-    value_ ^= zValueTable_.pieceValue((int)piece.color(), (int)piece.type(), position.row, position.column);
+    value_ ^= zValueTable_.pieceValue((int)piece->color(), (int)piece->type(), position.row, position.column);
 
     return *this;
 }

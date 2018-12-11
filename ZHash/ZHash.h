@@ -65,10 +65,10 @@ public:
     Z value() const { return value_; }
 
     //! Adds a piece. Returns the new value
-    ZHash add(Piece const & piece, Position const & position);
+    ZHash add(Piece const * piece, Position const & position);
 
     //! Removes a piece. Returns the new value.
-    ZHash remove(Piece const & piece, Position const & position);
+    ZHash remove(Piece const * piece, Position const & position);
 
     //! Changes the ability to perform a castle. Returns the new value.
     ZHash castle(unsigned mask);

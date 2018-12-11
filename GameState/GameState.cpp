@@ -228,13 +228,13 @@ void GameState::makeNormalMove(Color color, Move const & move)
     pCaptured = board_.pieceAt(capturedPosition);
     if (pCaptured != NO_PIECE)
     {
-        zhash_.remove(*pCaptured, capturedPosition);
+        zhash_.remove(pCaptured, capturedPosition);
         board_.removePiece(capturedPosition);
     }
 
     // Move the piece on the board
-    zhash_.remove(*pMoved, move.from());
-    zhash_.add(*pMoved, move.to());
+    zhash_.remove(pMoved, move.from());
+    zhash_.add(pMoved, move.to());
 
     board_.movePiece(move.from(), move.to());
 
@@ -316,8 +316,8 @@ void GameState::makeCastleMove(Color color, Move const & move)
 
     Piece const * pKing = board_.pieceAt(kingsMove.from());
 
-    zhash_.remove(*pKing, kingsMove.from());
-    zhash_.add(*pKing, kingsMove.to());
+    zhash_.remove(pKing, kingsMove.from());
+    zhash_.add(pKing, kingsMove.to());
 
     board_.movePiece(kingsMove.from(), kingsMove.to());
 
@@ -325,8 +325,8 @@ void GameState::makeCastleMove(Color color, Move const & move)
 
     Piece const * const pRook = board_.pieceAt(rooksMove.from());
 
-    zhash_.remove(*pRook, rooksMove.from());
-    zhash_.add(*pRook, rooksMove.to());
+    zhash_.remove(pRook, rooksMove.from());
+    zhash_.add(pRook, rooksMove.to());
 
     board_.movePiece(rooksMove.from(), rooksMove.to());
 
@@ -360,14 +360,14 @@ Piece const * GameState::promote(Color color, Position const & position)
 
     // Remove the pawn
 
-    zhash_.remove(*pPiece, position);
+    zhash_.remove(pPiece, position);
     board_.removePiece(position);
 
     // Replace with a queen
 
     Piece const * pAdded = Piece::get(PieceTypeId::QUEEN, color); // @todo Not always promoted to a queen
 
-    zhash_.add(*pAdded, position);
+    zhash_.add(pAdded, position);
     board_.putPiece(pAdded, position);
 
     return pAdded;
