@@ -13,51 +13,60 @@ class Move
 {
 public:
     // Values for the special moves. The values are shifted to leave room for board locations when needed
-    static int constexpr RESIGN           = 1 << 4;
-    static int constexpr UNDO             = 2 << 4;
-    static int constexpr RESET            = 3 << 4;
-    static int constexpr KINGSIDE_CASTLE  = 4 << 4;
-    static int constexpr QUEENSIDE_CASTLE = 5 << 4;
-    static int constexpr PROMOTION        = 6 << 4;
-    static int constexpr ENPASSANT        = 7 << 4;
-
+    enum Special
+    {
+        NORMAL = 0,
+        KINGSIDE_CASTLE,
+        QUEENSIDE_CASTLE,
+        PROMOTION,
+        ENPASSANT,
+        RESIGN,
+        UNDO,
+        RESET
+    };
     Move() = default;
     Move(Piece const * piece, Position const & from, Position const & to, bool capture = false);
-    Move(int              special,
+    Move(Special          special,
          Color            color   = Color::INVALID,
          Position const & from    = Position(),
          Position const & to      = Position(),
          bool             capture = false);
 
+    // Returns the piece being moved
+    Piece const * piece() const { return piece_; }
+    
     // Returns the from position
-    Position const from() const;
+    Position from() const { return from_; }
 
     // Returns the to position
-    Position const to() const;
+    Position to() const { return to_; }
 
     // Returns true if this is a special move
-    bool isSpecial() const;
+    bool isSpecial() const { return (special_ != NORMAL); }
 
     // Returns true if this move is a resignation
-    bool isResignation() const { return isSpecial(RESIGN); }
+    bool isResignation() const { return (special_ == RESIGN); }
 
     // Returns true if this is an undo
-    bool isUndo() const { return isSpecial(UNDO); }
+    bool isUndo() const { return (special_ == UNDO); }
 
     // Returns true if this is the starting position
-    bool isStartingPosition() const { return isSpecial(RESET); }
+    bool isStartingPosition() const { return (special_ == RESET); }
 
     // Returns true if this is a king-side castle
-    bool isKingSideCastle() const { return isSpecial(KINGSIDE_CASTLE); }
+    bool isKingSideCastle() const { return (special_ == KINGSIDE_CASTLE); }
 
     // Returns true if this is a queen-side castle
-    bool isQueenSideCastle() const { return isSpecial(QUEENSIDE_CASTLE); }
+    bool isQueenSideCastle() const { return (special_ == QUEENSIDE_CASTLE); }
 
     // Returns true if the pawn is promoted
-    bool isPromotion() const { return isSpecial(PROMOTION); }
+    bool isPromotion() const { return (special_ == PROMOTION); }
 
     // Returns true if this is en passant
-    bool isEnPassant() const { return isSpecial(ENPASSANT); }
+    bool isEnPassant() const { return (special_ == ENPASSANT); }
+    
+    // Returns true if the move is marked as a capture
+    bool isCapture() const { return capture_; }
 
     // Returns true if the difference is non-zero
     static bool isMoved(int dr, int dc);
@@ -71,7 +80,7 @@ public:
     // Returns true if the difference is along a row or a column
     static bool isSquare(int dr, int dc);
 
-    // Returns the move in SAN form
+    // Returns the move in notation form
     std::string notation() const;
 
     // Special move -- resignation
@@ -90,7 +99,8 @@ public:
     static Move queenSideCastle(Color color) { return Move(QUEENSIDE_CASTLE, color); }
 
     // Special move -- Promotion
-    static Move promotion(Color color, Position const & from, Position const & to, bool capture = false) {
+    static Move promotion(Color color, Position const & from, Position const & to, bool capture = false)
+    {
         return Move(PROMOTION,
                     color,
                     from,
@@ -115,17 +125,11 @@ public:
 
 private:
 
-    static int constexpr NORMAL_MOVE_MASK = 0x07;
-
-    // Returns true if this is the specified special move
-    bool isSpecial(int move) const;
-
     Piece const * piece_;   // The piece that moved
     Position from_;         // Beginning location
     Position to_;           // Ending location
     bool capture_;          // True if this is a capture
-
-public:
+    Special special_;       // Kind of move
 };
 
 #endif // !defined(Move_h__)
