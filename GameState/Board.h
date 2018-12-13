@@ -46,6 +46,23 @@ public:
     // Return the board as a FEN string
     std::string fen() const;
 
+    static Position const INITIAL_BLACK_ROOK_QUEENSIDE_POSITION;
+    static Position const INITIAL_BLACK_KNIGHT_QUEENSIDE_POSITION;
+    static Position const INITIAL_BLACK_BISHOP_QUEENSIDE_POSITION;
+    static Position const INITIAL_BLACK_QUEEN_POSITION;
+    static Position const INITIAL_BLACK_KING_POSITION;
+    static Position const INITIAL_BLACK_BISHOP_KINGSIDE_POSITION;
+    static Position const INITIAL_BLACK_KNIGHT_KINGSIDE_POSITION;
+    static Position const INITIAL_BLACK_ROOK_KINGSIDE_POSITION;
+    static Position const INITIAL_WHITE_ROOK_QUEENSIDE_POSITION;
+    static Position const INITIAL_WHITE_KNIGHT_QUEENSIDE_POSITION;
+    static Position const INITIAL_WHITE_BISHOP_QUEENSIDE_POSITION;
+    static Position const INITIAL_WHITE_QUEEN_POSITION;
+    static Position const INITIAL_WHITE_KING_POSITION;
+    static Position const INITIAL_WHITE_BISHOP_KINGSIDE_POSITION;
+    static Position const INITIAL_WHITE_KNIGHT_KINGSIDE_POSITION;
+    static Position const INITIAL_WHITE_ROOK_KINGSIDE_POSITION;
+
 private:
 
     friend bool operator ==(Board const & x, Board const & y);

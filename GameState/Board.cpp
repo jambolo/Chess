@@ -11,6 +11,23 @@
 #include <cassert>
 #include <regex>
 
+Position const Board::INITIAL_BLACK_ROOK_QUEENSIDE_POSITION  { 0, 0 };
+Position const Board::INITIAL_BLACK_KNIGHT_QUEENSIDE_POSITION{ 0, 1 };
+Position const Board::INITIAL_BLACK_BISHOP_QUEENSIDE_POSITION{ 0, 2 };
+Position const Board::INITIAL_BLACK_QUEEN_POSITION           { 0, 3 };
+Position const Board::INITIAL_BLACK_KING_POSITION            { 0, 4 };
+Position const Board::INITIAL_BLACK_BISHOP_KINGSIDE_POSITION { 0, 5 };
+Position const Board::INITIAL_BLACK_KNIGHT_KINGSIDE_POSITION { 0, 6 };
+Position const Board::INITIAL_BLACK_ROOK_KINGSIDE_POSITION   { 0, 7 };
+Position const Board::INITIAL_WHITE_ROOK_QUEENSIDE_POSITION  { 7, 0 };
+Position const Board::INITIAL_WHITE_KNIGHT_QUEENSIDE_POSITION{ 7, 1 };
+Position const Board::INITIAL_WHITE_BISHOP_QUEENSIDE_POSITION{ 7, 2 };
+Position const Board::INITIAL_WHITE_QUEEN_POSITION           { 7, 3 };
+Position const Board::INITIAL_WHITE_KING_POSITION            { 7, 4 };
+Position const Board::INITIAL_WHITE_BISHOP_KINGSIDE_POSITION { 7, 5 };
+Position const Board::INITIAL_WHITE_KNIGHT_KINGSIDE_POSITION { 7, 6 };
+Position const Board::INITIAL_WHITE_ROOK_KINGSIDE_POSITION   { 7, 7 };
+
 Board::Board()
 {
     clear();
