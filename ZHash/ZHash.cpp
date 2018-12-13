@@ -68,7 +68,6 @@ ZHash::ZHash(Board const & board, unsigned castleStatus /* = 0*/, Color ePColor 
         fifty();
 }
 
-
 ZHash ZHash::add(Piece const * piece, Position const & position)
 {
     value_ ^= zValueTable_.pieceValue((int)piece->color(), (int)piece->type(), position.row, position.column);
@@ -81,6 +80,12 @@ ZHash ZHash::remove(Piece const * piece, Position const & position)
     value_ ^= zValueTable_.pieceValue((int)piece->color(), (int)piece->type(), position.row, position.column);
 
     return *this;
+}
+
+ZHash ZHash::move(Piece const * piece, Position const & from, Position const & to)
+{
+    remove(piece, from);
+    return add(piece, to);
 }
 
 ZHash ZHash::castle(unsigned mask)

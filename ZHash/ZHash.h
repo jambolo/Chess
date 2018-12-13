@@ -69,6 +69,9 @@ public:
 
     //! Removes a piece. Returns the new value.
     ZHash remove(Piece const * piece, Position const & position);
+    
+    //! Removes a piece at the 'from' position and adds it to the 'to' position
+    ZHash move(Piece const * piece, Position const & from, Position const & to);
 
     //! Changes the ability to perform a castle. Returns the new value.
     ZHash castle(unsigned mask);
