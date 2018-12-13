@@ -10,8 +10,8 @@ void Rook::generatePossibleMoves(GameState const & state, Position const & from,
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
 
     generateSpanMoves(board, from, -1,  0, this, moves); // up
-    generateSpanMoves(board, from,  0,  1, this, moves);  // right
-    generateSpanMoves(board, from,  1,  0, this, moves);  // down
+    generateSpanMoves(board, from,  0,  1, this, moves); // right
+    generateSpanMoves(board, from,  1,  0, this, moves); // down
     generateSpanMoves(board, from,  0, -1, this, moves); // left
 }
 

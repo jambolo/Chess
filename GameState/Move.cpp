@@ -61,7 +61,46 @@ bool Move::isSquare(int dr, int dc)
 
 std::string Move::notation() const
 {
-#if 1 //defined(FEATURE_NOTATION_LONG)
+#if defined(FEATURE_NOTATION_PGN)
+    std::string result;
+    if (isSpecial())
+    {
+        if (isKingSideCastle())
+        {
+            result = "O-O";
+        }
+        else if (isQueenSideCastle())
+        {
+            result = "O-O-O";
+        }
+        else if (isPromotion())
+        {
+            result += from().notation();
+            result += capture_ ? 'x' : '-';
+            result += to().notation();
+            result += "=Q";
+        }
+        else if (isEnPassant())
+        {
+            result = from().notation();
+            result += 'x';
+            result += to().notation();
+        }
+        else if (isResignation())
+        {
+            result = (piece_->color() == Color::WHITE) ? "1-0" : "0-1";
+        }
+    }
+    else
+    {
+        if (piece_->type() != PieceTypeId::PAWN)
+            result = Piece::symbol(piece_->type());
+        result += from().notation();
+        result += capture_ ? 'x' : '-';
+        result += to().notation();
+    }
+
+#elif defined(FEATURE_NOTATION_LONG)
     std::string result;
     if (isSpecial())
     {
