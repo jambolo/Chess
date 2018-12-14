@@ -1,3 +1,6 @@
 [submodule "Misc"]
 	path = Misc
 	url = https://github.com/jambolo/Misc.git
+[submodule "json"]
+	path = json
+	url = https://github.com/nlohmann/json.git
