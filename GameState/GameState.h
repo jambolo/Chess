@@ -60,7 +60,7 @@ public:
 
 #if defined(FEATURE_GAME_STATE_ANALYSIS)
 
-    static int const EXPECTED_SEQUENCE_SIZE = 10;
+    static size_t constexpr EXPECTED_SEQUENCE_SIZE = 10;
 
     // Analysis data for the last move
 
@@ -68,11 +68,9 @@ public:
     {
         SequenceEntry expected[EXPECTED_SEQUENCE_SIZE]; // Sequence expected to follow this state
 
+        AnalysisData();
         void reset();
     };
-
-    // Resets all analysis data
-    void resetAnalysisData();
 
     mutable AnalysisData analysisData_;
 

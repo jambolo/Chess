@@ -51,21 +51,18 @@ public:
 
 #if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
 
-    // Resets all analysis data
-    void resetAnalysisData();
-
     // Analysis data
 
     struct AnalysisData
     {
-        int checkCount;
-        int updateCount;
-        int hitCount;
-        int usage;
-        int collisionCount;
-        int rejected;
-        int overwritten;
-        int refreshed;
+        int checkCount;     // The number of checks
+        int updateCount;    // The number of updates
+        int hitCount;       // The number of times a state was found
+        int collisionCount; // The number of times a different state was found
+        int rejected;       // The number of times an update was rejected
+        int overwritten;    // The number of times a state was overwritten by a different state
+        int refreshed;      // The number of times a state was updated with a newer value
+        int usage;          // The number of slots in use
 
         AnalysisData();
         void reset();

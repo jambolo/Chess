@@ -42,25 +42,7 @@ void GameState::initialize()
     inCheck_    = false;
     moveNumber_ = 1;
     zhash_      = ZHash(board_);
-
-#if defined(FEATURE_GAME_STATE_ANALYSIS)
-    analysisData_.reset();
-#endif
 }
-
-#if defined(FEATURE_GAME_STATE_ANALYSIS)
-
-void GameState::resetAnalysisData()
-{
-    analysisData_.reset();
-}
-
-void GameState::AnalysisData::reset()
-{
-    memset(expected, -1, sizeof(expected));
-}
-
-#endif // defined( FEATURE_GAME_STATE_ANALYSIS )
 
 bool GameState::initializeFromFen(char const * fen)
 {
@@ -397,6 +379,21 @@ std::string GameState::castleStatusToFen() const
     }
     return result;
 }
+
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
+
+GameState::AnalysisData::AnalysisData()
+{
+    reset();
+}
+
+void GameState::AnalysisData::reset()
+{
+    memset(expected, -1, sizeof(expected));
+}
+
+#endif // defined( FEATURE_GAME_STATE_ANALYSIS )
+
 
 bool operator ==(GameState const & x, GameState const & y)
 {

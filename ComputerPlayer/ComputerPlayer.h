@@ -3,6 +3,7 @@
 #if !defined(ComputerPlayer_h__)
 #define ComputerPlayer_h__
 
+#include "ComputerPlayer/GameTree.h"
 #include "Player/Player.h"
 #include <memory>
 
@@ -18,6 +19,21 @@ public:
     virtual ~ComputerPlayer() = default;
 
     virtual GameState myTurn(GameState const & s0) override;
+
+#if defined(FEATURE_PLAYER_ANALYSIS)
+
+    struct AnalysisData
+    {
+        int elapsedTime;
+#if defined(FEATURE_GAME_TREE_ANALYSIS)
+        GameTree::AnalysisData gameTreeAnalysisData;
+#endif
+        AnalysisData();
+        void reset();
+    };
+
+    mutable AnalysisData analysisData_;
+#endif // defined(FEATURE_PLAYER_ANALYSIS)
 
 private:
 

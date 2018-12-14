@@ -6,6 +6,7 @@ option(FEATURE_DEBUG_GAME_TREE_NODE_INFO                "GameTree info is dumped
 option(FEATURE_TRANSPOSITION_TABLE_ANALYSIS             "TranspositionTable analysis is enabled if true"                 FALSE)
 option(FEATURE_QUIESCENT_SEARCH                         "Quiescent search is enabled if true"                            FALSE)
 option(FEATURE_INCREMENTAL_STATIC_EVALUATION_VALIDATION "Validation of incremental static evaluation is enabled if true" FALSE)
+option(FEATURE_PLAYER_ANALYSIS "ComputerPlayer analysis is enabled if true" FALSE)
 
 set(SOURCES
     ComputerPlayer.cpp
@@ -51,3 +52,8 @@ endif()
 if(FEATURE_INCREMENTAL_STATIC_EVALUATION_VALIDATION)
     target_compile_definitions(computer_player PUBLIC FEATURE_INCREMENTAL_STATIC_EVALUATION_VALIDATION=1)
 endif()
+
+if(FEATURE_PLAYER_ANALYSIS)
+    target_compile_definitions(computer_player PUBLIC FEATURE_PLAYER_ANALYSIS=1)
+endif()
+

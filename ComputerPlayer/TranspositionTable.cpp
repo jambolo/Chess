@@ -92,9 +92,8 @@ bool TranspositionTable::check(GameState const & state,
     else
     {
 #if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
-        if (entry.hashCode_ != TableEntry::UNUSED_ENTRY)
+        if (entry.hash_ != TableEntry::UNUSED_ENTRY)
             ++analysisData_.collisionCount;
-
 #endif  // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
     }
 
@@ -111,26 +110,24 @@ void TranspositionTable::set(GameState const & state, int value, int quality)
     TableEntry & entry = find(hash);
     assert(hash != TableEntry::UNUSED_ENTRY);
 
+    // Store the state, value and quality
+    entry.hash_  = hash;
+    entry.value_ = value;
+    entry.q_     = quality;
+    entry.age_   = 0;   // Reset age
+
 #if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
-
+    
     // For tracking the number of used entries
-
-    if (entry.hashCode_ == TableEntry::UNUSED_ENTRY)
+    
+    if (entry.hash_ == TableEntry::UNUSED_ENTRY)
         ++analysisData_.usage;
-    else if (entry.hashCode_ == hash)
+    else if (entry.hash_ == hash)
         ++analysisData_.refreshed;
     else
         ++analysisData_.overwritten;
-
+    
 #endif // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
-
-    // Store the state, value and quality
-
-    assert(quality < 256);
-    entry.hash_ = hash;
-    entry.value_    = value;
-    entry.q_        = quality;
-    entry.age_      = 0;
 }
 
 void TranspositionTable::update(GameState const & state, int value, int quality)
@@ -150,25 +147,23 @@ void TranspositionTable::update(GameState const & state, int value, int quality)
 
     if (isUnused || (quality >= entry.q_))
     {
-#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
-
-        // For tracking the number of used entries
-
-        if (isUnused)
-            ++analysisData_.usage;
-        else if (entry.hashCode_ == hash)
-            ++analysisData_.refreshed;
-        else
-            ++analysisData_.overwritten;
-
-#endif  // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
-
-        // Store the state, value and quality
-
         entry.hash_  = hash;
         entry.value_ = value;
         entry.q_     = quality;
-        entry.age_   = 0;
+        entry.age_   = 0;       // Reset age
+        
+#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+        
+        // For tracking the number of used entries
+        
+        if (isUnused)
+            ++analysisData_.usage;
+        else if (entry.hash_ == hash)
+            ++analysisData_.refreshed;
+        else
+            ++analysisData_.overwritten;
+        
+#endif  // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
     }
     else
     {
@@ -191,10 +186,9 @@ void TranspositionTable::age()
             if (entry.age_ > MAX_AGE)
             {
                 entry.hash_ = TableEntry::UNUSED_ENTRY;
-
 #if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
                 --analysisData_.usage;
-#endif          // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
+#endif // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
             }
         }
     }
@@ -202,27 +196,22 @@ void TranspositionTable::age()
 
 #if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
 
-void TranspositionTable::resetAnalysisData()
-{
-    analysisData_.reset();
-}
-
-void TranspositionTable::AnalysisData::reset()
-{
-    checkCount  = 0;
-    updateCount = 0;
-    hitCount    = 0;
-//	usage			= 0;	// never reset
-    collisionCount = 0;
-    rejected       = 0;
-    overwritten    = 0;
-    refreshed      = 0;
-}
-
 TranspositionTable::AnalysisData::AnalysisData()
     : usage(0)
 {
     reset();
+}
+
+void TranspositionTable::AnalysisData::reset()
+{
+    checkCount     = 0;
+    updateCount    = 0;
+    hitCount       = 0;
+    collisionCount = 0;
+    rejected       = 0;
+    overwritten    = 0;
+    refreshed      = 0;
+//    usage          = 0;    // never reset
 }
 
 #endif // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )

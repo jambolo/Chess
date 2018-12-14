@@ -6,6 +6,8 @@
 #include "StaticEvaluator.h"
 #include "TranspositionTable.h"
 
+#include <time.h>
+
 ComputerPlayer::ComputerPlayer(Color color, int maxDepth)
     : Player(color)
     , maxDepth_(maxDepth)
@@ -17,6 +19,9 @@ ComputerPlayer::ComputerPlayer(Color color, int maxDepth)
 
 GameState ComputerPlayer::myTurn(GameState const & s0)
 {
+#if defined(FEATURE_PLAYER_ANALYSIS)
+    time_t startTime = time(NULL);
+#endif // defined(FEATURE_PLAYER_ANALYSIS)
 
     // Calculate the best move from here
 
@@ -35,12 +40,30 @@ GameState ComputerPlayer::myTurn(GameState const & s0)
 
     // Update analysis data
 
-    analysisData_.time  = 0; // elapsed_time;
-    analysisData_.value = new_state.value_;
+    analysisData_.elapsedTime  = time(NULL) - startTime;
 #if defined(FEATURE_GAME_TREE_ANALYSIS)
-    analysisData_.gameTreeAnalysisData = game_tree.analysisData_;
+    analysisData_.gameTreeAnalysisData = tree.analysisData_;
+    tree.analysisData_.reset();
 #endif
+    
 #endif // defined( FEATURE_PLAYER_ANALYSIS )
 
     return new_state;
 }
+
+#if defined(FEATURE_PLAYER_ANALYSIS)
+
+ComputerPlayer::AnalysisData::AnalysisData()
+    : elapsedTime(0)
+{
+}
+
+void ComputerPlayer::AnalysisData::reset()
+{
+    elapsedTime = 0;
+#if defined(FEATURE_GAME_TREE_ANALYSIS)
+    gameTreeAnalysisData.reset();
+#endif // defined(FEATURE_GAME_TREE_ANALYSIS)
+}
+
+#endif // defined(FEATURE_PLAYER_ANALYSIS)

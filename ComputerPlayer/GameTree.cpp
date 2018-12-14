@@ -44,8 +44,8 @@ GameTree::GameTree(int maxDepth)
 
 GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 {
-    int const DEPTH          = 0;                          // The depth of this ply (this is the current state, so its depth is 0)
-    int const RESPONSE_DEPTH = 1;                          // Depth of my responses to this state
+    int constexpr DEPTH          = 0;                      // The depth of this ply (this is the current state, so its depth is 0)
+    int constexpr RESPONSE_DEPTH = DEPTH + 1;              // Depth of my responses to this state
 //    int quality              = maxDepth_ - DEPTH;          // Quality of values at this depth (this is the depth of plies searched to
 //                                                           // get the results for this ply)
 //    int responseQuality      = maxDepth_ - RESPONSE_DEPTH; // Normal quality of responses to this state
@@ -99,32 +99,28 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
         best_move.state_.move_ = Move::resign(my_color);
 
 #if defined(FEATURE_GAME_TREE_ANALYSIS)
-
+    
     // Update analysis data
+    
+    analysisData_.value = best_move.value_;
     analysisData_.worstValue = worst_score;
-#if defined(FEATURE_TRANSPOSITION_TABLE)
-    analysisData_.tTableAnalysisData = transpositionTable_->analysisData_;
-#endif
-    analysisData_.gameStateAnalysisData = best_move.analysisData_;
 
-#endif // defined( FEATURE_GAME_TREE_ANALYSIS )
-
-#if defined(FEATURE_TRANSPOSITION_TABLE)
 #if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
-    transpositionTable_->resetAnalysisData();
-#endif // defined( FEATURE_GAME_TREE_ANALYSIS )
-#endif
-
+    analysisData_.ttAnalysisData = transpositionTable_->analysisData_;
+    transpositionTable_->analysisData_.reset();
+#endif // defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
 #if defined(FEATURE_GAME_STATE_ANALYSIS)
-    best_move.resetAnalysisData();
-#endif // defined( FEATURE_GAME_STATE_ANALYSIS )
+    analysisData_.gameStateAnalysisData = best_move.state_.analysisData_;
+    best_move.state_.analysisData_.reset();
+#endif // defined(FEATURE_GAME_STATE_ANALYSIS)
+    
+#endif // defined( FEATURE_GAME_TREE_ANALYSIS )
 
     // Return the best move
     return best_move.state_;
 }
 
-// Evaluate the state based on all my possible responses. The response I will make is the one with the highest
-// value.
+// Evaluate the state based on all my possible responses. The response I will make is the one with the highest value.
 
 void GameTree::myAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int depth)
 {
@@ -145,7 +141,7 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int 
     bool pruned     = false;
 
 #if defined(FEATURE_GAME_STATE_ANALYSIS)
-    GameState * pBestResponse = nullptr;
+    EvaluatedGameState * pBestResponse = nullptr;
 #endif // defined( FEATURE_GAME_STATE_ANALYSIS )
 
     for (auto & response : responses)
@@ -160,15 +156,10 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int 
              (shouldDoQuiescentSearch(state->value_, response.value_) && (responseDepth < MAX_DEPTH))))
         {
             opponentsAlphaBeta(&response, alpha, beta, responseDepth);
-#if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
-            printStateInfo(response, depth, alpha, beta);
-#endif
         }
+        
 #if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
-        else
-        {
-            printStateInfo(response, depth, alpha, beta);
-        }
+        printStateInfo(response, depth, alpha, beta);
 #endif
 
         // Determine if this response's value is the best so far. If so, then save value and do alpha-beta pruning
@@ -225,9 +216,9 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int 
 #if defined(FEATURE_GAME_STATE_ANALYSIS)
 
     // Save the expected sequence
-    memcpy(&state->analysisData_.expected,
-           &pBestResponse->analysisData_.expected,
-           sizeof(state->analysisData_.expected));
+    memcpy(&state->state_.analysisData_.expected,
+           &pBestResponse->state_.analysisData_.expected,
+           sizeof(state->state_.analysisData_.expected));
 
 #endif // defined( FEATURE_GAME_STATE_ANALYSIS )
 
@@ -343,9 +334,9 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, int alpha, int bet
 #if defined(FEATURE_GAME_STATE_ANALYSIS)
 
     // Save the expected sequence
-    memcpy(&state->analysisData_.expected,
-           &pBestResponse->analysisData_.expected,
-           sizeof(state->analysisData_.expected));
+    memcpy(&state->state_.analysisData_.expected,
+           &pBestResponse->state_.analysisData_.expected,
+           sizeof(state->state_.analysisData_.expected));
 
 #endif // defined( FEATURE_GAME_STATE_ANALYSIS )
 
@@ -532,9 +523,14 @@ int GameTree::prioritize(EvaluatedGameState const & state, int depth)
 
 #if defined(FEATURE_GAME_TREE_ANALYSIS)
 
-void GameTree::resetAnalysisData()
+GameTree::AnalysisData::AnalysisData()
+    : value(0)
+    , worstValue(0)
+    , alphaHitCount(0)
+    , betaHitCount(0)
 {
-    analysisData_.reset();
+    memset(aGeneratedStateCounts, 0, sizeof(aGeneratedStateCounts));
+    memset(aEvaluationCounts, 0, sizeof(aEvaluationCounts));
 }
 
 void GameTree::AnalysisData::reset()
@@ -542,22 +538,17 @@ void GameTree::AnalysisData::reset()
     memset(aGeneratedStateCounts, 0, sizeof(aGeneratedStateCounts));
     memset(aEvaluationCounts, 0, sizeof(aEvaluationCounts));
 
+    value         = 0;
+    worstValue    = 0;
     alphaHitCount = 0;
     betaHitCount  = 0;
-    worstValue    = 0;
 
-    tTableAnalysisData.reset();
+#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+    ttAnalysisData.reset();
+#endif // defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
     gameStateAnalysisData.reset();
-}
-
-GameTree::AnalysisData::AnalysisData()
-{
-    memset(aGeneratedStateCounts, 0, sizeof(aGeneratedStateCounts));
-    memset(aEvaluationCounts, 0, sizeof(aEvaluationCounts));
-
-    alphaHitCount = 0;
-    betaHitCount  = 0;
-    worstValue    = 0;
+#endif // defined(FEATURE_GAME_STATE_ANALYSIS)
 }
 
 #endif // defined( FEATURE_GAME_TREE_ANALYSIS )

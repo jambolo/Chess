@@ -30,20 +30,18 @@ public:
 
 #if defined(FEATURE_GAME_TREE_ANALYSIS)
 
-    // Resets all analysis data
-    void resetAnalysisData();
-
     // Analysis data for the last move
 
     struct AnalysisData
     {
         int aGeneratedStateCounts[MAX_DEPTH + 1];
         int aEvaluationCounts[MAX_DEPTH + 1];
+        int value;
         int worstValue;
         int alphaHitCount;
         int betaHitCount;
 #if defined(FEATURE_TRANSPOSITION_TABLE) && defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
-        TranspositionTable::AnalysisData tTableAnalysisData;
+        TranspositionTable::AnalysisData ttAnalysisData;
 #endif
 #if defined(FEATURE_GAME_STATE_ANALYSIS)
         GameState::AnalysisData gameStateAnalysisData;
