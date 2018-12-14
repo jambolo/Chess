@@ -5,9 +5,9 @@
 
 #include "GameState/ChessTypes.h"
 
-//#if defined(FEATURE_PLAYER_ANALYSIS)
+//#if defined(ANALYSIS_PLAYER)
 //#include "ComputerPlayer/GameTree.h" // for AnalysisData
-//#endif // defined(FEATURE_PLAYER_ANALYSIS)
+//#endif // defined(ANALYSIS_PLAYER)
 
 class GameState;
 

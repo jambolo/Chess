@@ -1,13 +1,20 @@
 cmake_minimum_required (VERSION 3.4)
 
-option(FEATURE_GAME_STATE_ANALYSIS           "GameState analysis is enabled if true"            FALSE)
 option(FEATURE_PRIORITIZED_MOVE_ORDERING     "Prioritized move ordering is used if true"        FALSE)
 option(FEATURE_INCREMENTAL_STATIC_EVALUATION "Incremental static evaluation is enabled if true" FALSE)
 
+message(STATUS "FEATURE_PRIORITIZED_MOVE_ORDERING is ${FEATURE_PRIORITIZED_MOVE_ORDERING}")
+message(STATUS "FEATURE_INCREMENTAL_STATIC_EVALUATION is ${FEATURE_INCREMENTAL_STATIC_EVALUATION}")
+
+option(ANALYSIS_GAME_STATE "GameState analysis is enabled if true" FALSE)
+
+message(STATUS "ANALYSIS_GAME_STATE is ${ANALYSIS_GAME_STATE}")
+
 set(FEATURE_NOTATION "Standard" CACHE STRING "Which form of algrebric notation used?")
 set_property(CACHE FEATURE_NOTATION PROPERTY STRINGS Standard Long Figurine UCI ICCF PGN)
- 
-message(STATUS "Algebraic Notation = '${FEATURE_NOTATION}'")
+
+message(STATUS "Notation is '${FEATURE_NOTATION}'")
+
 set(SOURCES
     Bishop.cpp
     Bishop.h
@@ -43,8 +50,8 @@ add_library(game_state ${SOURCES})
 target_include_directories(game_state PRIVATE ${PRIVATE_INCLUDE_PATHS})
 target_link_libraries(game_state zhash misc nlohmann_json::nlohmann_json)
 
-if(FEATURE_GAME_STATE_ANALYSIS)
-    target_compile_definitions(game_state PUBLIC FEATURE_GAME_STATE_ANALYSIS=1)
+if(ANALYSIS_GAME_STATE)
+    target_compile_definitions(game_state PUBLIC ANALYSIS_GAME_STATE=1)
 endif()
 
 if(FEATURE_PRIORITIZED_MOVE_ORDERING)

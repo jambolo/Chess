@@ -22,12 +22,12 @@ public:
 
     virtual GameState myTurn(GameState const & s0) override;
 
-#if defined(FEATURE_PLAYER_ANALYSIS)
+#if defined(ANALYSIS_PLAYER)
 
     struct AnalysisData
     {
         int elapsedTime;
-#if defined(FEATURE_GAME_TREE_ANALYSIS)
+#if defined(ANALYSIS_GAME_TREE)
         GameTree::AnalysisData gameTreeAnalysisData;
 #endif
         AnalysisData();
@@ -36,7 +36,7 @@ public:
     };
 
     mutable AnalysisData analysisData_;
-#endif // defined(FEATURE_PLAYER_ANALYSIS)
+#endif // defined(ANALYSIS_PLAYER)
 
 private:
 

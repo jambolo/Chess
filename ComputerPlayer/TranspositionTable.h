@@ -50,7 +50,7 @@ public:
     // Bump the age of entries so that they are eventually replaced by newer entries.
     void age();
 
-#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
 
     // Analysis data
 
@@ -72,7 +72,7 @@ public:
 
     mutable AnalysisData analysisData_;
 
-#endif // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
+#endif // defined( ANALYSIS_TRANSPOSITION_TABLE )
 
 private:
 

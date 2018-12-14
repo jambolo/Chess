@@ -33,7 +33,7 @@ int main(int argc, char ** argv)
 #if !defined(NDEBUG)
     fprintf(stderr, "\n\n");
 
-#if defined(FEATURE_PLAYER_ANALYSIS)
+#if defined(ANALYSIS_PLAYER)
     json out = computer.analysisData_.toJson();
     fprintf(stderr, "%s\n", out.dump(4).c_str());
 #endif

@@ -119,7 +119,7 @@ ZHash GameState::zhash() const
 
 void GameState::makeMove(Color color, Move const & move, int depth /*= 0*/)
 {
-#if defined(FEATURE_GAME_STATE_ANALYSIS)
+#if defined(ANALYSIS_GAME_STATE)
     // Add this move to the sequence
     assert(depth > 0);
     int const sequenceIndex = depth - 1;
@@ -138,9 +138,9 @@ void GameState::makeMove(Color color, Move const & move, int depth /*= 0*/)
             }
         }
     }
-#else // if defined(FEATURE_GAME_STATE_ANALYSIS)
+#else // if defined(ANALYSIS_GAME_STATE)
     (void)depth;
-#endif // if defined(FEATURE_GAME_STATE_ANALYSIS)
+#endif // if defined(ANALYSIS_GAME_STATE)
 
     // Save the move
     move_ = move;
@@ -380,7 +380,7 @@ std::string GameState::castleStatusToFen() const
     return result;
 }
 
-#if defined(FEATURE_GAME_STATE_ANALYSIS)
+#if defined(ANALYSIS_GAME_STATE)
 
 GameState::AnalysisData::AnalysisData()
 {
@@ -392,7 +392,7 @@ void GameState::AnalysisData::reset()
     memset(expected, -1, sizeof(expected));
 }
 
-#endif // defined( FEATURE_GAME_STATE_ANALYSIS )
+#endif // defined( ANALYSIS_GAME_STATE )
 
 
 bool operator ==(GameState const & x, GameState const & y)

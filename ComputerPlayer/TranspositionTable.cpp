@@ -22,9 +22,9 @@ bool TranspositionTable::check(GameState const & state,
                                int * pReturnedValue/* = NULL*/,
                                int * pReturnedQuality/* = NULL*/) const
 {
-#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
     ++analysisData_.checkCount;
-#endif // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
+#endif // defined( ANALYSIS_TRANSPOSITION_TABLE )
 
     ZHash::Z           hash  = state.zhash_.value();
     TableEntry const & entry = find(hash);
@@ -36,9 +36,9 @@ bool TranspositionTable::check(GameState const & state,
 
     if (entry.hash_ == hash)
     {
-#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
         ++analysisData_.hitCount;
-#endif  // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
+#endif  // defined( ANALYSIS_TRANSPOSITION_TABLE )
 
         hit = true;
         if (pReturnedValue)
@@ -49,10 +49,10 @@ bool TranspositionTable::check(GameState const & state,
     }
     else
     {
-#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
         if (entry.hash_ != TableEntry::UNUSED_ENTRY)
             ++analysisData_.collisionCount;
-#endif  // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
+#endif  // defined( ANALYSIS_TRANSPOSITION_TABLE )
     }
 
     return hit;
@@ -63,9 +63,9 @@ bool TranspositionTable::check(GameState const & state,
                                int * pReturnedValue/* = NULL*/,
                                int * pReturnedQuality/* = NULL*/) const
 {
-#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
     ++analysisData_.checkCount;
-#endif // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
+#endif // defined( ANALYSIS_TRANSPOSITION_TABLE )
 
     ZHash::Z           hash  = state.zhash_.value();
     TableEntry const & entry = find(hash);
@@ -79,9 +79,9 @@ bool TranspositionTable::check(GameState const & state,
 
     if (entry.hash_ == hash)
     {
-#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
         ++analysisData_.hitCount;
-#endif  // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
+#endif  // defined( ANALYSIS_TRANSPOSITION_TABLE )
 
         if (entry.q_ >= minQ)
         {
@@ -95,10 +95,10 @@ bool TranspositionTable::check(GameState const & state,
     }
     else
     {
-#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
         if (entry.hash_ != TableEntry::UNUSED_ENTRY)
             ++analysisData_.collisionCount;
-#endif  // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
+#endif  // defined( ANALYSIS_TRANSPOSITION_TABLE )
     }
 
     return hit;
@@ -106,9 +106,9 @@ bool TranspositionTable::check(GameState const & state,
 
 void TranspositionTable::set(GameState const & state, int value, int quality)
 {
-#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
     ++analysisData_.updateCount;
-#endif // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
+#endif // defined( ANALYSIS_TRANSPOSITION_TABLE )
 
     ZHash::Z     hash  = state.zhash_.value();
     TableEntry & entry = find(hash);
@@ -120,7 +120,7 @@ void TranspositionTable::set(GameState const & state, int value, int quality)
     entry.q_     = quality;
     entry.age_   = 0;   // Reset age
 
-#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
     
     // For tracking the number of used entries
     
@@ -131,14 +131,14 @@ void TranspositionTable::set(GameState const & state, int value, int quality)
     else
         ++analysisData_.overwritten;
     
-#endif // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
+#endif // defined( ANALYSIS_TRANSPOSITION_TABLE )
 }
 
 void TranspositionTable::update(GameState const & state, int value, int quality)
 {
-#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
     ++analysisData_.updateCount;
-#endif // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
+#endif // defined( ANALYSIS_TRANSPOSITION_TABLE )
 
     ZHash::Z     hash  = state.zhash_.value();
     TableEntry & entry = find(hash);
@@ -156,7 +156,7 @@ void TranspositionTable::update(GameState const & state, int value, int quality)
         entry.q_     = quality;
         entry.age_   = 0;       // Reset age
         
-#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
         
         // For tracking the number of used entries
         
@@ -167,13 +167,13 @@ void TranspositionTable::update(GameState const & state, int value, int quality)
         else
             ++analysisData_.overwritten;
         
-#endif  // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
+#endif  // defined( ANALYSIS_TRANSPOSITION_TABLE )
     }
     else
     {
-#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
         ++analysisData_.rejected;
-#endif  // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
+#endif  // defined( ANALYSIS_TRANSPOSITION_TABLE )
     }
 }
 
@@ -190,15 +190,15 @@ void TranspositionTable::age()
             if (entry.age_ > MAX_AGE)
             {
                 entry.hash_ = TableEntry::UNUSED_ENTRY;
-#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
                 --analysisData_.usage;
-#endif // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
+#endif // defined( ANALYSIS_TRANSPOSITION_TABLE )
             }
         }
     }
 }
 
-#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
 
 TranspositionTable::AnalysisData::AnalysisData()
     : usage(0)
@@ -235,4 +235,4 @@ json TranspositionTable::AnalysisData::toJson() const
     return out;
 }
 
-#endif // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )
+#endif // defined( ANALYSIS_TRANSPOSITION_TABLE )

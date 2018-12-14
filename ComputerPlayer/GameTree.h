@@ -29,7 +29,7 @@ public:
     static int constexpr MY_CHECKMATE_VALUE       = StaticEvaluator::CHECKMATE_VALUE;
     static int constexpr OPPONENT_CHECKMATE_VALUE = -StaticEvaluator::CHECKMATE_VALUE;
 
-#if defined(FEATURE_GAME_TREE_ANALYSIS)
+#if defined(ANALYSIS_GAME_TREE)
 
     // Analysis data for the last move
 
@@ -41,10 +41,10 @@ public:
         int worstValue;
         int alphaHitCount;
         int betaHitCount;
-#if defined(FEATURE_TRANSPOSITION_TABLE) && defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(FEATURE_TRANSPOSITION_TABLE) && defined(ANALYSIS_TRANSPOSITION_TABLE)
         TranspositionTable::AnalysisData ttAnalysisData;
 #endif
-#if defined(FEATURE_GAME_STATE_ANALYSIS)
+#if defined(ANALYSIS_GAME_STATE)
         GameState::AnalysisData gameStateAnalysisData;
 #endif
         AnalysisData();
@@ -54,7 +54,7 @@ public:
 
     mutable AnalysisData analysisData_;
 
-#endif // defined( FEATURE_GAME_TREE_ANALYSIS )
+#endif // defined( ANALYSIS_GAME_TREE )
 
 private:
 
@@ -91,7 +91,7 @@ private:
     // Generate a list of all possible states in response to the specified one
     void generateStates(GameState const & state, bool my_move, int depth, EvaluatedGameStateList & states);
 
-#if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
+#if defined(DEBUG_GAME_TREE_NODE_INFO)
     void printStateInfo(GameState const & state, int depth, int alpha, int beta);
 #endif
 

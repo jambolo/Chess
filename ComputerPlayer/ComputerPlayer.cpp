@@ -23,9 +23,9 @@ ComputerPlayer::ComputerPlayer(Color color, int maxDepth)
 
 GameState ComputerPlayer::myTurn(GameState const & s0)
 {
-#if defined(FEATURE_PLAYER_ANALYSIS)
+#if defined(ANALYSIS_PLAYER)
     time_t startTime = time(NULL);
-#endif // defined(FEATURE_PLAYER_ANALYSIS)
+#endif // defined(ANALYSIS_PLAYER)
 
     // Calculate the best move from here
 
@@ -40,22 +40,22 @@ GameState ComputerPlayer::myTurn(GameState const & s0)
     transpositionTable_->age();
 #endif
     
-#if defined(FEATURE_PLAYER_ANALYSIS)
+#if defined(ANALYSIS_PLAYER)
 
     // Update analysis data
 
     analysisData_.elapsedTime  = time(NULL) - startTime;
-#if defined(FEATURE_GAME_TREE_ANALYSIS)
+#if defined(ANALYSIS_GAME_TREE)
     analysisData_.gameTreeAnalysisData = tree.analysisData_;
     tree.analysisData_.reset();
 #endif
     
-#endif // defined( FEATURE_PLAYER_ANALYSIS )
+#endif // defined( ANALYSIS_PLAYER )
 
     return new_state;
 }
 
-#if defined(FEATURE_PLAYER_ANALYSIS)
+#if defined(ANALYSIS_PLAYER)
 
 ComputerPlayer::AnalysisData::AnalysisData()
     : elapsedTime(0)
@@ -65,9 +65,9 @@ ComputerPlayer::AnalysisData::AnalysisData()
 void ComputerPlayer::AnalysisData::reset()
 {
     elapsedTime = 0;
-#if defined(FEATURE_GAME_TREE_ANALYSIS)
+#if defined(ANALYSIS_GAME_TREE)
     gameTreeAnalysisData.reset();
-#endif // defined(FEATURE_GAME_TREE_ANALYSIS)
+#endif // defined(ANALYSIS_GAME_TREE)
 }
 
 nlohmann::json ComputerPlayer::AnalysisData::toJson() const
@@ -75,10 +75,10 @@ nlohmann::json ComputerPlayer::AnalysisData::toJson() const
     json out =
     {
         {"elapsedTime", elapsedTime}
-#if defined(FEATURE_GAME_TREE_ANALYSIS)
+#if defined(ANALYSIS_GAME_TREE)
         , {"gameTree", gameTreeAnalysisData.toJson()}
 #endif
     };
     return out;
 }
-#endif // defined(FEATURE_PLAYER_ANALYSIS)
+#endif // defined(ANALYSIS_PLAYER)

@@ -7,9 +7,9 @@
 #include "Move.h"
 #include "ZHash/ZHash.h"
 
-#if defined(FEATURE_GAME_STATE_ANALYSIS)
+#if defined(ANALYSIS_GAME_STATE)
 #include "ComputerPlayer/Sequence.h"
-#endif // defined(FEATURE_GAME_STATE_ANALYSIS)
+#endif // defined(ANALYSIS_GAME_STATE)
 
 #include <queue>
 #include <vector>
@@ -58,7 +58,7 @@ public:
     // Returns the FEN string for the state
     std::string fen() const;
 
-#if defined(FEATURE_GAME_STATE_ANALYSIS)
+#if defined(ANALYSIS_GAME_STATE)
 
     static size_t constexpr EXPECTED_SEQUENCE_SIZE = 10;
 
@@ -74,7 +74,7 @@ public:
 
     mutable AnalysisData analysisData_;
 
-#endif // defined( FEATURE_GAME_STATE_ANALYSIS )
+#endif // defined( ANALYSIS_GAME_STATE )
 
     Board board_;               // The board
     CastleStatus castleStatus_; // Which side has castled and which castles are still possible
