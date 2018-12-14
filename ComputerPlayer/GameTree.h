@@ -9,6 +9,7 @@
 #include "StaticEvaluator.h"
 #include "TranspositionTable.h"
 #include <memory>
+#include <nlohmann/json.hpp>
 
 class GameTree
 {
@@ -48,6 +49,7 @@ public:
 #endif
         AnalysisData();
         void reset();
+        nlohmann::json toJson() const;
     };
 
     mutable AnalysisData analysisData_;

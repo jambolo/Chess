@@ -10,6 +10,8 @@
 #include <functional>
 #include <limits>
 
+using json = nlohmann::json;
+
 namespace
 {
 bool shouldDoQuiescentSearch(int previousValue, int thisValue)
@@ -558,6 +560,26 @@ void GameTree::AnalysisData::reset()
 #endif // defined(FEATURE_GAME_STATE_ANALYSIS)
 }
 
+json GameTree::AnalysisData::toJson() const
+{
+    json out =
+    {
+        {"aGeneratedStateCounts", aGeneratedStateCounts},
+        {"aEvaluationCounts", aEvaluationCounts},
+        {"value", value},
+        {"worstValue", worstValue},
+        {"alphaHitCount", alphaHitCount},
+        {"betaHitCount", betaHitCount}
+    
+#if defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+        , {"transpositonTable", ttAnalysisData.toJson()}
+#endif // defined(FEATURE_TRANSPOSITION_TABLE_ANALYSIS)
+#if defined(FEATURE_GAME_STATE_ANALYSIS)
+        , {"gameState", gameStateAnalysisData.toJson()}
+#endif // defined(FEATURE_GAME_STATE_ANALYSIS)
+    };
+    return out;
+}
 #endif // defined( FEATURE_GAME_TREE_ANALYSIS )
 
 #if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)

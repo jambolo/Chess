@@ -30,6 +30,7 @@ add_executable(chess ${CHESS_SOURCES})
 target_link_libraries(chess
     computer_player
     game_state
+    nlohmann_json::nlohmann_json
 )
 target_compile_definitions(chess
     PRIVATE
@@ -48,3 +49,4 @@ add_subdirectory(GameState)
 add_subdirectory(Misc)
 add_subdirectory(Player)
 add_subdirectory(ZHash)
+add_subdirectory(json)

@@ -6,7 +6,11 @@
 #include "StaticEvaluator.h"
 #include "TranspositionTable.h"
 
+#include <nlohmann/json.hpp>
+
 #include <time.h>
+
+using json = nlohmann::json;
 
 ComputerPlayer::ComputerPlayer(Color color, int maxDepth)
     : Player(color)
@@ -66,4 +70,15 @@ void ComputerPlayer::AnalysisData::reset()
 #endif // defined(FEATURE_GAME_TREE_ANALYSIS)
 }
 
+nlohmann::json ComputerPlayer::AnalysisData::toJson() const
+{
+    json out =
+    {
+        {"elapsedTime", elapsedTime}
+#if defined(FEATURE_GAME_TREE_ANALYSIS)
+        , {"gameTree", gameTreeAnalysisData.toJson()}
+#endif
+    };
+    return out;
+}
 #endif // defined(FEATURE_PLAYER_ANALYSIS)

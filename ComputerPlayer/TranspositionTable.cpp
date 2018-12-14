@@ -2,8 +2,12 @@
 
 #include "GameState/GameState.h"
 
-#include "Misc/Etc.h"
+#include <Misc/Etc.h>
+#include <nlohmann/json.hpp>
+
 #include <cassert>
+
+using json = nlohmann::json;
 
 TranspositionTable::TranspositionTable()
 {
@@ -212,6 +216,23 @@ void TranspositionTable::AnalysisData::reset()
     overwritten    = 0;
     refreshed      = 0;
 //    usage          = 0;    // never reset
+}
+
+json TranspositionTable::AnalysisData::toJson() const
+{
+    json out =
+    {
+        {"checkCount", checkCount},
+        {"updateCount", updateCount},
+        {"hitCount", hitCount},
+        {"collisionCount", collisionCount},
+        {"rejected", rejected},
+        {"overwritten", overwritten},
+        {"refreshed", refreshed},
+        {"usage", usage},
+    };
+    
+    return out;
 }
 
 #endif // defined( FEATURE_TRANSPOSITION_TABLE_ANALYSIS )

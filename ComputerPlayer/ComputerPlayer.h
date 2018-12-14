@@ -6,10 +6,12 @@
 #include "ComputerPlayer/GameTree.h"
 #include "Player/Player.h"
 #include <memory>
+#include <nlohmann/json.hpp>
 
 enum class Color;
 class GameState;
 class TranspositionTable;
+//namespace nlohmann { class json; }
 
 class ComputerPlayer : public Player
 {
@@ -30,6 +32,7 @@ public:
 #endif
         AnalysisData();
         void reset();
+        nlohmann::json toJson() const;
     };
 
     mutable AnalysisData analysisData_;

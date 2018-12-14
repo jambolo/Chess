@@ -4,6 +4,7 @@
 #define TranspositionTable_h__
 
 #include "ZHash/ZHash.h"
+#include <nlohmann/json.hpp>
 
 class GameState;
 
@@ -66,6 +67,7 @@ public:
 
         AnalysisData();
         void reset();
+        nlohmann::json toJson() const;
     };
 
     mutable AnalysisData analysisData_;

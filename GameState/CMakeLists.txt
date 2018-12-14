@@ -41,7 +41,7 @@ set(PRIVATE_INCLUDE_PATHS
 
 add_library(game_state ${SOURCES})
 target_include_directories(game_state PRIVATE ${PRIVATE_INCLUDE_PATHS})
-target_link_libraries(game_state computer_player zhash misc)
+target_link_libraries(game_state zhash misc nlohmann_json::nlohmann_json)
 
 if(FEATURE_GAME_STATE_ANALYSIS)
     target_compile_definitions(game_state PUBLIC FEATURE_GAME_STATE_ANALYSIS=1)
