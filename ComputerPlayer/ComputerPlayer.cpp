@@ -8,25 +8,29 @@
 
 ComputerPlayer::ComputerPlayer(Color color, int maxDepth)
     : Player(color)
-    , transpositionTable_(new TranspositionTable)
     , maxDepth_(maxDepth)
+#if defined(FEATURE_TRANSPOSITION_TABLE)
+    , transpositionTable_(new TranspositionTable)
+#endif // defined(FEATURE_TRANSPOSITION_TABLE)
 {
 }
 
 GameState ComputerPlayer::myTurn(GameState const & s0)
 {
-//	CWaitCursor wait_cursor;
-
-//    uint32_t start_time = timeGetTime();
 
     // Calculate the best move from here
 
-    GameTree  game_tree(transpositionTable_, maxDepth_);
-    GameState new_state = game_tree.myBestMove(s0, myColor_);
+#if defined(FEATURE_TRANSPOSITION_TABLE)
+    GameTree  tree(transpositionTable_, maxDepth_);
+#else // defined(FEATURE_TRANSPOSITION_TABLE)
+    GameTree  tree(maxDepth_);
+#endif // defined(FEATURE_TRANSPOSITION_TABLE)
+
+    GameState new_state = tree.myBestMove(s0, myColor_);
+#if defined(FEATURE_TRANSPOSITION_TABLE)
     transpositionTable_->age();
-
-//    uint32_t elapsed_time = timeGetTime() - start_time;
-
+#endif
+    
 #if defined(FEATURE_PLAYER_ANALYSIS)
 
     // Update analysis data

@@ -16,7 +16,11 @@ public:
 
     static int const MAX_DEPTH = 10;
 
+#if defined(FEATURE_TRANSPOSITION_TABLE)
     GameTree(std::shared_ptr<TranspositionTable> tt, int maxDepth);
+#else // defined(FEATURE_TRANSPOSITION_TABLE)
+    GameTree(int maxDepth);
+#endif // defined(FEATURE_TRANSPOSITION_TABLE)
 
     // Search for my best move and return it
     GameState myBestMove(GameState const & state, Color my_color);
@@ -93,10 +97,10 @@ private:
 
     Color myColor_;                           // My color
     Color yourColor_;                         // My opponent's color
+    int maxDepth_;                            // How deep to seach
 #if defined(FEATURE_TRANSPOSITION_TABLE)
     std::shared_ptr<TranspositionTable> transpositionTable_; // Transposition table (persistant)
 #endif
-    int maxDepth_;                            // How deep to seach
 };
 
 #endif // !defined(GameTree_h__)

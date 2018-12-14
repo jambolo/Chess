@@ -30,13 +30,15 @@ bool shouldDoQuiescentSearch(int previousValue, int thisValue)
 }
 } // anonymous namespace
 
-GameTree::GameTree(std::shared_ptr<TranspositionTable> tt, int maxDepth)
 #if defined(FEATURE_TRANSPOSITION_TABLE)
-    : transpositionTable_(tt)
-    , maxDepth_(maxDepth)
-#else
+GameTree::GameTree(std::shared_ptr<TranspositionTable> tt, int maxDepth)
+#else // defined(FEATURE_TRANSPOSITION_TABLE)
+GameTree::GameTree(int maxDepth)
+#endif // defined(FEATURE_TRANSPOSITION_TABLE)
     : maxDepth_(maxDepth)
-#endif
+#if defined(FEATURE_TRANSPOSITION_TABLE)
+    , transpositionTable_(tt)
+#endif // defined(FEATURE_TRANSPOSITION_TABLE)
 {
 }
 
@@ -234,7 +236,7 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int 
     // because the search is not complete. Also, the value is stored only if its quality is better than the quality
     // of the value in the table.
     if (!pruned)
-        transpositionTable_->update(*state);
+        transpositionTable_->update(state->state_, state->value_, state->quality_);
 
 #endif
 }
@@ -246,8 +248,7 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, int alpha, int bet
 {
     int responseDepth = depth + 1;                      // Depth of responses to this state
     int quality       = maxDepth_ - depth;              // Quality of values at this depth (this is the depth of plies searched to
-                                                        // get
-                                                        // the results for this ply )
+                                                        // get the results for this ply )
     int minResponseQuality = maxDepth_ - responseDepth; // Minimum acceptable quality of responses to this state
 
     // Generate a list of my opponent's possible responses to this state sorted ascending by value. They are sorted
@@ -353,7 +354,7 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, int alpha, int bet
     // because the search is not complete. Also, the value is stored only if its quality is better than the quality
     // of the value in the table.
     if (!pruned)
-        transpositionTable_->update(*state);
+        transpositionTable_->update(state->state_, state->value_, state->quality_);
 
 #endif
 }
@@ -501,7 +502,7 @@ void GameTree::evaluate(GameState const & state, int depth, int * pValue, int * 
 
 #if defined(FEATURE_TRANSPOSITION_TABLE)
         // Save the value of the state in the T-table
-        transpositionTable_->update(*pState, *pValue, *pQuality);
+        transpositionTable_->update(state, *pValue, *pQuality);
 #endif
     }
 }

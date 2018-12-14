@@ -21,8 +21,10 @@ public:
 
 private:
 
-    std::shared_ptr<TranspositionTable> transpositionTable_;
     int maxDepth_;
+#if defined(FEATURE_TRANSPOSITION_TABLE)
+    std::shared_ptr<TranspositionTable> transpositionTable_;
+#endif // defined(FEATURE_TRANSPOSITION_TABLE)
 };
 
 #endif // !defined(ComputerPlayer_h__)
