@@ -102,8 +102,8 @@ int evaluate(GameState::CastleStatus castleStatus)
 
 int StaticEvaluator::evaluate(GameState const & state)
 {
-    // If both kings are present, checkmate_value will be 0, otherwise it will be -CHECKMATE_VALUE() if the WHITE
-    // king is missing, or CHECKMATE_VALUE() if the BLACK king is missing.
+    // If both kings are present, checkmate_value will be 0, otherwise it will be -CHECKMATE_VALUE if the WHITE
+    // king is missing, or CHECKMATE_VALUE if the BLACK king is missing.
     int checkmate_value =  0;
 
     // The value of property is computed by adding up the values of all the pieces on the board.

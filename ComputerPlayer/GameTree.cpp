@@ -129,7 +129,7 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int 
                                                         // get the results for this ply)
     int minResponseQuality = maxDepth_ - responseDepth; // Minimum acceptable quality of responses to this state
 
-    // Generate a list of my possible responses to this state sorted descending by value. They are sorted in
+    // Generate a list of my possible responses to this state sorted descending by preliminary value. They are sorted in
     // descending order hoping that a beta cutoff will occur early.
     // Note: Preliminary values of the generated states are retrieved from the transposition table or computed by
     // the static evaluation function.
@@ -146,18 +146,21 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int 
 
     for (auto & response : responses)
     {
-        // The quality of a value is basically the depth of the search tree below it. The reason for checking the quality is that
-        // some of the responses have not been fully searched.
-        // If the quality of the preliminary value is not as good as the minimum quality and we haven't
-        // reached the maximum depth, then do a search. Otherwise, the response's quality is as good as the quality of a search,
-        // so use the response as is.
-        if ((response.quality_ < minResponseQuality) &&
-            ((responseDepth < maxDepth_) ||
-             (shouldDoQuiescentSearch(state->value_, response.value_) && (responseDepth < MAX_DEPTH))))
+        // If the game is not over, then let's see what my opponent can do
+        if (response.value_ != MY_CHECKMATE_VALUE)
         {
-            opponentsAlphaBeta(&response, alpha, beta, responseDepth);
+            // The quality of a value is basically the depth of the search tree below it. The reason for checking the quality is that
+            // some of the responses have not been fully searched.
+            // If the quality of the preliminary value is not as good as the minimum quality and we haven't
+            // reached the maximum depth, then do a search. Otherwise, the response's quality is as good as the quality of a search,
+            // so use the response as is.
+            if ((response.quality_ < minResponseQuality) &&
+                ((responseDepth < maxDepth_) ||
+                 (shouldDoQuiescentSearch(state->value_, response.value_) && (responseDepth < MAX_DEPTH))))
+            {
+                opponentsAlphaBeta(&response, alpha, beta, responseDepth);
+            }
         }
-        
 #if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
         printStateInfo(response, depth, alpha, beta);
 #endif
@@ -259,25 +262,29 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, int alpha, int bet
 
     for (auto & response : responses)
     {
-        // The quality of a value is basically the depth of the search tree below it. The reason for checking the quality is that
-        // some of the responses have not been fully searched. If the quality of the preliminary value is not as good as the
-        // minimum quality and we haven't reached the maximum depth, then do a search. Otherwise, the response's quality is as
-        // good as the quality of a search, so use the response as is.
-        if ((response.quality_ < minResponseQuality) &&
-            ((responseDepth < maxDepth_) ||
-             (shouldDoQuiescentSearch(state->value_, response.value_) && (responseDepth < MAX_DEPTH))))
+        // If the the game is not over, let's see what I can do
+        if (response.value_ != OPPONENT_CHECKMATE_VALUE)
         {
-            myAlphaBeta(&response, alpha, beta, responseDepth);
+            // The quality of a value is basically the depth of the search tree below it. The reason for checking the quality is that
+            // some of the responses have not been fully searched. If the quality of the preliminary value is not as good as the
+            // minimum quality and we haven't reached the maximum depth, then do a search. Otherwise, the response's quality is as
+            // good as the quality of a search, so use the response as is.
+            if ((response.quality_ < minResponseQuality) &&
+                ((responseDepth < maxDepth_) ||
+                 (shouldDoQuiescentSearch(state->value_, response.value_) && (responseDepth < MAX_DEPTH))))
+            {
+                myAlphaBeta(&response, alpha, beta, responseDepth);
 #if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
-            printStateInfo(response, depth, alpha, beta);
+                printStateInfo(response, depth, alpha, beta);
+#endif
+            }
+#if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
+            else
+            {
+                printStateInfo(response, depth, alpha, beta);
+            }
 #endif
         }
-#if defined(FEATURE_DEBUG_GAME_TREE_NODE_INFO)
-        else
-        {
-            printStateInfo(response, depth, alpha, beta);
-        }
-#endif
 
         // Determine if this response's value is the best so far. If so, then save value and do alpha-beta pruning
         if (response.value_ < best_value)
