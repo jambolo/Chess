@@ -59,7 +59,7 @@ public:
     //! Returns the contents of the given row
     unsigned row(int r) const
     {
-        return unsigned((board_ >> r) & 0xff);
+        return unsigned((board_ >> (8*r)) & 0xff);
     }
 
     //! Returns the contents of the given column
