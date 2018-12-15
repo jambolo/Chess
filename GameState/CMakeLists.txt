@@ -6,10 +6,6 @@ option(FEATURE_INCREMENTAL_STATIC_EVALUATION "Incremental static evaluation is e
 message(STATUS "FEATURE_PRIORITIZED_MOVE_ORDERING is ${FEATURE_PRIORITIZED_MOVE_ORDERING}")
 message(STATUS "FEATURE_INCREMENTAL_STATIC_EVALUATION is ${FEATURE_INCREMENTAL_STATIC_EVALUATION}")
 
-option(ANALYSIS_GAME_STATE "GameState analysis is enabled if true" FALSE)
-
-message(STATUS "ANALYSIS_GAME_STATE is ${ANALYSIS_GAME_STATE}")
-
 set(FEATURE_NOTATION "Standard" CACHE STRING "Which form of algrebric notation used?")
 set_property(CACHE FEATURE_NOTATION PROPERTY STRINGS Standard Long Figurine UCI ICCF PGN)
 
@@ -49,10 +45,6 @@ set(PRIVATE_INCLUDE_PATHS
 add_library(game_state ${SOURCES})
 target_include_directories(game_state PRIVATE ${PRIVATE_INCLUDE_PATHS})
 target_link_libraries(game_state zhash misc nlohmann_json::nlohmann_json)
-
-if(ANALYSIS_GAME_STATE)
-    target_compile_definitions(game_state PUBLIC ANALYSIS_GAME_STATE=1)
-endif()
 
 if(FEATURE_PRIORITIZED_MOVE_ORDERING)
     target_compile_definitions(game_state PUBLIC FEATURE_PRIORITIZED_MOVE_ORDERING=1)

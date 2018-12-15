@@ -5,13 +5,14 @@
 #include "Move.h"
 #include "Piece.h"
 
-#include "Misc/exceptions.h"
-#include "Misc/Etc.h"
 #include "ZHash/ZHash.h"
 
 #if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
 #include "ComputerPlayer/StaticEvaluator.h"
 #endif // defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
+
+#include <Misc/exceptions.h>
+#include <Misc/Etc.h>
 
 #include <regex>
 
@@ -117,31 +118,8 @@ ZHash GameState::zhash() const
     return zhash_;
 }
 
-void GameState::makeMove(Color color, Move const & move, int depth /*= 0*/)
+void GameState::makeMove(Color color, Move const & move)
 {
-#if defined(ANALYSIS_GAME_STATE)
-    // Add this move to the sequence
-    assert(depth > 0);
-    int const sequenceIndex = depth - 1;
-    if (sequenceIndex < elementsof(analysisData_.expected))
-    {
-        if (!move.isResignation() && !move.isUndo())
-        {
-            if (move.isKingSideCastle() || move.isQueenSideCastle())
-            {
-                analysisData_.expected[sequenceIndex] = SequenceEntry(color, PieceTypeId::INVALID, move);
-            }
-            else
-            {
-                Piece const * const pPiece = board_.pieceAt(move.from());
-                analysisData_.expected[sequenceIndex] = SequenceEntry(color, pPiece->type(), move);
-            }
-        }
-    }
-#else // if defined(ANALYSIS_GAME_STATE)
-    (void)depth;
-#endif // if defined(ANALYSIS_GAME_STATE)
-
     // Save the move
     move_ = move;
 
@@ -380,28 +358,13 @@ std::string GameState::castleStatusToFen() const
     return result;
 }
 
-#if defined(ANALYSIS_GAME_STATE)
-
-GameState::AnalysisData::AnalysisData()
-{
-    reset();
-}
-
-void GameState::AnalysisData::reset()
-{
-    memset(expected, -1, sizeof(expected));
-}
-
-#endif // defined( ANALYSIS_GAME_STATE )
-
-
 bool operator ==(GameState const & x, GameState const & y)
 {
     // Easy quick test
     if (x.zhash_.value() != y.zhash_.value())
         return false;
 
-    //! @todo	Actually this is not correct because en passant validity and fifty-move state are part of the state, too
+    //! @todo	Actually this is not correct because en passant availability and the fifty-move status are part of the state, too
     return x.board_ == y.board_ &&
            (x.castleStatus_ & CASTLE_AVAILABILITY_MASK) == (y.castleStatus_ & CASTLE_AVAILABILITY_MASK);
 }

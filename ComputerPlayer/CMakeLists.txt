@@ -25,8 +25,6 @@ set(SOURCES
     ComputerPlayer.h
     GameTree.cpp
     GameTree.h
-    Sequence.cpp
-    Sequence.h
     StaticEvaluator.cpp
     StaticEvaluator.h
     TranspositionTable.cpp

@@ -7,10 +7,6 @@
 #include "Move.h"
 #include "ZHash/ZHash.h"
 
-#if defined(ANALYSIS_GAME_STATE)
-#include "ComputerPlayer/Sequence.h"
-#endif // defined(ANALYSIS_GAME_STATE)
-
 #include <queue>
 #include <vector>
 
@@ -53,28 +49,10 @@ public:
     ZHash zhash() const;
 
     // Updates the game state with the specified move
-    void makeMove(Color color, Move const & move, int depth = 0);
+    void makeMove(Color color, Move const & move);
 
     // Returns the FEN string for the state
     std::string fen() const;
-
-#if defined(ANALYSIS_GAME_STATE)
-
-    static size_t constexpr EXPECTED_SEQUENCE_SIZE = 10;
-
-    // Analysis data for the last move
-
-    struct AnalysisData
-    {
-        SequenceEntry expected[EXPECTED_SEQUENCE_SIZE]; // Sequence expected to follow this state
-
-        AnalysisData();
-        void reset();
-    };
-
-    mutable AnalysisData analysisData_;
-
-#endif // defined( ANALYSIS_GAME_STATE )
 
     Board board_;               // The board
     CastleStatus castleStatus_; // Which side has castled and which castles are still possible

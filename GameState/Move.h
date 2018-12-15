@@ -41,6 +41,9 @@ public:
     // Returns the to position
     Position to() const { return to_; }
 
+    // Returns the kind of special move (or NORMAL)
+    Special special() const { return special_; }
+    
     // Returns true if this is a special move
     bool isSpecial() const { return (special_ != NORMAL); }
 

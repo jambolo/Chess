@@ -101,7 +101,6 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
         best_move.state_.move_ = Move::resign(my_color);
 
 #if defined(ANALYSIS_GAME_TREE)
-    
     // Update analysis data
     
     analysisData_.value = best_move.value_;
@@ -111,12 +110,7 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
     analysisData_.ttAnalysisData = transpositionTable_->analysisData_;
     transpositionTable_->analysisData_.reset();
 #endif // defined(ANALYSIS_TRANSPOSITION_TABLE)
-#if defined(ANALYSIS_GAME_STATE)
-    analysisData_.gameStateAnalysisData = best_move.state_.analysisData_;
-    best_move.state_.analysisData_.reset();
-#endif // defined(ANALYSIS_GAME_STATE)
-    
-#endif // defined( ANALYSIS_GAME_TREE )
+#endif // defined(ANALYSIS_GAME_TREE)
 
     // Return the best move
     return best_move.state_;
@@ -141,10 +135,6 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int 
     // Evaluate each of my responses and choose the one with the highest score
     int  best_value = std::numeric_limits<int>::min(); // Initialize to worst
     bool pruned     = false;
-
-#if defined(ANALYSIS_GAME_STATE)
-    EvaluatedGameState * pBestResponse = nullptr;
-#endif // defined( ANALYSIS_GAME_STATE )
 
     for (auto & response : responses)
     {
@@ -172,10 +162,6 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int 
         {
             // Save it
             best_value = response.value_;
-
-#if defined(ANALYSIS_GAME_STATE)
-            pBestResponse = &response;
-#endif      // defined( ANALYSIS_GAME_STATE )
 
             // If this is a checkmate, then there is no reason to look for anything better
             if (best_value == MY_CHECKMATE_VALUE)
@@ -218,23 +204,13 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int 
     state->value_   = best_value;
     state->quality_ = quality;
 
-#if defined(ANALYSIS_GAME_STATE)
-
-    // Save the expected sequence
-    memcpy(&state->state_.analysisData_.expected,
-           &pBestResponse->state_.analysisData_.expected,
-           sizeof(state->state_.analysisData_.expected));
-
-#endif // defined( ANALYSIS_GAME_STATE )
-
 #if defined(FEATURE_TRANSPOSITION_TABLE)
     // Save the value of the state in the T-table if the ply was not pruned. Pruning results in an incorrect value
     // because the search is not complete. Also, the value is stored only if its quality is better than the quality
     // of the value in the table.
     if (!pruned)
         transpositionTable_->update(state->state_, state->value_, state->quality_);
-
-#endif
+#endif // defined(FEATURE_TRANSPOSITION_TABLE)
 }
 
 // Evaluate the state based on the values of all my opponent's possible responses. The move my opponent will
@@ -257,10 +233,6 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, int alpha, int bet
     // Evaluate each of his responses and choose the one with the lowest score
     int  best_value = std::numeric_limits<int>::max(); // Initialize to worst
     bool pruned     = false;
-
-#if defined(ANALYSIS_GAME_STATE)
-    EvaluatedGameState * pBestResponse = nullptr;
-#endif // defined( ANALYSIS_GAME_STATE )
 
     for (auto & response : responses)
     {
@@ -293,10 +265,6 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, int alpha, int bet
         {
             // Save it
             best_value = response.value_;
-
-#if defined(ANALYSIS_GAME_STATE)
-            pBestResponse = &response;
-#endif      // defined( ANALYSIS_GAME_STATE )
 
             // If this is a checkmate, then there is no reason to look for anything better
             if (best_value == OPPONENT_CHECKMATE_VALUE)
@@ -340,15 +308,6 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, int alpha, int bet
     state->value_   = best_value;
     state->quality_ = quality;
 
-#if defined(ANALYSIS_GAME_STATE)
-
-    // Save the expected sequence
-    memcpy(&state->state_.analysisData_.expected,
-           &pBestResponse->state_.analysisData_.expected,
-           sizeof(state->state_.analysisData_.expected));
-
-#endif // defined( ANALYSIS_GAME_STATE )
-
 #if defined(FEATURE_TRANSPOSITION_TABLE)
     // Save the value of the state in the T-table if the ply was not pruned. Pruning results in an incorrect value
     // because the search is not complete. Also, the value is stored only if its quality is better than the quality
@@ -387,7 +346,7 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Eva
                 for (auto const & move : moves)
                 {
                     EvaluatedGameState new_state{ s0, 0, 0 };
-                    new_state.state_.makeMove(current_color, move, depth);
+                    new_state.state_.makeMove(current_color, move);
 
                     // Compute a preliminary value for the state
                     evaluate(new_state.state_, depth, &new_state.value_, &new_state.quality_);
@@ -555,9 +514,6 @@ void GameTree::AnalysisData::reset()
 #if defined(ANALYSIS_TRANSPOSITION_TABLE)
     ttAnalysisData.reset();
 #endif // defined(ANALYSIS_TRANSPOSITION_TABLE)
-#if defined(ANALYSIS_GAME_STATE)
-    gameStateAnalysisData.reset();
-#endif // defined(ANALYSIS_GAME_STATE)
 }
 
 json GameTree::AnalysisData::toJson() const
@@ -574,9 +530,6 @@ json GameTree::AnalysisData::toJson() const
 #if defined(ANALYSIS_TRANSPOSITION_TABLE)
         , {"transpositonTable", ttAnalysisData.toJson()}
 #endif // defined(ANALYSIS_TRANSPOSITION_TABLE)
-#if defined(ANALYSIS_GAME_STATE)
-        , {"gameState", gameStateAnalysisData.toJson()}
-#endif // defined(ANALYSIS_GAME_STATE)
     };
     return out;
 }
