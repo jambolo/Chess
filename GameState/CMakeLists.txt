@@ -2,14 +2,16 @@ cmake_minimum_required (VERSION 3.4)
 
 option(FEATURE_PRIORITIZED_MOVE_ORDERING     "Prioritized move ordering is used if true"        FALSE)
 option(FEATURE_INCREMENTAL_STATIC_EVALUATION "Incremental static evaluation is enabled if true" FALSE)
+option(FEATURE_BITBOARD_THREAT_DETECTION     "Threat detection is done with bitboards if true"  FALSE)
 
-message(STATUS "FEATURE_PRIORITIZED_MOVE_ORDERING is ${FEATURE_PRIORITIZED_MOVE_ORDERING}")
-message(STATUS "FEATURE_INCREMENTAL_STATIC_EVALUATION is ${FEATURE_INCREMENTAL_STATIC_EVALUATION}")
+message(STATUS "FEATURE_PRIORITIZED_MOVE_ORDERING                  : ${FEATURE_PRIORITIZED_MOVE_ORDERING}")
+message(STATUS "FEATURE_INCREMENTAL_STATIC_EVALUATION              : ${FEATURE_INCREMENTAL_STATIC_EVALUATION}")
+message(STATUS "FEATURE_BITBOARD_THREAT_DETECTION                  : ${FEATURE_BITBOARD_THREAT_DETECTION}")
 
 set(FEATURE_NOTATION "Standard" CACHE STRING "Which form of algrebric notation used?")
 set_property(CACHE FEATURE_NOTATION PROPERTY STRINGS Standard Long Figurine UCI ICCF PGN)
 
-message(STATUS "Notation is '${FEATURE_NOTATION}'")
+message(STATUS "Notation is                                        : ${FEATURE_NOTATION}")
 
 set(SOURCES
     Bishop.cpp
