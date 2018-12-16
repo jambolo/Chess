@@ -41,12 +41,24 @@ set(SOURCES
 )
 
 set(PRIVATE_INCLUDE_PATHS
+    .
+)
+
+set(PUBLIC_INCLUDE_PATHS
     ${CMAKE_SOURCE_DIR}
 )
 
 add_library(game_state ${SOURCES})
-target_include_directories(game_state PRIVATE ${PRIVATE_INCLUDE_PATHS})
-target_link_libraries(game_state zhash misc nlohmann_json::nlohmann_json)
+target_include_directories(game_state
+    PUBLIC ${PUBLIC_INCLUDE_PATHS}
+    PRIVATE ${PRIVATE_INCLUDE_PATHS}
+)
+
+target_link_libraries(game_state
+    zhash
+    misc
+    nlohmann_json::nlohmann_json
+)
 
 if(FEATURE_PRIORITIZED_MOVE_ORDERING)
     target_compile_definitions(game_state PUBLIC FEATURE_PRIORITIZED_MOVE_ORDERING=1)

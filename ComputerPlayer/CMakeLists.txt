@@ -43,11 +43,19 @@ set(SOURCES
 )
 
 set(PRIVATE_INCLUDE_PATHS
+    .
+)
+
+set(PUBLIC_INCLUDE_PATHS
     ${CMAKE_SOURCE_DIR}
 )
 
 add_library(computer_player ${SOURCES})
-target_include_directories(computer_player PRIVATE ${PRIVATE_INCLUDE_PATHS})
+target_include_directories(computer_player
+    PUBLIC ${PUBLIC_INCLUDE_PATHS}
+    PRIVATE ${PRIVATE_INCLUDE_PATHS}
+)
+
 target_link_libraries(computer_player
     player
     game_state

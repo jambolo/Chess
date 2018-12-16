@@ -22,8 +22,8 @@ set(CHESS_SOURCES
     Chess.cpp
 )
 
-set(CHESS_PRIVATE_INCLUDE_PATHS
-    ${CMAKE_SOURCE_DIR}
+set(CHESS_INCLUDE_PATHS
+    .
 )
 
 add_executable(chess ${CHESS_SOURCES})
@@ -41,7 +41,7 @@ target_compile_definitions(chess
         -D_SECURE_SCL=0
         -D_SCL_SECURE_NO_WARNINGS
 )
-target_include_directories(chess PRIVATE ${CHESS_PRIVATE_INCLUDE_PATHS})
+target_include_directories(chess PRIVATE ${CHESS_INCLUDE_PATHS})
 
 add_subdirectory(BitBoard)
 add_subdirectory(ComputerPlayer)
