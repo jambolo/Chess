@@ -16,16 +16,13 @@
 
 #include "BitBoard.h"
 
-#include "GameState/Piece.h"
-#include "GameState/Position.h"
-
 #include <cassert>
 
 namespace
 {
-uint64_t const s_threatenedSquares[NUMBER_OF_PIECE_TYPES][BitBoard::NUMBER_OF_SQUARES] =
+uint64_t const s_threatened[BitBoard::NUMBER_OF_PIECES][BitBoard::SIZE] =
 {
-    // PieceTypeId::KING
+    // KING
     {
         0x0000000000000302, 0x0000000000000705, 0x0000000000000e0a, 0x0000000000001c14,
         0x0000000000003828, 0x0000000000007050, 0x000000000000e0a0, 0x000000000000c040,
@@ -44,7 +41,7 @@ uint64_t const s_threatenedSquares[NUMBER_OF_PIECE_TYPES][BitBoard::NUMBER_OF_SQ
         0x0203000000000000, 0x0507000000000000, 0x0a0e000000000000, 0x141c000000000000,
         0x2838000000000000, 0x5070000000000000, 0xa0e0000000000000, 0x40c0000000000000
     },
-    // PieceTypeId::QUEEN
+    // QUEEN
     {
         0x81412111090503fe, 0x02824222120a07fd, 0x0404844424150efb, 0x08080888492a1cf7,
         0x10101011925438ef, 0x2020212224a870df, 0x404142444850e0bf, 0x8182848890a0c07f,
@@ -63,7 +60,7 @@ uint64_t const s_threatenedSquares[NUMBER_OF_PIECE_TYPES][BitBoard::NUMBER_OF_SQ
         0xfe03050911214181, 0xfd070a1222428202, 0xfb0e152444840404, 0xf71c2a4988080808,
         0xef38549211101010, 0xdf70a82422212020, 0xbfe0504844424140, 0x7fc0a09088848281
     },
-    // PieceTypeId::BISHOP
+    // BISHOP
     {
         0x8040201008040200, 0x0080402010080500, 0x0000804020110a00, 0x0000008041221400,
         0x0000000182442800, 0x0000010204885000, 0x000102040810a000, 0x0102040810204000,
@@ -82,7 +79,7 @@ uint64_t const s_threatenedSquares[NUMBER_OF_PIECE_TYPES][BitBoard::NUMBER_OF_SQ
         0x0002040810204080, 0x0005081020408000, 0x000a112040800000, 0x0014224180000000,
         0x0028448201000000, 0x0050880402010000, 0x00a0100804020100, 0x0040201008040201
     },
-    // PieceTypeId::KNIGHT
+    // KNIGHT
     {
         0x0000000000020400, 0x0000000000050800, 0x00000000000a1100, 0x0000000000142200,
         0x0000000000284400, 0x0000000000508800, 0x0000000000a01000, 0x0000000000402000,
@@ -101,7 +98,7 @@ uint64_t const s_threatenedSquares[NUMBER_OF_PIECE_TYPES][BitBoard::NUMBER_OF_SQ
         0x0004020000000000, 0x0008050000000000, 0x00110a0000000000, 0x0022140000000000,
         0x0044280000000000, 0x0088500000000000, 0x0010a00000000000, 0x0020400000000000
     },
-    // PieceTypeId::ROOK
+    // ROOK
     {
         0x01010101010101fe, 0x02020202020202fd, 0x04040404040404fb, 0x08080808080808f7,
         0x10101010101010ef, 0x20202020202020df, 0x40404040404040bf, 0x808080808080807f,
@@ -120,7 +117,7 @@ uint64_t const s_threatenedSquares[NUMBER_OF_PIECE_TYPES][BitBoard::NUMBER_OF_SQ
         0xfe01010101010101, 0xfd02020202020202, 0xfb04040404040404, 0xf708080808080808,
         0xef10101010101010, 0xdf20202020202020, 0xbf40404040404040, 0x7f80808080808080
     },
-    // PieceTypeId::PAWN
+    // PAWN
     {
         0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
         0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
@@ -140,9 +137,11 @@ uint64_t const s_threatenedSquares[NUMBER_OF_PIECE_TYPES][BitBoard::NUMBER_OF_SQ
         0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000
     }
 };
-uint64_t const s_destinationSquares[NUMBER_OF_PIECE_TYPES][BitBoard::NUMBER_OF_SQUARES] =
+
+// NOTE: s_destinations[] is the same as s_threatened[], except for pawns
+uint64_t const s_destinations[BitBoard::NUMBER_OF_PIECES][BitBoard::SIZE] =
 {
-    // PieceTypeId::KING
+    // KING
     {
         0x0000000000000302, 0x0000000000000705, 0x0000000000000e0a, 0x0000000000001c14,
         0x0000000000003828, 0x0000000000007050, 0x000000000000e0a0, 0x000000000000c040,
@@ -161,7 +160,7 @@ uint64_t const s_destinationSquares[NUMBER_OF_PIECE_TYPES][BitBoard::NUMBER_OF_S
         0x0203000000000000, 0x0507000000000000, 0x0a0e000000000000, 0x141c000000000000,
         0x2838000000000000, 0x5070000000000000, 0xa0e0000000000000, 0x40c0000000000000
     },
-    // PieceTypeId::QUEEN
+    // QUEEN
     {
         0x81412111090503fe, 0x02824222120a07fd, 0x0404844424150efb, 0x08080888492a1cf7,
         0x10101011925438ef, 0x2020212224a870df, 0x404142444850e0bf, 0x8182848890a0c07f,
@@ -180,7 +179,7 @@ uint64_t const s_destinationSquares[NUMBER_OF_PIECE_TYPES][BitBoard::NUMBER_OF_S
         0xfe03050911214181, 0xfd070a1222428202, 0xfb0e152444840404, 0xf71c2a4988080808,
         0xef38549211101010, 0xdf70a82422212020, 0xbfe0504844424140, 0x7fc0a09088848281
     },
-    // PieceTypeId::BISHOP
+    // BISHOP
     {
         0x8040201008040200, 0x0080402010080500, 0x0000804020110a00, 0x0000008041221400,
         0x0000000182442800, 0x0000010204885000, 0x000102040810a000, 0x0102040810204000,
@@ -199,7 +198,7 @@ uint64_t const s_destinationSquares[NUMBER_OF_PIECE_TYPES][BitBoard::NUMBER_OF_S
         0x0002040810204080, 0x0005081020408000, 0x000a112040800000, 0x0014224180000000,
         0x0028448201000000, 0x0050880402010000, 0x00a0100804020100, 0x0040201008040201
     },
-    // PieceTypeId::KNIGHT
+    // KNIGHT
     {
         0x0000000000020400, 0x0000000000050800, 0x00000000000a1100, 0x0000000000142200,
         0x0000000000284400, 0x0000000000508800, 0x0000000000a01000, 0x0000000000402000,
@@ -218,7 +217,7 @@ uint64_t const s_destinationSquares[NUMBER_OF_PIECE_TYPES][BitBoard::NUMBER_OF_S
         0x0004020000000000, 0x0008050000000000, 0x00110a0000000000, 0x0022140000000000,
         0x0044280000000000, 0x0088500000000000, 0x0010a00000000000, 0x0020400000000000
     },
-    // PieceTypeId::ROOK
+    // ROOK
     {
         0x01010101010101fe, 0x02020202020202fd, 0x04040404040404fb, 0x08080808080808f7,
         0x10101010101010ef, 0x20202020202020df, 0x40404040404040bf, 0x808080808080807f,
@@ -237,7 +236,7 @@ uint64_t const s_destinationSquares[NUMBER_OF_PIECE_TYPES][BitBoard::NUMBER_OF_S
         0xfe01010101010101, 0xfd02020202020202, 0xfb04040404040404, 0xf708080808080808,
         0xef10101010101010, 0xdf20202020202020, 0xbf40404040404040, 0x7f80808080808080
     },
-    // PieceTypeId::PAWN
+    // PAWN
     {
         0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
         0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
@@ -257,7 +256,25 @@ uint64_t const s_destinationSquares[NUMBER_OF_PIECE_TYPES][BitBoard::NUMBER_OF_S
         0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000
     }
 };
+
+uint64_t s_blockedRowsAndColumns[BitBoard::SIZE][BitBoard::SIZE];
+uint64_t s_blockedDiagonals[BitBoard::SIZE][BitBoard::SIZE];
+
 } // anonymous namespace
+
+
+void BitBoard::flip()
+{
+    uint64_t temp = board_;
+    ((uint8_t *)&board_)[0] = ((uint8_t *)&temp)[7];
+    ((uint8_t *)&board_)[1] = ((uint8_t *)&temp)[6];
+    ((uint8_t *)&board_)[2] = ((uint8_t *)&temp)[5];
+    ((uint8_t *)&board_)[3] = ((uint8_t *)&temp)[4];
+    ((uint8_t *)&board_)[4] = ((uint8_t *)&temp)[3];
+    ((uint8_t *)&board_)[5] = ((uint8_t *)&temp)[2];
+    ((uint8_t *)&board_)[6] = ((uint8_t *)&temp)[1];
+    ((uint8_t *)&board_)[7] = ((uint8_t *)&temp)[0];
+}
 
 unsigned BitBoard::column(int c) const
 {
@@ -271,82 +288,124 @@ unsigned BitBoard::column(int c) const
     return result;
 }
 
-BitBoard const & BitBoard::flip()
-{
-    uint64_t temp = board_;
-    ((uint8_t *)&board_)[0] = ((uint8_t *)&temp)[7];
-    ((uint8_t *)&board_)[1] = ((uint8_t *)&temp)[6];
-    ((uint8_t *)&board_)[2] = ((uint8_t *)&temp)[5];
-    ((uint8_t *)&board_)[3] = ((uint8_t *)&temp)[4];
-    ((uint8_t *)&board_)[4] = ((uint8_t *)&temp)[3];
-    ((uint8_t *)&board_)[5] = ((uint8_t *)&temp)[2];
-    ((uint8_t *)&board_)[6] = ((uint8_t *)&temp)[1];
-    ((uint8_t *)&board_)[7] = ((uint8_t *)&temp)[0];
 
-    return *this;
+BitBoard BitBoard::threatened(int type, int r, int c)
+{
+    assert(type >= KING && type <= PAWN);
+    assert(r >= 0 && r < SQUARES_PER_ROW);
+    assert(c >= 0 && c < SQUARES_PER_COLUMN);
+
+    int from = index(r, c);
+    return BitBoard(s_threatened[type][from]);
 }
 
-BitBoard const & BitBoard::mirror()
+BitBoard BitBoard::threatened(int type, int r, int c, BitBoard friends, BitBoard foes)
 {
-    uint64_t temp = 0;
+    assert(type >= KING && type <= PAWN);
+    assert(r >= 0 && r < SQUARES_PER_ROW);
+    assert(c >= 0 && c < SQUARES_PER_COLUMN);
 
-    temp |= (board_ & 0x0101010101010101) << 7;
-    temp |= (board_ & 0x0202020202020202) << 5;
-    temp |= (board_ & 0x0404040404040404) << 3;
-    temp |= (board_ & 0x0808080808080808) << 1;
-    temp |= (board_ & 0x1010101010101010) >> 1;
-    temp |= (board_ & 0x2020202020202020) >> 3;
-    temp |= (board_ & 0x4040404040404040) >> 5;
-    temp |= (board_ & 0x8080808080808080) >> 7;
-
-    board_ = temp;
-
-    return *this;
-}
-
-BitBoard BitBoard::threatenedSquares(PieceTypeId type, Position const & position)
-{
-    assert(type != PieceTypeId::INVALID);
-    assert(position.row * 8 + position.column < NUMBER_OF_SQUARES);
-
-    return BitBoard(s_threatenedSquares[(int)type][position.row * 8 + position.column]);
-}
-
-BitBoard BitBoard::threatenedSquares(PieceTypeId type, Position const & position, BitBoard const & friends, BitBoard const & foes)
-{
-    BitBoard rv;
+    int from = index(r, c);
 
     // First get the uninhibited movement
 
-    rv = threatenedSquares(type, position);
+    uint64_t rv = s_threatened[type][from];
 
-    // Figure it out
+    // Remove blocked squares (for certain pieces)
 
-    return rv;
+    uint64_t blockers = uint64_t(friends) | uint64_t(foes);
+
+    if (type == QUEEN)
+    {
+        for (int i = 0; i < SIZE; ++i)
+        {
+            if (blockers & 1)
+            {
+                rv &= ~s_blockedRowsAndColumns[from][i];
+                rv &= ~s_blockedDiagonals[from][i];
+            }
+            blockers >>= 1;
+        }
+    }
+    else if (type == ROOK)
+    {
+        for (int i = 0; i < SIZE; ++i)
+        {
+            if (blockers & 1)
+                rv &= ~s_blockedRowsAndColumns[from][i];
+            blockers >>= 1;
+        }
+    }
+    else if (type == BISHOP)
+    {
+        for (int i = 0; i < SIZE; ++i)
+        {
+            if (blockers & 1)
+                rv &= ~s_blockedDiagonals[from][i];
+            blockers >>= 1;
+        }
+    }
+
+    return BitBoard(rv);
 }
 
-BitBoard BitBoard::destinationSquares(PieceTypeId type, Position const & position)
+BitBoard BitBoard::destinations(int type, int r, int c)
 {
-    assert(type != PieceTypeId::INVALID);
-    assert(position.row * 8 + position.column < NUMBER_OF_SQUARES);
+    assert(type >= KING && type <= PAWN);
+    assert(r >= 0 && r < SQUARES_PER_ROW);
+    assert(c >= 0 && c < SQUARES_PER_COLUMN);
 
-    return BitBoard(s_destinationSquares[(int)type][position.row * 8 + position.column]);
+    int from = index(r, c);
+
+    return BitBoard(s_destinations[type][from]);
 }
 
-BitBoard BitBoard::destinationSquares(PieceTypeId type, Position const & position, BitBoard const & friends, BitBoard const & foes)
+BitBoard BitBoard::destinations(int type, int r, int c, BitBoard friends, BitBoard foes)
 {
-    BitBoard rv;
+    assert(type >= KING && type <= PAWN);
+    assert(r >= 0 && r < SQUARES_PER_ROW);
+    assert(c >= 0 && c < SQUARES_PER_COLUMN);
+
+    int from = index(r, c);
 
     // First get the uninhibited movement
 
-    rv =  destinationSquares(type, position);
+    uint64_t rv =  s_destinations[type][from];
 
-    // Figure it out
+    // Remove blocked squares (for certain pieces)
 
-    return rv;
-}
+    uint64_t blockers = uint64_t(friends) | uint64_t(foes);
 
-BitBoard BitBoard::blockedSquares(PieceTypeId type, Position const & position, Position block)
-{
-    return BitBoard(0);
+    if (type == QUEEN)
+    {
+        for (int i = 0; i < SIZE; ++i)
+        {
+            if (blockers & 1)
+            {
+                rv &= ~s_blockedRowsAndColumns[from][i];
+                rv &= ~s_blockedDiagonals[from][i];
+            }
+            blockers >>= 1;
+        }
+    }
+    else if (type == ROOK || type == PAWN)
+    {
+        for (int i = 0; i < SIZE; ++i)
+        {
+            if (blockers & 1)
+                rv &= ~s_blockedRowsAndColumns[from][i];
+            blockers >>= 1;
+        }
+    }
+    else if (type == BISHOP)
+    {
+        for (int i = 0; i < SIZE; ++i)
+        {
+            if (blockers & 1)
+                rv &= ~s_blockedDiagonals[from][i];
+            blockers >>= 1;
+        }
+    }
+
+    return BitBoard(rv);
 }
