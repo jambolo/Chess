@@ -5,14 +5,25 @@
 #include "Move.h"
 #include "Types.h"
 
+#include <BitBoard/BitBoard.h>
+
 void Bishop::generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const
 {
     Board const & board = state.board_;
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
+
+#if defined(FEATURE_BITBOARD_MOVE_GENERATION)
+    BitBoard destinations = BitBoard::destinations(BitBoard::BISHOP,
+                                                   from.row,
+                                                   from.column,
+                                                   (color_ == Color::WHITE) ? board.white() : board.black(),
+                                                   (color_ == Color::WHITE) ? board.black() : board.white());
+#else // defined(FEATURE_BITBOARD_MOVE_GENERATION)
     generateSpanMoves(board, from, (int)Direction::UP, (int)Direction::RIGHT, moves);
     generateSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::RIGHT, moves);
     generateSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::LEFT, moves);
     generateSpanMoves(board, from, (int)Direction::UP, (int)Direction::LEFT, moves);
+#endif // defined(FEATURE_BITBOARD_MOVE_GENERATION)
 }
 
 int Bishop::countPossibleMoves(GameState const & state, Position const & from) const

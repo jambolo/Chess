@@ -299,7 +299,7 @@ BitBoard BitBoard::threatened(int type, int r, int c)
     return BitBoard(s_threatened[type][from]);
 }
 
-BitBoard BitBoard::threatened(int type, int r, int c, const BitBoard& friends, const BitBoard& foes)
+BitBoard BitBoard::threatened(int type, int r, int c, BitBoard const & friends, BitBoard const & foes)
 {
     assert(type >= KING && type <= PAWN);
     assert(r >= 0 && r < SQUARES_PER_ROW);
@@ -343,11 +343,10 @@ BitBoard BitBoard::threatened(int type, int r, int c, const BitBoard& friends, c
         }
         break;
     default:
+        // Remove squares occupied by friends
+        rv &= ~uint64_t(friends);
         break;
     }
-
-    // Remove squares occupied by friends
-    rv &= ~uint64_t(friends);
 
     return BitBoard(rv);
 }
@@ -363,7 +362,7 @@ BitBoard BitBoard::destinations(int type, int r, int c)
     return BitBoard(s_destinations[type][from]);
 }
 
-BitBoard BitBoard::destinations(int type, int r, int c, const BitBoard& friends, const BitBoard& foes)
+BitBoard BitBoard::destinations(int type, int r, int c, BitBoard const & friends, BitBoard const & foes)
 {
     assert(type >= KING && type <= PAWN);
     assert(r >= 0 && r < SQUARES_PER_ROW);
@@ -408,11 +407,10 @@ BitBoard BitBoard::destinations(int type, int r, int c, const BitBoard& friends,
         }
         break;
     default:
+        // Remove squares occupied by friends
+        rv &= ~uint64_t(friends);
         break;
     }
-
-    // Remove squares occupied by friends
-    rv &= ~uint64_t(friends);
 
     return BitBoard(rv);
 }

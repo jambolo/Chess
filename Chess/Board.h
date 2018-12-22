@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <BitBoard/BitBoard.h>
 #include "Chess/Types.h"
 #include <string>
 
@@ -46,6 +47,15 @@ public:
     // Return the board as a FEN string
     std::string fen() const;
 
+    // Returns a bitboard containing all the white pieces
+    BitBoard white() const { return white_; }
+
+    // Returns a bitboard containing all the white pieces
+    BitBoard black() const { return black_; }
+
+    // Returns a bitboard containing all the white pieces
+    BitBoard all() const { return BitBoard(uint64_t(white_) | uint64_t(black_)); }
+
     static Position const INITIAL_BLACK_ROOK_QUEENSIDE_POSITION;
     static Position const INITIAL_BLACK_KNIGHT_QUEENSIDE_POSITION;
     static Position const INITIAL_BLACK_BISHOP_QUEENSIDE_POSITION;
@@ -71,6 +81,11 @@ private:
     void clear();
 
     Piece const * board_[SIZE][SIZE]; // The board
+
+#if 1//defined(FEATURE_BITBOARD_MOVE_GENERATION)
+    BitBoard white_;
+    BitBoard black_;
+#endif // defined(FEATURE_BITBOARD_MOVE_GENERATION)
 };
 
 // Returns true if the other board is the same as this one

@@ -3,12 +3,17 @@ cmake_minimum_required (VERSION 3.10)
 #option(FEATURE_PRIORITIZED_MOVE_ORDERING     "Prioritized move ordering is used if true"        FALSE)
 #option(FEATURE_INCREMENTAL_STATIC_EVALUATION "Incremental static evaluation is enabled if true" FALSE)
 #option(FEATURE_BITBOARD_THREAT_DETECTION     "Threat detection is done with bitboards if true"  FALSE)
-#option(ANALYSIS_GAME_STATE                    "General GameState analysis is enabled if true"    FALSE)
+#option(ANALYSIS_GAME_STATE                   "General GameState analysis is enabled if true"    FALSE)
+option(FEATURE_BITBOARD_MOVE_GENERATION       "Move generation is done with bitboards if true"   FALSE)
 
 message(STATUS "FEATURE_PRIORITIZED_MOVE_ORDERING                  : ${FEATURE_PRIORITIZED_MOVE_ORDERING}")
 message(STATUS "FEATURE_INCREMENTAL_STATIC_EVALUATION              : ${FEATURE_INCREMENTAL_STATIC_EVALUATION}")
 message(STATUS "FEATURE_BITBOARD_THREAT_DETECTION                  : ${FEATURE_BITBOARD_THREAT_DETECTION}")
 message(STATUS "ANALYSIS_GAME_STATE                                : ${ANALYSIS_GAME_STATE}")
+message(STATUS "FEATURE_BITBOARD_MOVE_GENERATION                   : ${FEATURE_BITBOARD_MOVE_GENERATION}")
+
+option(DEBUG_VALIDATE_BITBOARD_MOVE_GENERATION "BitBoard move generation is validated if true"   FALSE)
+message(STATUS "DEBUG_VALIDATE_BITBOARD_MOVE_GENERATION            : ${DEBUG_VALIDATE_BITBOARD_MOVE_GENERATION}")
 
 set(SOURCES
     Bishop.cpp
@@ -55,6 +60,7 @@ target_include_directories(Chess
 )
 
 target_link_libraries(Chess PUBLIC
+    BitBoard
     GamePlayer
     Misc::Misc
     nlohmann_json::nlohmann_json
