@@ -16,6 +16,9 @@ public:
 
     // Returns true if the move is valid
     virtual bool isValidMove(GameState const & state, Move const & move) const override;
+
+private:
+    static int constexpr MAX_POSSIBLE_MOVES = 10; // The maximum number of possible moves for a rook
 };
 
 #endif // !defined(Rook_h__)

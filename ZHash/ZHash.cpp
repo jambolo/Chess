@@ -40,7 +40,11 @@ ZHash::ZHash(Z z /* = EMPTY */)
 {
 }
 
-ZHash::ZHash(Board const & board, unsigned castleStatus /* = 0*/, Color ePColor /* = INVALID*/, int ePColumn /* = -1*/, bool fiftyMoveRule /* = false */)
+ZHash::ZHash(Board const & board,
+             unsigned castleStatus /* = 0*/,
+             Color ePColor /* = INVALID*/,
+             int ePColumn /* = -1*/,
+             bool fiftyMoveRule /* = false */)
 {
     value_ = 0;
 

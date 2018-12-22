@@ -19,6 +19,9 @@ public:
 
     // Returns true if the move is valid
     virtual bool isValidMove(GameState const & state, Move const & move) const override;
+
+private:
+    static int constexpr MAX_POSSIBLE_MOVES = 6; // The maximum number of possible moves for a pawn
 };
 
 #endif // !defined(Pawn_h__)

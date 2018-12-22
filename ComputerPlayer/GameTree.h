@@ -3,7 +3,6 @@
 #if !defined(GameTree_h__)
 #define GameTree_h__
 
-
 #include "GameState/GameState.h"
 #include "GameState/Move.h"
 #include "StaticEvaluator.h"

@@ -15,9 +15,6 @@ struct Position;
 class Piece
 {
 public:
-
-    static int constexpr MAX_POSSIBLE_MOVES = 28; // The maximum number of possible moves for any piece
-
     using MoveList = std::vector<Move>;
 
     Piece(PieceTypeId t, Color c);
