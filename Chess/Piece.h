@@ -11,6 +11,7 @@ class Board;
 class Move;
 class GameState;
 struct Position;
+class BitBoard;
 
 class Piece
 {
@@ -70,6 +71,10 @@ protected:
                          Position const & from,
                          int              dr,
                          int              dc) const;
+
+#if defined(FEATURE_BITBOARD_MOVE_GENERATION)
+    static void extractMoves(BitBoard b, MoveList & list);
+#endif // defined(FEATURE_BITBOARD_MOVE_GENERATION)
 
 private:
 

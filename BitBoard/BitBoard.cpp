@@ -404,5 +404,8 @@ BitBoard BitBoard::destinations(int type, int r, int c, BitBoard friends, BitBoa
         }
     }
 
+    // Squares occupied by friends are also blocked
+    rv &= ~friends;
+
     return BitBoard(rv);
 }
