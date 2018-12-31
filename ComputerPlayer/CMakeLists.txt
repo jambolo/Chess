@@ -16,7 +16,6 @@ message(STATUS "FEATURE_TRANSPOSITION_TABLE_INCLUDES_PRUNED_VALUES : ${FEATURE_T
 message(STATUS "FEATURE_ITERATIVE_DEEPENING                        : ${FEATURE_ITERATIVE_DEEPENING}")
 message(STATUS "FEATURE_INTERNAL_ITERATIVE_DEEPENING               : ${FEATURE_INTERNAL_ITERATIVE_DEEPENING}")
 message(STATUS "FEATURE_NULL_MOVE                                  : ${FEATURE_NULL_MOVE}")
-message(STATUS "FEATURE_NULL_MOVE                                  : ${FEATURE_NULL_MOVE}")
 message(STATUS "FEATURE_BITBOARD_MOVE_GENERATION                   : ${FEATURE_BITBOARD_MOVE_GENERATION}")
 
 option(ANALYSIS_PLAYER              "General ComputerPlayer analysis is enabled if true"     FALSE)

@@ -1,15 +1,15 @@
 cmake_minimum_required (VERSION 3.4)
 project(Chess CXX)
 
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-    add_custom_target(chess_doxygen ALL
-        ${DOXYGEN_EXECUTABLE}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Generating API documentation with Doxygen" VERBATIM
-        SOURCES Doxyfile
-    )
-endif(DOXYGEN_FOUND)
+#find_package(Doxygen)
+#if(DOXYGEN_FOUND)
+#    add_custom_target(chess_doxygen ALL
+#        ${DOXYGEN_EXECUTABLE}
+#        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+#        COMMENT "Generating API documentation with Doxygen" VERBATIM
+#        SOURCES Doxyfile
+#    )
+#endif(DOXYGEN_FOUND)
 
 option(BUILD_SHARED_LIBS       "Build libraries as DLLs"                    FALSE)
 
