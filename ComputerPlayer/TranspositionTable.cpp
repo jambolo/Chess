@@ -19,8 +19,8 @@ TranspositionTable::TranspositionTable()
 }
 
 bool TranspositionTable::check(GameState const & state,
-                               int * pReturnedValue/* = NULL*/,
-                               int * pReturnedQuality/* = NULL*/) const
+                               float *           pReturnedValue /* = NULL*/,
+                               int *             pReturnedQuality /* = NULL*/) const
 {
 #if defined(ANALYSIS_TRANSPOSITION_TABLE)
     ++analysisData_.checkCount;
@@ -42,7 +42,7 @@ bool TranspositionTable::check(GameState const & state,
 
         hit = true;
         if (pReturnedValue)
-            *pReturnedValue   = entry.value_;
+            *pReturnedValue = entry.value_;
         if (pReturnedQuality)
             *pReturnedQuality = entry.q_;
         entry.age_ = 0;  // Reset age
@@ -59,9 +59,9 @@ bool TranspositionTable::check(GameState const & state,
 }
 
 bool TranspositionTable::check(GameState const & state,
-                               int minQ,
-                               int * pReturnedValue/* = NULL*/,
-                               int * pReturnedQuality/* = NULL*/) const
+                               int               minQ,
+                               float *           pReturnedValue /* = NULL*/,
+                               int *             pReturnedQuality /* = NULL*/) const
 {
 #if defined(ANALYSIS_TRANSPOSITION_TABLE)
     ++analysisData_.checkCount;
@@ -104,7 +104,7 @@ bool TranspositionTable::check(GameState const & state,
     return hit;
 }
 
-void TranspositionTable::set(GameState const & state, int value, int quality)
+void TranspositionTable::set(GameState const & state, float value, int quality)
 {
 #if defined(ANALYSIS_TRANSPOSITION_TABLE)
     ++analysisData_.updateCount;
@@ -121,20 +121,20 @@ void TranspositionTable::set(GameState const & state, int value, int quality)
     entry.age_   = 0;   // Reset age
 
 #if defined(ANALYSIS_TRANSPOSITION_TABLE)
-    
+
     // For tracking the number of used entries
-    
+
     if (entry.hash_ == TableEntry::UNUSED_ENTRY)
         ++analysisData_.usage;
     else if (entry.hash_ == hash)
         ++analysisData_.refreshed;
     else
         ++analysisData_.overwritten;
-    
+
 #endif // defined( ANALYSIS_TRANSPOSITION_TABLE )
 }
 
-void TranspositionTable::update(GameState const & state, int value, int quality)
+void TranspositionTable::update(GameState const & state, float value, int quality)
 {
 #if defined(ANALYSIS_TRANSPOSITION_TABLE)
     ++analysisData_.updateCount;
@@ -155,18 +155,18 @@ void TranspositionTable::update(GameState const & state, int value, int quality)
         entry.value_ = value;
         entry.q_     = quality;
         entry.age_   = 0;       // Reset age
-        
+
 #if defined(ANALYSIS_TRANSPOSITION_TABLE)
-        
+
         // For tracking the number of used entries
-        
+
         if (isUnused)
             ++analysisData_.usage;
         else if (entry.hash_ == hash)
             ++analysisData_.refreshed;
         else
             ++analysisData_.overwritten;
-        
+
 #endif  // defined( ANALYSIS_TRANSPOSITION_TABLE )
     }
     else
@@ -192,7 +192,7 @@ void TranspositionTable::age()
                 entry.hash_ = TableEntry::UNUSED_ENTRY;
 #if defined(ANALYSIS_TRANSPOSITION_TABLE)
                 --analysisData_.usage;
-#endif // defined( ANALYSIS_TRANSPOSITION_TABLE )
+#endif          // defined( ANALYSIS_TRANSPOSITION_TABLE )
             }
         }
     }
@@ -222,16 +222,16 @@ json TranspositionTable::AnalysisData::toJson() const
 {
     json out =
     {
-        {"checkCount", checkCount},
-        {"updateCount", updateCount},
-        {"hitCount", hitCount},
-        {"collisionCount", collisionCount},
-        {"rejected", rejected},
-        {"overwritten", overwritten},
-        {"refreshed", refreshed},
-        {"usage", usage},
+        { "checkCount", checkCount },
+        { "updateCount", updateCount },
+        { "hitCount", hitCount },
+        { "collisionCount", collisionCount },
+        { "rejected", rejected },
+        { "overwritten", overwritten },
+        { "refreshed", refreshed },
+        { "usage", usage },
     };
-    
+
     return out;
 }
 

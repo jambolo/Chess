@@ -32,20 +32,20 @@ public:
 
     // Returns true and value if the state is already in the table
     bool check(GameState const & state,
-               int * pReturnedValue = NULL,
-               int * pReturnedQuality = NULL) const;
+               float *           pReturnedValue   = nullptr,
+               int *             pReturnedQuality = nullptr) const;
 
     // Returns true and value if the state is already in the table and the quality is high enough.
     bool check(GameState const & state,
-               int minQ,
-               int * pReturnedValue = NULL,
-               int * pReturnedQuality = NULL) const;
+               int               minQ,
+               float *           pReturnedValue   = nullptr,
+               int *             pReturnedQuality = nullptr) const;
 
     // Puts the state into the table
-    void set(GameState const & state, int value, int quality);
+    void set(GameState const & state, float value, int quality);
 
     // Puts the state into the table, if its quality is high enough
-    void update(GameState const & state, int value, int quality);
+    void update(GameState const & state, float value, int quality);
 
     // Bump the age of entries so that they are eventually replaced by newer entries.
     void age();
@@ -66,7 +66,7 @@ public:
         int usage;          // The number of slots in use
 
         AnalysisData();
-        void reset();
+        void           reset();
         nlohmann::json toJson() const;
     };
 
@@ -78,20 +78,20 @@ private:
 
     class TableEntry
     {
-    public:
+public:
 
         static ZHash::Z const UNUSED_ENTRY = ZHash::INVALID;
 
         void clear() { hash_ = UNUSED_ENTRY; }
 
-        ZHash::Z       hash_;  // The state's hash
-        int            value_; // The state's value
-        int8_t         q_;     // The quality of the value
+        ZHash::Z hash_;        // The state's hash
+        float value_;          // The state's value
+        int8_t q_;             // The quality of the value
         mutable int8_t age_;   // The number of turns since the entry has been referenced
     };
 
-    TableEntry const & find(ZHash::Z hash) const    { return table_[hash % SIZE]; }
-    TableEntry &       find(ZHash::Z hash)          { return table_[hash % SIZE]; }
+    TableEntry const & find(ZHash::Z hash) const { return table_[hash % SIZE]; }
+    TableEntry &       find(ZHash::Z hash)       { return table_[hash % SIZE]; }
 
     TableEntry table_[SIZE];
 };

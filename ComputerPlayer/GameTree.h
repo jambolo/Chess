@@ -25,8 +25,8 @@ public:
     // Search for my best move and return it
     GameState myBestMove(GameState const & state, Color my_color);
 
-    static int constexpr MY_CHECKMATE_VALUE       = StaticEvaluator::CHECKMATE_VALUE;
-    static int constexpr OPPONENT_CHECKMATE_VALUE = -StaticEvaluator::CHECKMATE_VALUE;
+    static float constexpr MY_CHECKMATE_VALUE       = StaticEvaluator::CHECKMATE_VALUE;
+    static float constexpr OPPONENT_CHECKMATE_VALUE = -StaticEvaluator::CHECKMATE_VALUE;
 
 #if defined(ANALYSIS_GAME_TREE)
 
@@ -36,15 +36,15 @@ public:
     {
         int aGeneratedStateCounts[MAX_DEPTH + 1];
         int aEvaluationCounts[MAX_DEPTH + 1];
-        int value;
-        int worstValue;
+        float value;
+        float worstValue;
         int alphaHitCount;
         int betaHitCount;
 #if defined(FEATURE_TRANSPOSITION_TABLE) && defined(ANALYSIS_TRANSPOSITION_TABLE)
         TranspositionTable::AnalysisData ttAnalysisData;
 #endif
         AnalysisData();
-        void reset();
+        void           reset();
         nlohmann::json toJson() const;
     };
 
@@ -57,25 +57,25 @@ private:
     struct EvaluatedGameState
     {
         GameState state_;
-        int value_;       // Value of the game state
-        int quality_;     // Quality of the value
+        float value_;  // Value of the game state
+        int quality_;  // Quality of the value
 #if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
-        int priority_;    // Higher priority states should be searched first
+        int priority_; // Higher priority states should be searched first
 #endif
     };
-    
+
     using EvaluatedGameStateList = std::vector<EvaluatedGameState>;
 
     static int constexpr SEF_QUALITY = 0;
 
     // Sets the value of the given state to my best response
-    void myAlphaBeta(EvaluatedGameState * s0, int alpha, int beta, int depth);
+    void myAlphaBeta(EvaluatedGameState * s0, float alpha, float beta, int depth);
 
     // Sets the value of the given state to my opponent's best response
-    void opponentsAlphaBeta(EvaluatedGameState * s0, int alpha, int beta, int depth);
+    void opponentsAlphaBeta(EvaluatedGameState * s0, float alpha, float beta, int depth);
 
     // Static evaluation function
-    void evaluate(GameState const & state, int depth, int * pValue, int * pQuality);
+    void evaluate(GameState const & state, int depth, float * pValue, int * pQuality);
 
 #if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
 
@@ -88,12 +88,12 @@ private:
     void generateStates(GameState const & state, bool my_move, int depth, EvaluatedGameStateList & states);
 
 #if defined(DEBUG_GAME_TREE_NODE_INFO)
-    void printStateInfo(GameState const & state, int depth, int alpha, int beta);
+    void printStateInfo(GameState const & state, int depth, float alpha, float beta);
 #endif
 
-    Color myColor_;                           // My color
-    Color yourColor_;                         // My opponent's color
-    int maxDepth_;                            // How deep to seach
+    Color myColor_;                                          // My color
+    Color yourColor_;                                        // My opponent's color
+    int maxDepth_;                                           // How deep to seach
 #if defined(FEATURE_TRANSPOSITION_TABLE)
     std::shared_ptr<TranspositionTable> transpositionTable_; // Transposition table (persistant)
 #endif

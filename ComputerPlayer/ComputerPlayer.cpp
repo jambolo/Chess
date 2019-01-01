@@ -30,26 +30,26 @@ GameState ComputerPlayer::myTurn(GameState const & s0)
     // Calculate the best move from here
 
 #if defined(FEATURE_TRANSPOSITION_TABLE)
-    GameTree  tree(transpositionTable_, maxDepth_);
+    GameTree tree(transpositionTable_, maxDepth_);
 #else // defined(FEATURE_TRANSPOSITION_TABLE)
-    GameTree  tree(maxDepth_);
+    GameTree tree(maxDepth_);
 #endif // defined(FEATURE_TRANSPOSITION_TABLE)
 
     GameState new_state = tree.myBestMove(s0, myColor_);
 #if defined(FEATURE_TRANSPOSITION_TABLE)
     transpositionTable_->age();
 #endif
-    
+
 #if defined(ANALYSIS_PLAYER)
 
     // Update analysis data
 
-    analysisData_.elapsedTime  = time(NULL) - startTime;
+    analysisData_.elapsedTime = (int)(time(NULL) - startTime);
 #if defined(ANALYSIS_GAME_TREE)
     analysisData_.gameTreeAnalysisData = tree.analysisData_;
     tree.analysisData_.reset();
 #endif
-    
+
 #endif // defined( ANALYSIS_PLAYER )
 
     return new_state;
@@ -74,9 +74,9 @@ nlohmann::json ComputerPlayer::AnalysisData::toJson() const
 {
     json out =
     {
-        {"elapsedTime", elapsedTime}
+        { "elapsedTime", elapsedTime }
 #if defined(ANALYSIS_GAME_TREE)
-        , {"gameTree", gameTreeAnalysisData.toJson()}
+        , { "gameTree", gameTreeAnalysisData.toJson() }
 #endif
     };
     return out;

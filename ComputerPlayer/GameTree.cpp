@@ -1,9 +1,10 @@
 #include "GameTree.h"
 
-#include "GameState/Move.h"
-#include "GameState/Piece.h"
 #include "StaticEvaluator.h"
 #include "TranspositionTable.h"
+
+#include "GameState/Move.h"
+#include "GameState/Piece.h"
 
 #include "Misc/Random.h"
 
@@ -14,14 +15,14 @@ using json = nlohmann::json;
 
 namespace
 {
-bool shouldDoQuiescentSearch(int previousValue, int thisValue)
+bool shouldDoQuiescentSearch(float previousValue, float thisValue)
 {
 #if defined(FEATURE_QUIESCENT_SEARCH)
 
     // In the normal case, we would not search. However, if the situation is unsettled and we haven't reached the
     // true depth limit, then we should search the next ply.
 
-    int const QUIESCENT_THRESHOLD = 1000;
+    float const QUIESCENT_THRESHOLD = 1.0f;
     return abs(previousValue - thisValue) >= QUIESCENT_THRESHOLD;
 
 #else   // defined( FEATURE_QUIESCENT_SEARCH )
@@ -48,7 +49,8 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 {
     int constexpr DEPTH          = 0;                      // The depth of this ply (this is the current state, so its depth is 0)
     int constexpr RESPONSE_DEPTH = DEPTH + 1;              // Depth of my responses to this state
-//    int quality              = maxDepth_ - DEPTH;          // Quality of values at this depth (this is the depth of plies searched to
+//    int quality              = maxDepth_ - DEPTH;          // Quality of values at this depth (this is the depth of plies searched
+// to
 //                                                           // get the results for this ply)
 //    int responseQuality      = maxDepth_ - RESPONSE_DEPTH; // Normal quality of responses to this state
 
@@ -64,16 +66,16 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
     // Find the best of the responses... I want to find the state with the highest score
 
     EvaluatedGameState best_move;
-    best_move.value_ = std::numeric_limits<int>::min();
-    
+    best_move.value_ = std::numeric_limits<float>::min();
+
 #if defined(ANALYSIS_GAME_TREE)
-    int worst_score = std::numeric_limits<int>::max();
+    float worst_score = std::numeric_limits<float>::max();
 #endif // defined( ANALYSIS_GAME_TREE )
 
     for (auto & myMove : myMoves)
     {
         // Revise the value of the move by searching the tree of all possible responses
-        opponentsAlphaBeta(&myMove, best_move.value_, std::numeric_limits<int>::max(), RESPONSE_DEPTH);
+        opponentsAlphaBeta(&myMove, best_move.value_, std::numeric_limits<float>::max(), RESPONSE_DEPTH);
 #if defined(DEBUG_GAME_TREE_NODE_INFO)
         printStateInfo(myMove, DEPTH, best_move.value_, std::numeric_limits<int>::max());
 #endif
@@ -90,7 +92,7 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
         // If this is the highest value so far, then save it (if checkmate, then there is no need to continue looking for better).
         if (myMove.value_ > best_move.value_)
         {
-            best_move  = myMove;
+            best_move = myMove;
             if (best_move.value_ == MY_CHECKMATE_VALUE)
                 break;
         }
@@ -102,8 +104,8 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 
 #if defined(ANALYSIS_GAME_TREE)
     // Update analysis data
-    
-    analysisData_.value = best_move.value_;
+
+    analysisData_.value      = best_move.value_;
     analysisData_.worstValue = worst_score;
 
 #if defined(ANALYSIS_TRANSPOSITION_TABLE)
@@ -118,7 +120,7 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
 
 // Evaluate the state based on all my possible responses. The response I will make is the one with the highest value.
 
-void GameTree::myAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int depth)
+void GameTree::myAlphaBeta(EvaluatedGameState * state, float alpha, float beta, int depth)
 {
     int responseDepth = depth + 1;                      // Depth of responses to this state
     int quality       = maxDepth_ - depth;              // Quality of values at this depth (this is the depth of plies searched to
@@ -133,15 +135,16 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int 
     generateStates(state->state_, true, responseDepth, responses);
 
     // Evaluate each of my responses and choose the one with the highest score
-    int  best_value = std::numeric_limits<int>::min(); // Initialize to worst
-    bool pruned     = false;
+    float best_value = std::numeric_limits<float>::min();  // Initialize to worst
+    bool  pruned     = false;
 
     for (auto & response : responses)
     {
         // If the game is not over, then let's see what my opponent can do
         if (response.value_ != MY_CHECKMATE_VALUE)
         {
-            // The quality of a value is basically the depth of the search tree below it. The reason for checking the quality is that
+            // The quality of a value is basically the depth of the search tree below it. The reason for checking the quality is
+            // that
             // some of the responses have not been fully searched.
             // If the quality of the preliminary value is not as good as the minimum quality and we haven't
             // reached the maximum depth, then do a search. Otherwise, the response's quality is as good as the quality of a search,
@@ -216,7 +219,7 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int 
 // Evaluate the state based on the values of all my opponent's possible responses. The move my opponent will
 // make is the one with the lowest value, so that is the value of S0.
 
-void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, int alpha, int beta, int depth)
+void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, float alpha, float beta, int depth)
 {
     int responseDepth = depth + 1;                      // Depth of responses to this state
     int quality       = maxDepth_ - depth;              // Quality of values at this depth (this is the depth of plies searched to
@@ -231,15 +234,16 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, int alpha, int bet
     generateStates(state->state_, false, responseDepth, responses);
 
     // Evaluate each of his responses and choose the one with the lowest score
-    int  best_value = std::numeric_limits<int>::max(); // Initialize to worst
-    bool pruned     = false;
+    float best_value = std::numeric_limits<float>::max();  // Initialize to worst
+    bool  pruned     = false;
 
     for (auto & response : responses)
     {
         // If the the game is not over, let's see what I can do
         if (response.value_ != OPPONENT_CHECKMATE_VALUE)
         {
-            // The quality of a value is basically the depth of the search tree below it. The reason for checking the quality is that
+            // The quality of a value is basically the depth of the search tree below it. The reason for checking the quality is
+            // that
             // some of the responses have not been fully searched. If the quality of the preliminary value is not as good as the
             // minimum quality and we haven't reached the maximum depth, then do a search. Otherwise, the response's quality is as
             // good as the quality of a search, so use the response as is.
@@ -409,7 +413,7 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Eva
     }
 }
 
-void GameTree::evaluate(GameState const & state, int depth, int * pValue, int * pQuality)
+void GameTree::evaluate(GameState const & state, int depth, float * pValue, int * pQuality)
 {
 #if defined(FEATURE_TRANSPOSITION_TABLE)
     // SEF optimization:
@@ -443,11 +447,11 @@ void GameTree::evaluate(GameState const & state, int depth, int * pValue, int * 
 
         ASSERT(state.value_ == absoluteValue);
 
-#endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION_VALIDATION )
+#endif  // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION_VALIDATION )
 
 #else   // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
 
-        int value = StaticEvaluator::evaluate(state);
+        float value = StaticEvaluator::evaluate(state);
 
         // Black has negative value so if I am black then I need to negate the value. This is to make the value in terms
         // of me or my opponent, rather than color.
@@ -506,8 +510,8 @@ void GameTree::AnalysisData::reset()
     memset(aGeneratedStateCounts, 0, sizeof(aGeneratedStateCounts));
     memset(aEvaluationCounts, 0, sizeof(aEvaluationCounts));
 
-    value         = 0;
-    worstValue    = 0;
+    value         = 0.0f;
+    worstValue    = 0.0f;
     alphaHitCount = 0;
     betaHitCount  = 0;
 
@@ -520,16 +524,16 @@ json GameTree::AnalysisData::toJson() const
 {
     json out =
     {
-        {"aGeneratedStateCounts", aGeneratedStateCounts},
-        {"aEvaluationCounts", aEvaluationCounts},
-        {"value", value},
-        {"worstValue", worstValue},
-        {"alphaHitCount", alphaHitCount},
-        {"betaHitCount", betaHitCount}
-    
+        { "aGeneratedStateCounts", aGeneratedStateCounts },
+        { "aEvaluationCounts", aEvaluationCounts },
+        { "value", value },
+        { "worstValue", worstValue },
+        { "alphaHitCount", alphaHitCount },
+        { "betaHitCount", betaHitCount }
+
 #if defined(ANALYSIS_TRANSPOSITION_TABLE)
-        , {"transpositonTable", ttAnalysisData.toJson()}
-#endif // defined(ANALYSIS_TRANSPOSITION_TABLE)
+        , { "transpositonTable", ttAnalysisData.toJson() }
+#endif  // defined(ANALYSIS_TRANSPOSITION_TABLE)
     };
     return out;
 }
@@ -543,7 +547,7 @@ void GameTree::printStateInfo(GameState const & state, int depth, int alpha, int
         fprintf(stderr, "    ");
     }
 
-    fprintf(stderr, "%6s, value = %11d, quality = %11d, alpha = %11d, beta = %11d\n",
+    fprintf(stderr, "%6s, value = %6.2f, quality = %3d, alpha = %6.2f, beta = %6.2f\n",
             state.move_.notation().c_str(), state.value_, state.quality_, alpha, beta);
 }
 

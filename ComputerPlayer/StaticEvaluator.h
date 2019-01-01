@@ -15,21 +15,23 @@ class StaticEvaluator
 public:
 
     // Returns a value for the board
-    static int evaluate(GameState const & state);
+    static float evaluate(GameState const & state);
 
+#if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     // Returns a value for the game state based on the move and its current value
-    static int incremental(Move const &            move,
-                           GameState::CastleStatus castleStatus,
-                           Piece const *           pMoved = nullptr,
-                           Position const *        pRemovedPosition = nullptr,
-                           Piece const *           pRemoved         = nullptr,
-                           Piece const *           pAdded = nullptr);
+    static float incremental(Move const &            move,
+                             GameState::CastleStatus castleStatus,
+                             Piece const *           pMoved           = nullptr,
+                             Position const *        pRemovedPosition = nullptr,
+                             Piece const *           pRemoved         = nullptr,
+                             Piece const *           pAdded           = nullptr);
+#endif defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
 
     // The absolute value of checkmate
-    static int constexpr CHECKMATE_VALUE = std::numeric_limits<int>::max() - 1;
+    static float constexpr CHECKMATE_VALUE = 1000000.0f;
 
-    // The absolute value of threshold at which the evaluator recommends resignation
-    static int constexpr RESIGNATION_THRESHOLD = 16500;
+    // The absolute value of threshold at which the evaluator recommends resignation (down by 1 of each major piece)
+    static float constexpr RESIGNATION_THRESHOLD = 20000.0f;
 };
 
 #endif // !defined(StaticEvaluator_h__)
