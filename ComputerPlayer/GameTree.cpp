@@ -66,7 +66,7 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
     // Find the best of the responses... I want to find the state with the highest score
 
     EvaluatedGameState best_move;
-    best_move.value_ = std::numeric_limits<float>::min();
+    best_move.value_ = -std::numeric_limits<float>::max();
 
 #if defined(ANALYSIS_GAME_TREE)
     float worst_score = std::numeric_limits<float>::max();
@@ -135,7 +135,7 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, float alpha, float beta, 
     generateStates(state->state_, true, responseDepth, responses);
 
     // Evaluate each of my responses and choose the one with the highest score
-    float best_value = std::numeric_limits<float>::min();  // Initialize to worst
+    float best_value = -std::numeric_limits<float>::max();  // Initialize to worst
     bool  pruned     = false;
 
     for (auto & response : responses)
