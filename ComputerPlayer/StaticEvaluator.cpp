@@ -64,6 +64,9 @@ float constexpr POSITION_FACTOR = PAWN_PROPERTY_VALUE / 100000.0f;
 // Maximum is 60 which is worth a pawn
 float constexpr THREAT_FACTOR = PAWN_PROPERTY_VALUE / 60.0f;
 
+// Maximum is 64 which is worth a queen
+float constexpr ADVANCEMENT_FACTOR = QUEEN_PROPERTY_VALUE / 64.0f;
+
 float evaluate(GameState::CastleStatus castleStatus)
 {
     // A bonus is given for having castled. Likewise, a penalty is given for losing the ability to castle.
@@ -103,6 +106,9 @@ float StaticEvaluator::evaluate(GameState const & state)
     // The value of the threats is found by adding up the number of pieces attacked and protected by each piece (by color)
     float totalThreatValue = 0;
 
+    // The value of pawn advancement is found by adding the row of each pawn (by color)
+    float totalAdvancementValue = 0.0f;
+
     // Compute the difference in values of the pieces on the board
     for (int row = 0; row < Board::SIZE; ++row)
     {
@@ -119,6 +125,10 @@ float StaticEvaluator::evaluate(GameState const & state)
                 // Compute the checkmate value
                 if (type == PieceTypeId::KING)
                     totalCheckmateValue += (color == Color::WHITE) ? CHECKMATE_VALUE : -CHECKMATE_VALUE;
+
+                // Compute pawn advancement value
+                if (type == PieceTypeId::PAWN)
+                    totalAdvancementValue = float((color == Color::WHITE) ? Board::SIZE - row : -row);
 
                 // Compute the property difference
                 {
@@ -171,7 +181,8 @@ float StaticEvaluator::evaluate(GameState const & state)
                 + totalPositionValue * POSITION_FACTOR
                 + castleStatusValue * CASTLE_FACTOR
                 + totalMobilityValue * MOBILITY_FACTOR
-                + totalThreatValue * THREAT_FACTOR;
+                + totalThreatValue * THREAT_FACTOR
+                + totalAdvancementValue * ADVANCEMENT_FACTOR;
     }
 
 #if defined(PROFILING)
