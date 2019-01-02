@@ -9,14 +9,29 @@ void Queen::generatePossibleMoves(GameState const & state, Position const & from
 
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
 
-    generateSpanMoves(board, from, (int)Direction::UP,   0,                     this, moves);
-    generateSpanMoves(board, from, (int)Direction::UP,   (int)Direction::RIGHT, this, moves);
-    generateSpanMoves(board, from, 0,                    (int)Direction::RIGHT, this, moves);
-    generateSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::RIGHT, this, moves);
-    generateSpanMoves(board, from, (int)Direction::DOWN, 0,                     this, moves);
-    generateSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::LEFT,  this, moves);
-    generateSpanMoves(board, from, 0,                    (int)Direction::LEFT,  this, moves);
-    generateSpanMoves(board, from, (int)Direction::UP,   (int)Direction::LEFT,  this, moves);
+    generateSpanMoves(board, from, (int)Direction::UP,   0,                     moves);
+    generateSpanMoves(board, from, (int)Direction::UP,   (int)Direction::RIGHT, moves);
+    generateSpanMoves(board, from, 0,                    (int)Direction::RIGHT, moves);
+    generateSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::RIGHT, moves);
+    generateSpanMoves(board, from, (int)Direction::DOWN, 0,                     moves);
+    generateSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::LEFT,  moves);
+    generateSpanMoves(board, from, 0,                    (int)Direction::LEFT,  moves);
+    generateSpanMoves(board, from, (int)Direction::UP,   (int)Direction::LEFT,  moves);
+}
+
+int Queen::countPossibleMoves(GameState const & state, Position const & from) const
+{
+    Board const & board = state.board_;
+    int           count = 0;
+    count += countSpanMoves(board, from, (int)Direction::UP, 0);
+    count += countSpanMoves(board, from, (int)Direction::UP, (int)Direction::RIGHT);
+    count += countSpanMoves(board, from, 0, (int)Direction::RIGHT);
+    count += countSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::RIGHT);
+    count += countSpanMoves(board, from, (int)Direction::DOWN, 0);
+    count += countSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::LEFT);
+    count += countSpanMoves(board, from, 0, (int)Direction::LEFT);
+    count += countSpanMoves(board, from, (int)Direction::UP, (int)Direction::LEFT);
+    return count;
 }
 
 bool Queen::isValidMove(GameState const & state, Move const & move) const

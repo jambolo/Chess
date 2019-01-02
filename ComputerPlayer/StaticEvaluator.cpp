@@ -106,7 +106,7 @@ float StaticEvaluator::evaluate(GameState const & state)
         {
             Piece const * p = state.board_.pieceAt(row, column);
 
-            if (p != NO_PIECE)
+            if (p)
             {
                 Color       color = p->color();
                 PieceTypeId type  = p->type();
@@ -123,14 +123,13 @@ float StaticEvaluator::evaluate(GameState const & state)
                     totalPropertyValue += propertyValue;
                 }
 
-//				// Compute the mobility value
-//				{
-//					MoveList moves;
-//
-//					pPiece->GeneratePossibleMoves( board, p, &moves );
-//
-//					totalMobilityValue += moves.size() * color_factor;
-//				}
+                // Compute the mobility value
+                {
+                    float mobilityValue = (float)p->countPossibleMoves(state, { row, column });
+                    if (color != Color::WHITE)
+                        mobilityValue = -mobilityValue;
+                    totalMobilityValue += mobilityValue;
+                }
 
                 // Compute the position value
                 {
@@ -158,8 +157,7 @@ float StaticEvaluator::evaluate(GameState const & state)
         value =   totalPropertyValue * PROPERTY_FACTOR
                 + totalPositionValue * POSITION_FACTOR
                 + castleStatusValue * CASTLE_FACTOR
-//				+ totalMobilityValue * MOBILITY_FACTOR
-        ;
+                + totalMobilityValue * MOBILITY_FACTOR;
     }
 
 #if defined(PROFILING)

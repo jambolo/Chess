@@ -341,7 +341,7 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Eva
         {
             Piece const * piece = board.pieceAt(p);
 
-            if ((piece != NO_PIECE) && (piece->color() == current_color))
+            if (piece && (piece->color() == current_color))
             {
                 Piece::MoveList moves;
                 piece->generatePossibleMoves(s0, p, moves);

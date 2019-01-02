@@ -176,9 +176,9 @@ void GameState::makeNormalMove(Color color, Move const & move)
     Piece const * movedPiece = board_.pieceAt(move.from());
 
     // Capture a piece
-    Position capturedPosition = move.isEnPassant() ? Position(move.from().row, move.to().column) : move.to();
-    Piece const * capturedPiece = board_.pieceAt(capturedPosition);
-    if (capturedPiece != NO_PIECE)
+    Position      capturedPosition = move.isEnPassant() ? Position(move.from().row, move.to().column) : move.to();
+    Piece const * capturedPiece    = board_.pieceAt(capturedPosition);
+    if (capturedPiece)
     {
         zhash_.remove(capturedPiece, capturedPosition);
         board_.removePiece(capturedPosition);
@@ -197,18 +197,20 @@ void GameState::makeNormalMove(Color color, Move const & move)
         addedPiece = NO_PIECE;
 
     // Update castle status
-    
+
 #if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     CastleStatus oldStatus = castleStatus_;
 #endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
 
     if (movedPiece->type() == PieceTypeId::KING)
         castleStatus_ |= (color == Color::WHITE) ? WHITE_CASTLE_UNAVAILABLE : BLACK_CASTLE_UNAVAILABLE;
-    else if (move.from() == Board::INITIAL_WHITE_ROOK_QUEENSIDE_POSITION || move.to() == Board::INITIAL_WHITE_ROOK_QUEENSIDE_POSITION)
+    else if (move.from() == Board::INITIAL_WHITE_ROOK_QUEENSIDE_POSITION ||
+             move.to() == Board::INITIAL_WHITE_ROOK_QUEENSIDE_POSITION)
         castleStatus_ |= WHITE_QUEENSIDE_CASTLE_UNAVAILABLE;
     else if (move.from() == Board::INITIAL_WHITE_ROOK_KINGSIDE_POSITION || move.to() == Board::INITIAL_WHITE_ROOK_KINGSIDE_POSITION)
         castleStatus_ |= WHITE_KINGSIDE_CASTLE_UNAVAILABLE;
-    else  if (move.from() == Board::INITIAL_BLACK_ROOK_QUEENSIDE_POSITION || move.to() == Board::INITIAL_BLACK_ROOK_QUEENSIDE_POSITION)
+    else if (move.from() == Board::INITIAL_BLACK_ROOK_QUEENSIDE_POSITION ||
+             move.to() == Board::INITIAL_BLACK_ROOK_QUEENSIDE_POSITION)
         castleStatus_ |= BLACK_QUEENSIDE_CASTLE_UNAVAILABLE;
     else if (move.from() == Board::INITIAL_BLACK_ROOK_KINGSIDE_POSITION || move.to() == Board::INITIAL_BLACK_ROOK_KINGSIDE_POSITION)
         castleStatus_ |= BLACK_KINGSIDE_CASTLE_UNAVAILABLE;
@@ -232,23 +234,23 @@ void GameState::makeCastleMove(Color color, Move const & move)
 #endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
 
     // Move the king
-    
+
     {
-        Move kingsMove = move.isKingSideCastle() ? Move::kingSideCastleKing(color) : Move::queenSideCastleKing(color);
-        Piece const * king = Piece::get(PieceTypeId::KING, color);
+        Move          kingsMove = move.isKingSideCastle() ? Move::kingSideCastleKing(color) : Move::queenSideCastleKing(color);
+        Piece const * king      = Piece::get(PieceTypeId::KING, color);
         zhash_.move(king, kingsMove.from(), kingsMove.to());
         board_.movePiece(kingsMove.from(), kingsMove.to());
     }
-    
+
     // Move the rook
-    
+
     {
-        Move rooksMove = move.isKingSideCastle() ? Move::kingSideCastleRook(color) : Move::queenSideCastleRook(color);
-        Piece const * rook = Piece::get(PieceTypeId::ROOK, color);
+        Move          rooksMove = move.isKingSideCastle() ? Move::kingSideCastleRook(color) : Move::queenSideCastleRook(color);
+        Piece const * rook      = Piece::get(PieceTypeId::ROOK, color);
         zhash_.move(rook, rooksMove.from(), rooksMove.to());
         board_.movePiece(rooksMove.from(), rooksMove.to());
     }
-    
+
     // Update castle status
     if (color == Color::WHITE)
     {

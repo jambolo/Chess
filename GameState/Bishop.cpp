@@ -8,13 +8,22 @@
 void Bishop::generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const
 {
     Board const & board = state.board_;
-
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
+    generateSpanMoves(board, from, (int)Direction::UP, (int)Direction::RIGHT, moves);
+    generateSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::RIGHT, moves);
+    generateSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::LEFT, moves);
+    generateSpanMoves(board, from, (int)Direction::UP, (int)Direction::LEFT, moves);
+}
 
-    generateSpanMoves(board, from, (int)Direction::UP, (int)Direction::RIGHT, this, moves);
-    generateSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::RIGHT, this, moves);
-    generateSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::LEFT, this, moves);
-    generateSpanMoves(board, from, (int)Direction::UP, (int)Direction::LEFT, this, moves);
+int Bishop::countPossibleMoves(GameState const & state, Position const & from) const
+{
+    Board const & board = state.board_;
+    int           count = 0;
+    count += countSpanMoves(board, from, (int)Direction::UP, (int)Direction::RIGHT);
+    count += countSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::RIGHT);
+    count += countSpanMoves(board, from, (int)Direction::DOWN, (int)Direction::LEFT);
+    count += countSpanMoves(board, from, (int)Direction::UP, (int)Direction::LEFT);
+    return count;
 }
 
 bool Bishop::isValidMove(GameState const & state, Move const & move) const

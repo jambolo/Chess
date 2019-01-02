@@ -28,11 +28,11 @@ ZHash::ZValueTable const ZHash::zValueTable_;
 
 namespace
 {
-uint64_t generateRandomZ(RandomMT & rng)
-{
-    // Z is 63 bits and RandomMT is 32 bits so we have to concatenate two numbers together to make a Z value.
-    return ((uint64_t(rng()) << 32) | rng()) & 0x7fffffffffffffff;
-}
+    uint64_t generateRandomZ(RandomMT & rng)
+    {
+        // Z is 63 bits and RandomMT is 32 bits so we have to concatenate two numbers together to make a Z value.
+        return ((uint64_t(rng()) << 32) | rng()) & 0x7fffffffffffffff;
+    }
 } // anonymous namespace
 
 ZHash::ZHash(Z z /* = EMPTY */)
@@ -41,10 +41,10 @@ ZHash::ZHash(Z z /* = EMPTY */)
 }
 
 ZHash::ZHash(Board const & board,
-             unsigned castleStatus /* = 0*/,
-             Color ePColor /* = INVALID*/,
-             int ePColumn /* = -1*/,
-             bool fiftyMoveRule /* = false */)
+             unsigned      castleStatus /* = 0*/,
+             Color         ePColor /* = INVALID*/,
+             int           ePColumn /* = -1*/,
+             bool          fiftyMoveRule /* = false */)
 {
     value_ = 0;
 
@@ -52,11 +52,9 @@ ZHash::ZHash(Board const & board,
     {
         for (int j = 0; j < Board::SIZE; ++j)
         {
-            Piece const * const pPiece = board.pieceAt(i, j);
-            if (pPiece != NO_PIECE)
-            {
-                add(pPiece, Position(i, j));
-            }
+            Piece const * const piece = board.pieceAt(i, j);
+            if (piece)
+                add(piece, Position(i, j));
         }
     }
 
@@ -64,10 +62,8 @@ ZHash::ZHash(Board const & board,
         castle(castleStatus);
 
     if ((ePColor != Color::INVALID) && (ePColumn >= 0))
-    {
         enPassant(ePColor, ePColumn);
-    }
-    
+
     if (fiftyMoveRule)
         fifty();
 }

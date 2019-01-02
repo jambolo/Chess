@@ -18,12 +18,15 @@ public:
     using MoveList = std::vector<Move>;
 
     Piece(PieceTypeId t, Color c);
-    virtual ~Piece();
-    Piece(const Piece&) = delete;            // Non-copyable
-    Piece& operator=(const Piece&) = delete; // Non-copyable
+    virtual ~Piece()     = default;
+    Piece(const Piece &) = delete;              // Non-copyable
+    Piece & operator =(const Piece &) = delete; // Non-copyable
 
     // Generates all legal moves for this piece
     virtual void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const = 0;
+
+    // Counts the number of legal moves for this piece
+    virtual int countPossibleMoves(GameState const & state, Position const & from) const = 0;
 
     // Returns true if the move is valid
     virtual bool isValidMove(GameState const & state, Move const & move) const = 0;
@@ -40,22 +43,25 @@ public:
 
 protected:
 
-    PieceTypeId type_;          // Type of piece
-    Color color_;               // Color of piece
-    char const * symbol_;       // Symbol for documentation
+    PieceTypeId type_;    // Type of piece
+    Color color_;         // Color of piece
+    char const * symbol_; // Symbol for documentation
 
     void generateSpanMoves(Board const &     board,
                            Position const &  from,
                            int               dr,
                            int               dc,
-                           Piece const *     myPiece,
                            Piece::MoveList & moves) const;
+
+    int countSpanMoves(Board const &    board,
+                       Position const & from,
+                       int              dr,
+                       int              dc) const;
 
 private:
 
-    
     // NO_PIECE followed by white pieces followed by black pieces
-    static Piece const * pieces_[1 + NUMBER_OF_COLORS * NUMBER_OF_PIECE_TYPES];
+    static Piece const * const pieces_[1 + NUMBER_OF_COLORS * NUMBER_OF_PIECE_TYPES];
 };
 
 Piece const * const NO_PIECE = nullptr;

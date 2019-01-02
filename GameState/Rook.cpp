@@ -6,13 +6,22 @@
 void Rook::generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const
 {
     Board const & board = state.board_;
-
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
+    generateSpanMoves(board, from, (int)Direction::UP,   0, moves); // up
+    generateSpanMoves(board, from, (int)Direction::DOWN, 0, moves); // down
+    generateSpanMoves(board, from, 0, (int)Direction::LEFT, moves); // left
+    generateSpanMoves(board, from, 0, (int)Direction::RIGHT, moves); // right
+}
 
-    generateSpanMoves(board, from, -1,  0, this, moves); // up
-    generateSpanMoves(board, from,  0,  1, this, moves); // right
-    generateSpanMoves(board, from,  1,  0, this, moves); // down
-    generateSpanMoves(board, from,  0, -1, this, moves); // left
+int Rook::countPossibleMoves(GameState const & state, Position const & from) const
+{
+    Board const & board = state.board_;
+    int           count = 0;
+    count += countSpanMoves(board, from, (int)Direction::UP, 0); // up
+    count += countSpanMoves(board, from, (int)Direction::DOWN, 0); // down
+    count += countSpanMoves(board, from, 0, (int)Direction::LEFT); // left
+    count += countSpanMoves(board, from, 0, (int)Direction::RIGHT); // right
+    return count;
 }
 
 bool Rook::isValidMove(GameState const & state, Move const & move) const

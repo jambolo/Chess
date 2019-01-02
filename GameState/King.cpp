@@ -9,7 +9,7 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
     moves.reserve(moves.size() + MAX_POSSIBLE_MOVES);
 
     // Normal moves
-    
+
     {
         Position to = from;
 
@@ -61,7 +61,7 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
         if ((to.row >= 0) && (to.column >= 0) && state.canBeOccupied(to, color_))
             moves.emplace_back(this, from, to, (board.pieceAt(to) != nullptr));
     }
-    
+
     // Castles
 
     if (state.kingSideCastleIsAllowed(color_) && !state.inCheck_)
@@ -69,13 +69,13 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
         // All squares must be empty and un-threatened
         //! @todo Must check all squares that the kings moves through for being threatened
         bool castleOk = true;
-        if ((state.board_.pieceAt(from.row, from.column+1) != NO_PIECE) ||
-            (state.board_.pieceAt(from.row, from.column+2) != NO_PIECE))
+        if ((state.board_.pieceAt(from.row, from.column + 1)) ||
+            (state.board_.pieceAt(from.row, from.column + 2)))
         {
             castleOk = false;
         }
         if (castleOk)
-            moves.push_back(Move(Move::KINGSIDE_CASTLE, color_));
+            moves.emplace_back(Move::KINGSIDE_CASTLE, color_);
     }
 
     if (state.queenSideCastleIsAllowed(color_) && !state.inCheck_)
@@ -83,15 +83,108 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
         // All squares must be empty and un-threatened
         //! @todo Must check all squares that the kings moves through for being threatened
         bool castleOk = true;
-        if ((state.board_.pieceAt(from.row, from.column-1) != NO_PIECE) ||
-            (state.board_.pieceAt(from.row, from.column-2) != NO_PIECE) ||
-            (state.board_.pieceAt(from.row, from.column-3) != NO_PIECE))
+        if ((state.board_.pieceAt(from.row, from.column - 1)) ||
+            (state.board_.pieceAt(from.row, from.column - 2)) ||
+            (state.board_.pieceAt(from.row, from.column - 3)))
         {
             castleOk = false;
         }
         if (castleOk)
             moves.emplace_back(Move::QUEENSIDE_CASTLE, color_, Position(), Position(), false);
     }
+}
+
+int King::countPossibleMoves(GameState const & state, Position const & from) const
+{
+    Board const & board = state.board_;
+    int           count = 0;
+
+    // Normal moves
+
+    {
+        Position to = from;
+
+        // Up
+
+        --to.row;
+        if ((to.row >= 0) && state.canBeOccupied(to, color_))
+            ++count;
+
+        // Up-right
+
+        ++to.column;
+        if ((to.row >= 0) && (to.column < Board::SIZE) && state.canBeOccupied(to, color_))
+            ++count;
+
+        // Right
+
+        ++to.row;
+        if ((to.column < Board::SIZE) && state.canBeOccupied(to, color_))
+            ++count;
+
+        // Down-right
+
+        ++to.row;
+        if ((to.row < Board::SIZE) && (to.column < Board::SIZE) && state.canBeOccupied(to, color_))
+            ++count;
+
+        // Down
+
+        --to.column;
+        if ((to.row < Board::SIZE) && state.canBeOccupied(to, color_))
+            ++count;
+
+        // Down-left
+
+        --to.column;
+        if ((to.row < Board::SIZE) && (to.column >= 0) && state.canBeOccupied(to, color_))
+            ++count;
+
+        // Left
+
+        --to.row;
+        if ((to.column >= 0) && state.canBeOccupied(to, color_))
+            ++count;
+
+        // Up-left
+
+        --to.row;
+        if ((to.row >= 0) && (to.column >= 0) && state.canBeOccupied(to, color_))
+            ++count;
+    }
+
+    // Castles
+
+    if (state.kingSideCastleIsAllowed(color_) && !state.inCheck_)
+    {
+        // All squares must be empty and un-threatened
+        //! @todo Must check all squares that the kings moves through for being threatened
+        bool castleOk = true;
+        if ((state.board_.pieceAt(from.row, from.column + 1)) ||
+            (state.board_.pieceAt(from.row, from.column + 2)))
+        {
+            castleOk = false;
+        }
+        if (castleOk)
+            ++count;
+    }
+
+    if (state.queenSideCastleIsAllowed(color_) && !state.inCheck_)
+    {
+        // All squares must be empty and un-threatened
+        //! @todo Must check all squares that the kings moves through for being threatened
+        bool castleOk = true;
+        if ((state.board_.pieceAt(from.row, from.column - 1)) ||
+            (state.board_.pieceAt(from.row, from.column - 2)) ||
+            (state.board_.pieceAt(from.row, from.column - 3)))
+        {
+            castleOk = false;
+        }
+        if (castleOk)
+            ++count;
+    }
+
+    return count;
 }
 
 bool King::isValidMove(GameState const & state, Move const & move) const
@@ -105,12 +198,12 @@ bool King::isValidMove(GameState const & state, Move const & move) const
     {
         if (!state.kingSideCastleIsAllowed(color_) || state.inCheck_)
             return false;
-        
+
         // All squares must be empty and un-threatened
         //! @todo Must check all squares that the kings moves through for being threatened
         bool castleValid = true;
-        if ((state.board_.pieceAt(from.row, from.column+1) != NO_PIECE) ||
-            (state.board_.pieceAt(from.row, from.column+2) != NO_PIECE))
+        if ((state.board_.pieceAt(from.row, from.column + 1)) ||
+            (state.board_.pieceAt(from.row, from.column + 2)))
         {
             castleValid = false;
         }
@@ -122,13 +215,13 @@ bool King::isValidMove(GameState const & state, Move const & move) const
         //! @todo Must check all squares that the kings moves through
         if (!state.queenSideCastleIsAllowed(color_) || state.inCheck_)
             return false;
-        
+
         // All squares must be empty and un-threatened
         //! @todo Must check all squares that the kings moves through for being threatened
         bool castleValid = true;
-        if ((state.board_.pieceAt(from.row, from.column-1) != NO_PIECE) ||
-            (state.board_.pieceAt(from.row, from.column-2) != NO_PIECE) ||
-            (state.board_.pieceAt(from.row, from.column-3) != NO_PIECE))
+        if ((state.board_.pieceAt(from.row, from.column - 1)) ||
+            (state.board_.pieceAt(from.row, from.column - 2)) ||
+            (state.board_.pieceAt(from.row, from.column - 3)))
         {
             castleValid = false;
         }
