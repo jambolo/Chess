@@ -13,8 +13,10 @@
 
 #include <Misc/exceptions.h>
 #include <Misc/Etc.h>
-
+#include <nlohmann/json.hpp>
 #include <regex>
+
+using json = nlohmann::json;
 
 GameState::GameState(Board const & board,
                      Color         whoseTurn,
@@ -369,4 +371,20 @@ bool operator ==(GameState const & x, GameState const & y)
     //! @todo	Actually this is not correct because en passant availability and the fifty-move status are part of the state, too
     return x.board_ == y.board_ &&
            (x.castleStatus_ & CASTLE_AVAILABILITY_MASK) == (y.castleStatus_ & CASTLE_AVAILABILITY_MASK);
+}
+
+void GameState::AnalysisData::reset()
+{
+    expectedLine_.clear();
+}
+
+nlohmann::json GameState::AnalysisData::toJson() const
+{
+    json expectedLine;
+    for (auto const & m : expectedLine_)
+    {
+        expectedLine.push_back(m.notation());
+    }
+
+    return { "expectedLine", expectedLine };
 }

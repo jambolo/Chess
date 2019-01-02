@@ -112,6 +112,10 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
     analysisData_.ttAnalysisData = transpositionTable_->analysisData_;
     transpositionTable_->analysisData_.reset();
 #endif // defined(ANALYSIS_TRANSPOSITION_TABLE)
+#if defined(ANALYSIS_GAME_STATE)
+    analysisData_.gsAnalysisData = best_move.state_.analysisData_;
+#endif
+
 #endif // defined(ANALYSIS_GAME_TREE)
 
     // Return the best move
@@ -137,6 +141,9 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, float alpha, float beta, 
     // Evaluate each of my responses and choose the one with the highest score
     float best_value = -std::numeric_limits<float>::max();  // Initialize to worst
     bool  pruned     = false;
+#if defined(ANALYSIS_GAME_STATE)
+    EvaluatedGameState best_response;
+#endif
 
     for (auto & response : responses)
     {
@@ -144,11 +151,9 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, float alpha, float beta, 
         if (response.value_ != MY_CHECKMATE_VALUE)
         {
             // The quality of a value is basically the depth of the search tree below it. The reason for checking the quality is
-            // that
-            // some of the responses have not been fully searched.
-            // If the quality of the preliminary value is not as good as the minimum quality and we haven't
-            // reached the maximum depth, then do a search. Otherwise, the response's quality is as good as the quality of a search,
-            // so use the response as is.
+            // that some of the responses have not been fully searched. If the quality of the preliminary value is not as good as
+            // the minimum quality and we haven't reached the maximum depth, then do a search. Otherwise, the response's quality is
+            // as good as the quality of a search, so use the response as is.
             if ((response.quality_ < minResponseQuality) &&
                 ((responseDepth < maxDepth_) ||
                  (shouldDoQuiescentSearch(state->value_, response.value_) && (responseDepth < MAX_DEPTH))))
@@ -165,6 +170,9 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, float alpha, float beta, 
         {
             // Save it
             best_value = response.value_;
+#if defined(ANALYSIS_GAME_STATE)
+            best_response = response;
+#endif
 
             // If this is a checkmate, then there is no reason to look for anything better
             if (best_value == MY_CHECKMATE_VALUE)
@@ -173,8 +181,8 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, float alpha, float beta, 
             // alpha-beta pruning (beta cutoff check) Here's how it works:
             //
             // I am looking for the highest value. The 'beta' is the value of my opponent's best move found so far. If the value
-            // of this response is higher than the beta, then my opponent will not make the move that allows me to choose this
-            // response because it has already found a move with the value of the beta that is better.
+            // of this response is higher than the beta, then my opponent should abandon the move because allows me to choose
+            // this response, which is worse for my opponent than a move it has already found a move whose value is the beta.
 
             if (best_value > beta)
             {
@@ -206,6 +214,13 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, float alpha, float beta, 
 
     state->value_   = best_value;
     state->quality_ = quality;
+#if defined(ANALYSIS_GAME_STATE)
+    state->state_.analysisData_.expectedLine_.clear();
+    state->state_.analysisData_.expectedLine_.push_back(best_response.state_.move_);
+    state->state_.analysisData_.expectedLine_.insert(state->state_.analysisData_.expectedLine_.end(),
+        best_response.state_.analysisData_.expectedLine_.begin(),
+        best_response.state_.analysisData_.expectedLine_.end());
+#endif
 
 #if defined(FEATURE_TRANSPOSITION_TABLE)
     // Save the value of the state in the T-table if the ply was not pruned. Pruning results in an incorrect value
@@ -226,8 +241,8 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, float alpha, float
                                                         // get the results for this ply )
     int minResponseQuality = maxDepth_ - responseDepth; // Minimum acceptable quality of responses to this state
 
-    // Generate a list of my opponent's possible responses to this state sorted ascending by value. They are sorted
-    // in ascending order hoping that a alpha cutoff will occur early.
+    // Generate a list of my opponent's possible responses to this state sorted ascending by preliminary value. They are sorted in
+    // ascending order hoping that a alpha cutoff will occur early.
     // Note: Preliminary values of the generated states are retrieved from the transposition table or computed by
     // the static evaluation function.
     EvaluatedGameStateList responses;
@@ -236,31 +251,27 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, float alpha, float
     // Evaluate each of his responses and choose the one with the lowest score
     float best_value = std::numeric_limits<float>::max();  // Initialize to worst
     bool  pruned     = false;
+#if defined(ANALYSIS_GAME_STATE)
+    EvaluatedGameState best_response;
+#endif
 
     for (auto & response : responses)
     {
-        // If the the game is not over, let's see what I can do
+        // If the game is not over, let's see what I can do
         if (response.value_ != OPPONENT_CHECKMATE_VALUE)
         {
             // The quality of a value is basically the depth of the search tree below it. The reason for checking the quality is
-            // that
-            // some of the responses have not been fully searched. If the quality of the preliminary value is not as good as the
-            // minimum quality and we haven't reached the maximum depth, then do a search. Otherwise, the response's quality is as
-            // good as the quality of a search, so use the response as is.
+            // that some of the responses have not been fully searched. If the quality of the preliminary value is not as good as
+            // the minimum quality and we haven't reached the maximum depth, then do a search. Otherwise, the response's quality is
+            // as good as the quality of a search, so use the response as is.
             if ((response.quality_ < minResponseQuality) &&
                 ((responseDepth < maxDepth_) ||
                  (shouldDoQuiescentSearch(state->value_, response.value_) && (responseDepth < MAX_DEPTH))))
             {
                 myAlphaBeta(&response, alpha, beta, responseDepth);
-#if defined(DEBUG_GAME_TREE_NODE_INFO)
-                printStateInfo(response, depth, alpha, beta);
-#endif
             }
 #if defined(DEBUG_GAME_TREE_NODE_INFO)
-            else
-            {
-                printStateInfo(response, depth, alpha, beta);
-            }
+            printStateInfo(response, depth, alpha, beta);
 #endif
         }
 
@@ -269,6 +280,9 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, float alpha, float
         {
             // Save it
             best_value = response.value_;
+#if defined(ANALYSIS_GAME_STATE)
+            best_response = response;
+#endif
 
             // If this is a checkmate, then there is no reason to look for anything better
             if (best_value == OPPONENT_CHECKMATE_VALUE)
@@ -276,10 +290,9 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, float alpha, float
 
             // alpha-beta pruning (alpha cutoff check) Here's how it works:
             //
-            // My opponent is looking for the lowest value. The 'alpha' is the value of my best move found so far.
-            // If the value of this response is lower than the alpha, then I should abandon this move because it
-            // allows my opponent to make a move that is worse for me than the move I have already found with a
-            // value of the alpha.
+            // My opponent is looking for the lowest value. The 'alpha' is the value of my best move found so far.  If the value
+            // of this response is lower than the alpha, then I should abandon this move because it allows my opponent to choose
+            // this response, which is worse for me than a move I have already found am move whose value is the alpha.
 
             if (best_value < alpha)
             {
@@ -296,11 +309,11 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, float alpha, float
             // alpha-beta pruning (beta) Here's how it works.
             //
             // My opponent is looking for the lowest value. The 'beta' passed in to this function is the value of
-            // my opponent's best move found so far. If the value of this response is lower than the beta, then
-            // obviously this is a better move for my opponent. The beta value is passed to my move evaluator so
-            // that if it finds a response with a higher value than the beta, it won't bother continuing because
-            // it knows that my opponent already has a better move and will choose it instead of allowing me to
-            // make a move with worse value for him.
+            // my opponent's best move found so far. If the value of this response is lower than the beta, then obviously
+            // this is a better move for my opponent. The beta value is passed to my move evaluator so that if
+            // it finds a response with a higher value than the beta, it won't bother continuing because it knows
+            // that my opponent already has a better move and will choose it instead of allowing me to make a move with
+            // worse value for him.
 
             if (best_value < beta)
                 beta = best_value;
@@ -311,6 +324,13 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, float alpha, float
 
     state->value_   = best_value;
     state->quality_ = quality;
+#if defined(ANALYSIS_GAME_STATE)
+    state->state_.analysisData_.expectedLine_.clear();
+    state->state_.analysisData_.expectedLine_.push_back(best_response.state_.move_);
+    state->state_.analysisData_.expectedLine_.insert(state->state_.analysisData_.expectedLine_.end(),
+                                                     best_response.state_.analysisData_.expectedLine_.begin(),
+                                                     best_response.state_.analysisData_.expectedLine_.end());
+#endif
 
 #if defined(FEATURE_TRANSPOSITION_TABLE)
     // Save the value of the state in the T-table if the ply was not pruned. Pruning results in an incorrect value
@@ -318,8 +338,7 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, float alpha, float
     // of the value in the table.
     if (!pruned)
         transpositionTable_->update(state->state_, state->value_, state->quality_);
-
-#endif
+#endif // defined(FEATURE_TRANSPOSITION_TABLE)
 }
 
 void GameTree::generateStates(GameState const & s0, bool my_move, int depth, EvaluatedGameStateList & states)
@@ -518,6 +537,9 @@ void GameTree::AnalysisData::reset()
 #if defined(ANALYSIS_TRANSPOSITION_TABLE)
     ttAnalysisData.reset();
 #endif // defined(ANALYSIS_TRANSPOSITION_TABLE)
+#if defined(ANALYSIS_GAME_STATE)
+    gsAnalysisData.reset();
+#endif
 }
 
 json GameTree::AnalysisData::toJson() const
@@ -530,10 +552,12 @@ json GameTree::AnalysisData::toJson() const
         { "worstValue", worstValue },
         { "alphaHitCount", alphaHitCount },
         { "betaHitCount", betaHitCount }
-
 #if defined(ANALYSIS_TRANSPOSITION_TABLE)
         , { "transpositonTable", ttAnalysisData.toJson() }
 #endif  // defined(ANALYSIS_TRANSPOSITION_TABLE)
+#if defined(ANALYSIS_GAME_STATE)
+        , { "gameState", gsAnalysisData.toJson() }
+#endif
     };
     return out;
 }

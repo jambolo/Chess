@@ -43,6 +43,10 @@ public:
 #if defined(FEATURE_TRANSPOSITION_TABLE) && defined(ANALYSIS_TRANSPOSITION_TABLE)
         TranspositionTable::AnalysisData ttAnalysisData;
 #endif
+#if defined(ANALYSIS_GAME_STATE)
+        GameState::AnalysisData gsAnalysisData;
+#endif  //
+
         AnalysisData();
         void           reset();
         nlohmann::json toJson() const;

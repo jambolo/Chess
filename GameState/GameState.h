@@ -6,7 +6,7 @@
 #include "Board.h"
 #include "Move.h"
 #include "ZHash/ZHash.h"
-
+#include <nlohmann/json.hpp>
 #include <queue>
 #include <vector>
 
@@ -63,6 +63,19 @@ public:
     bool inCheck_;              // True if the king is in check
     int moveNumber_;            // Move number
     ZHash zhash_;               // Zobrist hash for this state
+
+#if defined(ANALYSIS_GAME_STATE)
+
+    struct AnalysisData
+    {
+        std::vector<Move> expectedLine_;
+
+        void           reset();
+        nlohmann::json toJson() const;
+    };
+
+    mutable AnalysisData analysisData_;
+#endif // defined(ANALYSIS_GAME_STATE)
 
 private:
 
