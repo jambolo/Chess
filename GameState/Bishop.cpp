@@ -26,6 +26,17 @@ int Bishop::countPossibleMoves(GameState const & state, Position const & from) c
     return count;
 }
 
+int Bishop::countThreats(GameState const & state, Position const & from) const
+{
+    Board const & board = state.board_;
+    int           count = 0;
+    count += countSpanThreats(board, from, (int)Direction::UP, (int)Direction::RIGHT);
+    count += countSpanThreats(board, from, (int)Direction::DOWN, (int)Direction::RIGHT);
+    count += countSpanThreats(board, from, (int)Direction::DOWN, (int)Direction::LEFT);
+    count += countSpanThreats(board, from, (int)Direction::UP, (int)Direction::LEFT);
+    return count;
+}
+
 bool Bishop::isValidMove(GameState const & state, Move const & move) const
 {
     Board const &    board = state.board_;

@@ -34,6 +34,21 @@ int Queen::countPossibleMoves(GameState const & state, Position const & from) co
     return count;
 }
 
+int Queen::countThreats(GameState const & state, Position const & from) const
+{
+    Board const & board = state.board_;
+    int           count = 0;
+    count += countSpanThreats(board, from, (int)Direction::UP, 0);
+    count += countSpanThreats(board, from, (int)Direction::UP, (int)Direction::RIGHT);
+    count += countSpanThreats(board, from, 0, (int)Direction::RIGHT);
+    count += countSpanThreats(board, from, (int)Direction::DOWN, (int)Direction::RIGHT);
+    count += countSpanThreats(board, from, (int)Direction::DOWN, 0);
+    count += countSpanThreats(board, from, (int)Direction::DOWN, (int)Direction::LEFT);
+    count += countSpanThreats(board, from, 0, (int)Direction::LEFT);
+    count += countSpanThreats(board, from, (int)Direction::UP, (int)Direction::LEFT);
+    return count;
+}
+
 bool Queen::isValidMove(GameState const & state, Move const & move) const
 {
     Board const &    board = state.board_;

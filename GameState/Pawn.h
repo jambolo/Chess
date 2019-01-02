@@ -20,6 +20,9 @@ public:
     // Counts the number of legal moves for this piece
     virtual int countPossibleMoves(GameState const & state, Position const & from) const override;
 
+    // Counts the number of legal moves for this piece
+    virtual int countThreats(GameState const & state, Position const & from) const override;
+
     // Returns true if the move is valid
     virtual bool isValidMove(GameState const & state, Move const & move) const override;
 

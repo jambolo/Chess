@@ -24,6 +24,17 @@ int Rook::countPossibleMoves(GameState const & state, Position const & from) con
     return count;
 }
 
+int Rook::countThreats(GameState const & state, Position const & from) const
+{
+    Board const & board = state.board_;
+    int           count = 0;
+    count += countSpanThreats(board, from, (int)Direction::UP, 0); // up
+    count += countSpanThreats(board, from, (int)Direction::DOWN, 0); // down
+    count += countSpanThreats(board, from, 0, (int)Direction::LEFT); // left
+    count += countSpanThreats(board, from, 0, (int)Direction::RIGHT); // right
+    return count;
+}
+
 bool Rook::isValidMove(GameState const & state, Move const & move) const
 {
     Board const &    board = state.board_;

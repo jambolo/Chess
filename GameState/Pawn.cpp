@@ -194,6 +194,27 @@ int Pawn::countPossibleMoves(GameState const & state, Position const & from) con
     return count;
 }
 
+int Pawn::countThreats(GameState const & state, Position const & from) const
+{
+    Board const & board = state.board_;
+
+    int direction = (color_ == Color::BLACK) ? (int)Direction::DOWN : (int)Direction::UP;
+    int count = 0;
+
+    Position to;
+
+    to.row = from.row + direction;
+    to.column = from.column + (int)Direction::LEFT;
+    if (board.isValidPosition(to) && board.pieceAt(to))
+        ++count;
+
+    to.column = from.column + (int)Direction::RIGHT;
+    if (board.isValidPosition(to) && board.pieceAt(to))
+        ++count;
+
+    return count;
+}
+
 bool Pawn::isValidMove(GameState const & state, Move const & move) const
 {
     Board const &    board = state.board_;

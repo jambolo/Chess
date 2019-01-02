@@ -44,6 +44,21 @@ int Knight::countPossibleMoves(GameState const & state, Position const & from) c
     return count;
 }
 
+int Knight::countThreats(GameState const & state, Position const & from) const
+{
+    Board const & board = state.board_;
+    int           count = 0;
+
+    for (auto const & o : OFFSETS)
+    {
+        Position to(from.row + o.row, from.column + o.column);
+        if (board.isValidPosition(to) && board.pieceAt(to))
+            ++count;
+    }
+
+    return count;
+}
+
 bool Knight::isValidMove(GameState const & state, Move const & move) const
 {
     Position const & from = move.from();

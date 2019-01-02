@@ -187,6 +187,63 @@ int King::countPossibleMoves(GameState const & state, Position const & from) con
     return count;
 }
 
+int King::countThreats(GameState const & state, Position const & from) const
+{
+    Board const & board = state.board_;
+    int           count = 0;
+    Position to = from;
+
+    // Up
+
+    --to.row;
+    if ((to.row >= 0) && board.pieceAt(to))
+        ++count;
+
+    // Up-right
+
+    ++to.column;
+    if ((to.row >= 0) && (to.column < Board::SIZE) && board.pieceAt(to))
+        ++count;
+
+    // Right
+
+    ++to.row;
+    if ((to.column < Board::SIZE) && board.pieceAt(to))
+        ++count;
+
+    // Down-right
+
+    ++to.row;
+    if ((to.row < Board::SIZE) && (to.column < Board::SIZE) && board.pieceAt(to))
+        ++count;
+
+    // Down
+
+    --to.column;
+    if ((to.row < Board::SIZE) && state.canBeOccupied(to, color_))
+        ++count;
+
+    // Down-left
+
+    --to.column;
+    if ((to.row < Board::SIZE) && (to.column >= 0) && board.pieceAt(to))
+        ++count;
+
+    // Left
+
+    --to.row;
+    if ((to.column >= 0) && board.pieceAt(to))
+        ++count;
+
+    // Up-left
+
+    --to.row;
+    if ((to.row >= 0) && (to.column >= 0) && board.pieceAt(to))
+        ++count;
+
+    return count;
+}
+
 bool King::isValidMove(GameState const & state, Move const & move) const
 {
     Position const & from = move.from();

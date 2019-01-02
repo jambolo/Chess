@@ -157,3 +157,23 @@ int Piece::countSpanMoves(Board const &    board,
 
     return count;
 }
+
+int Piece::countSpanThreats(Board const & board, Position const & from, int dr, int dc) const
+{
+    // Generate moves until the edge of the board is reached or there is a collision
+
+    Position to(from.row + dr, from.column + dc);
+    while (board.isValidPosition(to))
+    {
+        // If this square has a piece in it then the span is finished.
+        Piece const * piece = board.pieceAt(to);
+        if (piece)
+            return 1;
+
+        // Next square in span
+        to.row    += dr;
+        to.column += dc;
+    }
+
+    return 0;
+}

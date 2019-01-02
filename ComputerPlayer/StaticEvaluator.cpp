@@ -61,7 +61,8 @@ float constexpr MOBILITY_FACTOR = QUEEN_PROPERTY_VALUE / 144.0f;
 // Reasonable maximum is 100,000 which is worth a pawn
 float constexpr POSITION_FACTOR = PAWN_PROPERTY_VALUE / 100000.0f;
 
-float constexpr THREAT_FACTOR = 0.0f;
+// Maximum is 60 which is worth a pawn
+float constexpr THREAT_FACTOR = PAWN_PROPERTY_VALUE / 60.0f;
 
 float evaluate(GameState::CastleStatus castleStatus)
 {
@@ -99,12 +100,16 @@ float StaticEvaluator::evaluate(GameState const & state)
     // The value of position is is found by adding up the values of the positions of each piece (by color)
     float totalPositionValue = 0.0f;
 
+    // The value of the threats is found by adding up the number of pieces attacked and protected by each piece (by color)
+    float totalThreatValue = 0;
+
     // Compute the difference in values of the pieces on the board
     for (int row = 0; row < Board::SIZE; ++row)
     {
         for (int column = 0; column < Board::SIZE; ++column)
         {
             Piece const * p = state.board_.pieceAt(row, column);
+            Position position{ row, column };
 
             if (p)
             {
@@ -115,7 +120,7 @@ float StaticEvaluator::evaluate(GameState const & state)
                 if (type == PieceTypeId::KING)
                     totalCheckmateValue += (color == Color::WHITE) ? CHECKMATE_VALUE : -CHECKMATE_VALUE;
 
-                // Compute the property value
+                // Compute the property difference
                 {
                     float propertyValue = s_ValuesByPiece[(int)type].property;
                     if (color != Color::WHITE)
@@ -123,20 +128,28 @@ float StaticEvaluator::evaluate(GameState const & state)
                     totalPropertyValue += propertyValue;
                 }
 
-                // Compute the mobility value
+                // Compute the mobility difference
                 {
-                    float mobilityValue = (float)p->countPossibleMoves(state, { row, column });
+                    float mobilityValue = (float)p->countPossibleMoves(state, position);
                     if (color != Color::WHITE)
                         mobilityValue = -mobilityValue;
                     totalMobilityValue += mobilityValue;
                 }
 
-                // Compute the position value
+                // Compute the position difference
                 {
                     float positionValue = s_ValuesByPiece[(int)type].position * s_PositionValues[row][column];
                     if (color != Color::WHITE)
                         positionValue = -positionValue;
                     totalPositionValue += positionValue;
+                }
+
+                // Compute threat difference
+                {
+                    float threatValue = (float)p->countThreats(state, position);
+                    if (color != Color::WHITE)
+                        threatValue = -threatValue;
+                    totalThreatValue += threatValue;
                 }
             }
         }
@@ -157,7 +170,8 @@ float StaticEvaluator::evaluate(GameState const & state)
         value =   totalPropertyValue * PROPERTY_FACTOR
                 + totalPositionValue * POSITION_FACTOR
                 + castleStatusValue * CASTLE_FACTOR
-                + totalMobilityValue * MOBILITY_FACTOR;
+                + totalMobilityValue * MOBILITY_FACTOR
+                + totalThreatValue * THREAT_FACTOR;
     }
 
 #if defined(PROFILING)
