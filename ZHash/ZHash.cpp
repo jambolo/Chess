@@ -41,6 +41,7 @@ ZHash::ZHash(Z z /* = EMPTY */)
 }
 
 ZHash::ZHash(Board const & board,
+             Color         whoseTurn,
              unsigned      castleStatus /* = 0*/,
              Color         ePColor /* = INVALID*/,
              int           ePColumn /* = -1*/,
@@ -58,6 +59,9 @@ ZHash::ZHash(Board const & board,
         }
     }
 
+    if (whoseTurn != Color::WHITE)
+        turn();
+
     if (castleStatus != 0)
         castle(castleStatus);
 
@@ -71,14 +75,12 @@ ZHash::ZHash(Board const & board,
 ZHash ZHash::add(Piece const * piece, Position const & position)
 {
     value_ ^= zValueTable_.pieceValue((int)piece->color(), (int)piece->type(), position.row, position.column);
-
     return *this;
 }
 
 ZHash ZHash::remove(Piece const * piece, Position const & position)
 {
     value_ ^= zValueTable_.pieceValue((int)piece->color(), (int)piece->type(), position.row, position.column);
-
     return *this;
 }
 
@@ -86,6 +88,12 @@ ZHash ZHash::move(Piece const * piece, Position const & from, Position const & t
 {
     remove(piece, from);
     return add(piece, to);
+}
+
+ZHash ZHash::turn()
+{
+    value_ ^= zValueTable_.turnValue();
+    return *this;
 }
 
 ZHash ZHash::castle(unsigned mask)
@@ -97,21 +105,18 @@ ZHash ZHash::castle(unsigned mask)
         if (mask & (0x10 << i))
             value_ ^= zValueTable_.castleValue(i);
     }
-
     return *this;
 }
 
 ZHash ZHash::enPassant(Color color, int column)
 {
     value_ ^= zValueTable_.enPassantValue((int)color, column);
-
     return *this;
 }
 
 ZHash ZHash::fifty()
 {
     value_ ^= zValueTable_.fiftyValue();
-
     return *this;
 }
 
@@ -161,6 +166,10 @@ ZHash::ZValueTable::ZValueTable()
     // Generate fifty-move rule value
 
     fiftyValue_ = generateRandomZ(rng);
+
+    // Generate turn value
+
+    turnValue_ = generateRandomZ(rng);
 }
 
 ZHash::Z ZHash::ZValueTable::pieceValue(int color, int type, int row, int column) const
@@ -181,6 +190,11 @@ ZHash::Z ZHash::ZValueTable::enPassantValue(int color, int column) const
 ZHash::Z ZHash::ZValueTable::fiftyValue() const
 {
     return fiftyValue_;
+}
+
+ZHash::Z ZHash::ZValueTable::turnValue() const
+{
+    return turnValue_;
 }
 
 bool operator ==(ZHash const & x, ZHash const & y)

@@ -122,7 +122,7 @@ GameState GameTree::myBestMove(GameState const & s0, Color my_color)
     return best_move.state_;
 }
 
-// Evaluate the state based on all my possible responses. The response I will make is the one with the highest value.
+// Evaluate all of my possible responses to the given state. The chosen response is the one with the highest value.
 
 void GameTree::myAlphaBeta(EvaluatedGameState * state, float alpha, float beta, int depth)
 {
@@ -218,8 +218,8 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, float alpha, float beta, 
     state->state_.analysisData_.expectedLine_.clear();
     state->state_.analysisData_.expectedLine_.push_back(best_response.state_.move_);
     state->state_.analysisData_.expectedLine_.insert(state->state_.analysisData_.expectedLine_.end(),
-        best_response.state_.analysisData_.expectedLine_.begin(),
-        best_response.state_.analysisData_.expectedLine_.end());
+                                                     best_response.state_.analysisData_.expectedLine_.begin(),
+                                                     best_response.state_.analysisData_.expectedLine_.end());
 #endif
 
 #if defined(FEATURE_TRANSPOSITION_TABLE)
@@ -231,8 +231,7 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, float alpha, float beta, 
 #endif // defined(FEATURE_TRANSPOSITION_TABLE)
 }
 
-// Evaluate the state based on the values of all my opponent's possible responses. The move my opponent will
-// make is the one with the lowest value, so that is the value of S0.
+// Evaluate all of my opponent's possible responses to the given state. The chosen response is the one with the lowest value.
 
 void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, float alpha, float beta, int depth)
 {

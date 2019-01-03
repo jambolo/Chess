@@ -26,12 +26,13 @@ GameState::GameState(Board const & board,
                      bool          inCheck,
                      int           moveNumber)
     : board_(board)
-    , castleStatus_(castleStatus)
     , whoseTurn_(whoseTurn)
+    , castleStatus_(castleStatus)
     , fiftyMoveTimer_(fiftyMoveTimer)
     , move_(move)
     , inCheck_(inCheck)
-    , zhash_(board)
+    , moveNumber_(moveNumber)
+    , zhash_(board, whoseTurn)
 {
 }
 
@@ -44,7 +45,7 @@ void GameState::initialize()
     makeMove(Color::WHITE, Move::reset());
     inCheck_    = false;
     moveNumber_ = 1;
-    zhash_      = ZHash(board_);
+    zhash_      = ZHash(board_, whoseTurn_);
 }
 
 bool GameState::initializeFromFen(char const * fen)
@@ -87,6 +88,9 @@ bool GameState::initializeFromFen(char const * fen)
     end = strchr(start, 0);
     if (!end || !moveNumberFromFen(start, end))
         return false;
+
+    inCheck_ = false;   // @todo See issue #25.
+    zhash_   = ZHash(board_, whoseTurn_);
 
     return true;
 }
@@ -152,6 +156,8 @@ void GameState::makeMove(Color color, Move const & move)
         whoseTurn_ = Color::WHITE;
         ++moveNumber_;
     }
+
+    zhash_.turn();
 }
 
 std::string GameState::fen() const
@@ -378,6 +384,7 @@ void GameState::AnalysisData::reset()
     expectedLine_.clear();
 }
 
+#if defined(ANALYSIS_GAME_STATE)
 nlohmann::json GameState::AnalysisData::toJson() const
 {
     json expectedLine;
@@ -388,3 +395,4 @@ nlohmann::json GameState::AnalysisData::toJson() const
 
     return { "expectedLine", expectedLine };
 }
+#endif // defined(ANALYSIS_GAME_STATE)

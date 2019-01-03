@@ -55,8 +55,8 @@ public:
     std::string fen() const;
 
     Board board_;               // The board
-    CastleStatus castleStatus_; // Which side has castled and which castles are still possible
     Color whoseTurn_;           // Whose turn
+    CastleStatus castleStatus_; // Which side has castled and which castles are still possible
     int fiftyMoveTimer_;        // Fifty move rule countdown
     Position enPassant_;        // En passant target if any
     Move move_;                 // The move that resulted in this state
@@ -65,7 +65,6 @@ public:
     ZHash zhash_;               // Zobrist hash for this state
 
 #if defined(ANALYSIS_GAME_STATE)
-
     struct AnalysisData
     {
         std::vector<Move> expectedLine_;

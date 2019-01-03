@@ -36,7 +36,7 @@ enum class Color;
 //!
 //! There are 6 components of state. This implementation of Zorbrist hashing incorporates most of them.
 //!     1. Piece placement
-//!     2. Active color (this is ignored because it is not useful and it interferes with the null-move heuristic)
+//!     2. Active color
 //!     3. Castling availability
 //!     4. En-passant possibility
 //!     5. Fifty-move rule
@@ -51,7 +51,7 @@ public:
 
     //! An impossible value which will always be "undefined"
     static Z constexpr INVALID = 0xFFFFFFFFFFFFFFFF;
-    
+
     //! The value of an empty board
     static Z constexpr EMPTY = 0;
 
@@ -59,7 +59,12 @@ public:
     explicit ZHash(Z z = EMPTY);
 
     // Constructor
-    explicit ZHash(Board const & board, unsigned castleStatus = 0, Color ePColor = Color::INVALID, int ePColumn = -1, bool fiftyMoveRule = false);
+    explicit ZHash(Board const & board,
+                   Color         turn,
+                   unsigned      castleStatus  = 0,
+                   Color         ePColor       = Color::INVALID,
+                   int           ePColumn      = -1,
+                   bool          fiftyMoveRule = false);
 
     //! Returns the current value.
     Z value() const { return value_; }
@@ -69,16 +74,19 @@ public:
 
     //! Removes a piece. Returns the new value.
     ZHash remove(Piece const * piece, Position const & position);
-    
+
     //! Removes a piece at the 'from' position and adds it to the 'to' position
     ZHash move(Piece const * piece, Position const & from, Position const & to);
+
+    //! Changes whose turn. Returns the new value.
+    ZHash turn();
 
     //! Changes the ability to perform a castle. Returns the new value.
     ZHash castle(unsigned mask);
 
     //! Changes en passant status. Returns the new value.
     ZHash enPassant(Color color, int column);
-    
+
     //! Changes the state of the fifty-move rule (it either now applies to the next move or it doesn't)
     ZHash fifty();
 
@@ -103,7 +111,7 @@ class ZHash::ZValueTable
 {
 public:
 
-    // Conatructor
+    // Constructor
     ZValueTable();
 
     // Returns the hash value for a piece on the board
@@ -111,19 +119,23 @@ public:
 
     // Returns the hash value for a particular castle availability
     Z castleValue(int which) const;
-    
+
     // Returns the hash value for en passant
     Z enPassantValue(int color, int column) const;
 
     // Returns the hash value for changing whether the fifty-move rule now or no longer applies
     Z fiftyValue() const;
 
+    // Returns the hash value for changing whether the fifty-move rule now or no longer applies
+    Z turnValue() const;
+
 private:
-    
+
     Z pieceValues_[NUMBER_OF_COLORS][Board::SIZE][Board::SIZE][NUMBER_OF_PIECE_TYPES];
     Z castleValues_[4];
     Z enPassantValues_[NUMBER_OF_COLORS][Board::SIZE];
     Z fiftyValue_;
+    Z turnValue_;
 };
 
 #endif // !defined(ZHash_h__)
