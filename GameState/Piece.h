@@ -34,21 +34,26 @@ public:
     // Returns true if the move is valid
     virtual bool isValidMove(GameState const & state, Move const & move) const = 0;
 
-    PieceTypeId  type() const   { return type_;   }
-    Color        color() const  { return color_;  }
-    char const * symbol() const { return symbol_; }
+    PieceTypeId  type() const     { return type_;   }
+    Color        color() const    { return color_;  }
+    char const * symbol() const   { return symbol_; }
+    char const * figurine() const { return figurine_; }
 
-    // Returns the symbol for a piece type
-    static char const * symbol(PieceTypeId id);
+    // Returns the text symbol for a piece type
+    static char const * symbol(PieceTypeId id, Color color = Color::WHITE);
+
+    // Returns the figurine symbol for a piece type (as UTF8)
+    static char const * figurine(PieceTypeId id, Color color);
 
     // Returns the piece corresponding to the specified type and color
     static Piece const * get(PieceTypeId id, Color color);
 
 protected:
 
-    PieceTypeId type_;    // Type of piece
-    Color color_;         // Color of piece
-    char const * symbol_; // Symbol for documentation
+    PieceTypeId type_;          // Type of piece
+    Color color_;               // Color of piece
+    char const * symbol_;       // Text symbol for documentation
+    char const * figurine_;  // Figurine symbol for documentation
 
     void generateSpanMoves(Board const &     board,
                            Position const &  from,

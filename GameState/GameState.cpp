@@ -357,13 +357,13 @@ std::string GameState::castleStatusToFen() const
     else
     {
         if ((castleStatus_ & WHITE_KINGSIDE_CASTLE_UNAVAILABLE) == 0)
-            result += 'K';
+            result += Piece::symbol(PieceTypeId::KING, Color::WHITE);
         if ((castleStatus_ & WHITE_QUEENSIDE_CASTLE_UNAVAILABLE) == 0)
-            result += 'Q';
+            result += Piece::symbol(PieceTypeId::QUEEN, Color::WHITE);
         if ((castleStatus_ & BLACK_KINGSIDE_CASTLE_UNAVAILABLE) == 0)
-            result += 'k';
+            result += Piece::symbol(PieceTypeId::KING, Color::BLACK);
         if ((castleStatus_ & BLACK_QUEENSIDE_CASTLE_UNAVAILABLE) == 0)
-            result += 'q';
+            result += Piece::symbol(PieceTypeId::QUEEN, Color::BLACK);
     }
     return result;
 }
@@ -379,12 +379,12 @@ bool operator ==(GameState const & x, GameState const & y)
            (x.castleStatus_ & CASTLE_AVAILABILITY_MASK) == (y.castleStatus_ & CASTLE_AVAILABILITY_MASK);
 }
 
+#if defined(ANALYSIS_GAME_STATE)
 void GameState::AnalysisData::reset()
 {
     expectedLine_.clear();
 }
 
-#if defined(ANALYSIS_GAME_STATE)
 nlohmann::json GameState::AnalysisData::toJson() const
 {
     json expectedLine;

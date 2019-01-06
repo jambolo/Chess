@@ -13,23 +13,61 @@ using json = nlohmann::json;
 static void drawBoard(Board const & b);
 #endif
 
+static constexpr char OPTION_NOTATION_KEY[] = "--notation=";
+static constexpr size_t OPTION_NOTATION_KEY_LENGTH = sizeof(OPTION_NOTATION_KEY) - 1;
+static constexpr char OPTION_DEPTH_KEY[] = "--depth=";
+static constexpr size_t OPTION_DEPTH_KEY_LENGTH = sizeof(OPTION_DEPTH_KEY) - 1;
+
+
+static Notation notation = Notation::PGN;
+static int depth = 7;
+
 int main(int argc, char ** argv)
 {
     GameState s0;
-    if (!s0.initializeFromFen(argv[1]))
+
+    --argc;
+    ++argv;
+    while (argc > 0)
     {
-        fprintf(stderr, "Unable to parse input: %s\n", argv[1]);
-        exit(1);
+        if (strncmp(*argv, OPTION_NOTATION_KEY, OPTION_NOTATION_KEY_LENGTH) == 0)
+        {
+            if (strcmp(*argv + OPTION_NOTATION_KEY_LENGTH, "standard") == 0)
+                notation = Notation::STANDARD;
+            else if (strcmp(*argv + OPTION_NOTATION_KEY_LENGTH, "long") == 0)
+                notation = Notation::LONG;
+            else if (strcmp(*argv + OPTION_NOTATION_KEY_LENGTH, "figurine") == 0)
+                notation = Notation::FIGURINE;
+            else if (strcmp(*argv + OPTION_NOTATION_KEY_LENGTH, "uci") == 0)
+                notation = Notation::UCI;
+            else if (strcmp(*argv + OPTION_NOTATION_KEY_LENGTH, "iccf") == 0)
+                notation = Notation::ICCF;
+            else if (strcmp(*argv + OPTION_NOTATION_KEY_LENGTH, "pgn") == 0)
+                notation = Notation::PGN;
+            else 
+                notation = Notation::PGN;
+        }
+        else if (strncmp(*argv, OPTION_DEPTH_KEY, OPTION_DEPTH_KEY_LENGTH) == 0)
+        {
+            sscanf(*argv + OPTION_DEPTH_KEY_LENGTH, "%d", &depth);
+        }
+        else if (!s0.initializeFromFen(*argv))
+        {
+            fprintf(stderr, "Unable to parse input: %s\n", *argv);
+            exit(1);
+        }
+        --argc;
+        ++argv;
     }
-    
+
 #if !defined(NDEBUG)
     drawBoard(s0.board_);
 #endif
 
-    ComputerPlayer computer(s0.whoseTurn_, 7);
+    ComputerPlayer computer(s0.whoseTurn_, depth);
     GameState      s1 = computer.myTurn(s0);
-    printf("%s", s1.move_.notation().c_str());
-    
+    printf("%s", s1.move_.notation(notation).c_str());
+
 #if !defined(NDEBUG)
     fprintf(stderr, "\n\n");
 
@@ -38,7 +76,7 @@ int main(int argc, char ** argv)
     fprintf(stderr, "%s\n", out.dump(4).c_str());
 #endif
 #endif
-    
+
     return 0;
 }
 

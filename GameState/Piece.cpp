@@ -14,16 +14,17 @@ namespace
 struct PieceTraits
 {
     char symbol[2][2];
+    char figurine[2][4];
 };
 
 PieceTraits const PIECE_TRAITS[NUMBER_OF_PIECE_TYPES] =
 {
-    {{ "K", "k" } },
-    {{ "Q", "q" } },
-    {{ "B", "b" } },
-    {{ "N", "n" } },
-    {{ "R", "r" } },
-    {{ "P", "p" } },
+    {{ "K", "k" }, { "\xe2\x99\x94", "\xe2\x99\x9a" } },
+    {{ "Q", "q" }, { "\xe2\x99\x95", "\xe2\x99\x9b" } },
+    {{ "B", "b" }, { "\xe2\x99\x96", "\xe2\x99\x9c" } },
+    {{ "N", "n" }, { "\xe2\x99\x97", "\xe2\x99\x9d" } },
+    {{ "R", "r" }, { "\xe2\x99\x98", "\xe2\x99\x9e" } },
+    {{ "P", "p" }, { "\xe2\x99\x99", "\xe2\x99\x9f" } },
 };
 
 #if 0
@@ -87,12 +88,18 @@ Piece::Piece(PieceTypeId t, Color c)
 //	int	result = image_->LoadBitmap( image_resid );
 //	ASSERT( result != 0 );
 
-    symbol_ = PIECE_TRAITS[(size_t)t].symbol[(size_t)c];
+    symbol_   = PIECE_TRAITS[(size_t)t].symbol[(size_t)c];
+    figurine_ = PIECE_TRAITS[(size_t)t].figurine[(size_t)c];
 }
 
-char const * Piece::symbol(PieceTypeId piece)
+char const * Piece::symbol(PieceTypeId id, Color color /*= Color::WHITE*/)
 {
-    return (piece != PieceTypeId::INVALID) ? PIECE_TRAITS[(size_t)piece].symbol[0] : "?";
+    return (id != PieceTypeId::INVALID) ? PIECE_TRAITS[(size_t)id].symbol[(size_t)color] : "?";
+}
+
+char const * Piece::figurine(PieceTypeId id, Color color)
+{
+    return (id != PieceTypeId::INVALID) ? PIECE_TRAITS[(size_t)id].figurine[(size_t)color] : "?";
 }
 
 void Piece::generateSpanMoves(Board const &     board,

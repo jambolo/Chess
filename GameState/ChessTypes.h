@@ -31,6 +31,16 @@ enum class PieceTypeId
 };
 static int constexpr NUMBER_OF_PIECE_TYPES = (int)PieceTypeId::PAWN - (int)PieceTypeId::KING + 1;
 
+enum class Notation
+{
+    STANDARD,
+    LONG,
+    FIGURINE,
+    UCI,
+    ICCF,
+    PGN
+};
+
 // Castle moves
 static int constexpr WHITE_QUEENSIDE_CASTLE = 0x01;
 static int constexpr WHITE_KINGSIDE_CASTLE  = 0x02;

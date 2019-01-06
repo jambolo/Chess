@@ -10,11 +10,6 @@ message(STATUS "FEATURE_INCREMENTAL_STATIC_EVALUATION              : ${FEATURE_I
 message(STATUS "FEATURE_BITBOARD_THREAT_DETECTION                  : ${FEATURE_BITBOARD_THREAT_DETECTION}")
 message(STATUS "ANALYSIS_GAME_STATE                                : ${ANALYSIS_GAME_STATE}")
 
-set(FEATURE_NOTATION "Standard" CACHE STRING "Which form of algrebric notation used?")
-set_property(CACHE FEATURE_NOTATION PROPERTY STRINGS Standard Long Figurine UCI ICCF PGN)
-
-message(STATUS "Notation is                                        : ${FEATURE_NOTATION}")
-
 set(SOURCES
     Bishop.cpp
     Bishop.h
@@ -68,20 +63,6 @@ endif()
 
 if(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     target_compile_definitions(game_state PUBLIC FEATURE_INCREMENTAL_STATIC_EVALUATION=1)
-endif()
-
-if(FEATURE_NOTATION STREQUAL "Long")
-    target_compile_definitions(game_state PRIVATE FEATURE_NOTATION_LONG=1)
-elseif(FEATURE_NOTATION STREQUAL "Figurine")
-    target_compile_definitions(game_state PRIVATE FEATURE_NOTATION_FIGURINE=1)
-elseif(FEATURE_NOTATION STREQUAL "UCI")
-    target_compile_definitions(game_state PRIVATE FEATURE_NOTATION_UCI=1)
-elseif(FEATURE_NOTATION STREQUAL "ICCF")
-    target_compile_definitions(game_state PRIVATE FEATURE_NOTATION_ICCF=1)
-elseif(FEATURE_NOTATION STREQUAL "PGN")
-    target_compile_definitions(game_state PRIVATE FEATURE_NOTATION_PGN=1)
-else()
-    target_compile_definitions(game_state PRIVATE FEATURE_NOTATION_STANDARD=1)
 endif()
 
 if(ANALYSIS_GAME_STATE)

@@ -34,7 +34,7 @@ public:
 
     // Returns the piece being moved
     Piece const * piece() const { return piece_; }
-    
+
     // Returns the from position
     Position from() const { return from_; }
 
@@ -43,31 +43,31 @@ public:
 
     // Returns the kind of special move (or NORMAL)
     Special special() const { return special_; }
-    
+
     // Returns true if this is a special move
-    bool isSpecial() const { return (special_ != NORMAL); }
+    bool isSpecial() const { return special_ != NORMAL;  }
 
     // Returns true if this move is a resignation
-    bool isResignation() const { return (special_ == RESIGN); }
+    bool isResignation() const { return special_ == RESIGN;  }
 
     // Returns true if this is an undo
-    bool isUndo() const { return (special_ == UNDO); }
+    bool isUndo() const { return special_ == UNDO;  }
 
     // Returns true if this is the starting position
-    bool isStartingPosition() const { return (special_ == RESET); }
+    bool isStartingPosition() const { return special_ == RESET;  }
 
     // Returns true if this is a king-side castle
-    bool isKingSideCastle() const { return (special_ == KINGSIDE_CASTLE); }
+    bool isKingSideCastle() const { return special_ == KINGSIDE_CASTLE;  }
 
     // Returns true if this is a queen-side castle
-    bool isQueenSideCastle() const { return (special_ == QUEENSIDE_CASTLE); }
+    bool isQueenSideCastle() const { return special_ == QUEENSIDE_CASTLE;  }
 
     // Returns true if the pawn is promoted
-    bool isPromotion() const { return (special_ == PROMOTION); }
+    bool isPromotion() const { return special_ == PROMOTION;  }
 
     // Returns true if this is en passant
-    bool isEnPassant() const { return (special_ == ENPASSANT); }
-    
+    bool isEnPassant() const { return special_ == ENPASSANT;  }
+
     // Returns true if the move is marked as a capture
     bool isCapture() const { return capture_; }
 
@@ -84,7 +84,7 @@ public:
     static bool isSquare(int dr, int dc);
 
     // Returns the move in notation form
-    std::string notation() const;
+    std::string notation(Notation notation = Notation::STANDARD) const;
 
     // Special move -- resignation
     static Move resign(Color color) { return Move(RESIGN, color); }
@@ -127,6 +127,13 @@ public:
     static Move queenSideCastleRook(Color c);
 
 private:
+
+    std::string standardNotation() const;
+    std::string longNotation() const;
+    std::string pgnNotation() const;
+    std::string figurineNotation() const;
+    std::string iccfNotation() const;
+    std::string uciNotation() const;
 
     Piece const * piece_;   // The piece that moved
     Position from_;         // Beginning location
