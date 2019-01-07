@@ -4,3 +4,6 @@
 [submodule "json"]
 	path = json
 	url = https://github.com/nlohmann/json.git
+[submodule "OpeningProcessor/eco"]
+	path = OpeningProcessor/eco
+	url = https://github.com/niklasf/eco.git
