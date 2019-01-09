@@ -3,21 +3,54 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 using json     = nlohmann::json;
 
-using Move = std::string;
+struct Move
+{
+    struct Position
+    {
+        int rank;
+        int file;
+    };
+    Position from;
+    Position to;
+};
+bool operator ==(Move::Position const & a, Move::Position const & b)
+{
+    return a.rank == b.rank && a.file == b.file;
+}
+bool operator ==(Move const & a, Move const & b)
+{
+    return a.from == b.from && a.to == b.to;
+}
 using MoveList = std::vector<Move>;
+
+void to_json(json & j, Move::Position const & p)
+{
+    j = { { "r", p.rank },  { "f", p.file } };
+}
 
 void to_json(json & j, Move const & m)
 {
-    j = m; // haven't figured this out yet
+    j = { { "f", m.from },  { "t", m.to } };
 }
 
 static MoveList extractMoves(std::string const & moves)
 {
     std::istringstream movestream(moves);
-    return MoveList{ std::istream_iterator<std::string> { movestream }, std::istream_iterator<std::string> {} };
+    std::vector<std::string> parsed
+    {
+        std::istream_iterator<std::string> { movestream },
+        std::istream_iterator<std::string> {}
+    };
+    MoveList rv;
+    for (auto const & p : parsed)
+    {
+        rv.push_back(Move{ { '8' - p.at(1), p.at(0) - 'a' }, { '8' - p.at(3), p.at(2) - 'a' } });
+    }
+    return rv;
 }
 
 struct Opening
@@ -51,15 +84,15 @@ struct Node
 static void to_json(json & j, Node const & n)
 {
     j = json{
-        { "move", n.move },
-        { "code", n.code },
-        { "name", n.name },
+        { "m", n.move },
+        { "c", n.code },
+        { "n", n.name },
         { "id", n.id },
-        { "children", json::array() }
+        { "l", json::array() }
     };
     for (auto const & c : n.children)
     {
-        j["children"].push_back(*c);
+        j["l"].push_back(*c);
     }
 }
 
@@ -117,7 +150,7 @@ int main(int argc, char ** argv)
         out.push_back(*n);
     }
 
-    std::cout << out.dump(2);
+    std::cout << out;
 
     return 0;
 }
