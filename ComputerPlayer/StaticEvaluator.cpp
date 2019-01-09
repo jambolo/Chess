@@ -270,4 +270,4 @@ float StaticEvaluator::incremental(Move const &            move,
     return value;
 }
 
-#endif defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
+#endif // defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)

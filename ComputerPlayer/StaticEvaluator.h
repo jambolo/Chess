@@ -25,7 +25,7 @@ public:
                              Position const *        pRemovedPosition = nullptr,
                              Piece const *           pRemoved         = nullptr,
                              Piece const *           pAdded           = nullptr);
-#endif defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
+#endif // defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
 
     // The absolute value of checkmate
     static float constexpr CHECKMATE_VALUE = 1000000.0f;

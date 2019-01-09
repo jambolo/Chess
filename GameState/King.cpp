@@ -96,7 +96,6 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
 
 int King::countPossibleMoves(GameState const & state, Position const & from) const
 {
-    Board const & board = state.board_;
     int           count = 0;
 
     // Normal moves
