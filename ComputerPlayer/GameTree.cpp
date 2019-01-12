@@ -33,15 +33,9 @@ bool shouldDoQuiescentSearch(float previousValue, float thisValue)
 }
 } // anonymous namespace
 
-#if defined(FEATURE_TRANSPOSITION_TABLE)
 GameTree::GameTree(std::shared_ptr<TranspositionTable> tt, int maxDepth)
-#else // defined(FEATURE_TRANSPOSITION_TABLE)
-GameTree::GameTree(int maxDepth)
-#endif // defined(FEATURE_TRANSPOSITION_TABLE)
     : maxDepth_(maxDepth)
-#if defined(FEATURE_TRANSPOSITION_TABLE)
     , transpositionTable_(tt)
-#endif // defined(FEATURE_TRANSPOSITION_TABLE)
 {
 }
 
@@ -222,13 +216,11 @@ void GameTree::myAlphaBeta(EvaluatedGameState * state, float alpha, float beta, 
                                                      best_response.state_.analysisData_.expectedLine_.end());
 #endif
 
-#if defined(FEATURE_TRANSPOSITION_TABLE)
     // Save the value of the state in the T-table if the ply was not pruned. Pruning results in an incorrect value
     // because the search is not complete. Also, the value is stored only if its quality is better than the quality
     // of the value in the table.
     if (!pruned)
         transpositionTable_->update(state->state_, state->value_, state->quality_);
-#endif // defined(FEATURE_TRANSPOSITION_TABLE)
 }
 
 // Evaluate all of my opponent's possible responses to the given state. The chosen response is the one with the lowest value.
@@ -331,13 +323,11 @@ void GameTree::opponentsAlphaBeta(EvaluatedGameState * state, float alpha, float
                                                      best_response.state_.analysisData_.expectedLine_.end());
 #endif
 
-#if defined(FEATURE_TRANSPOSITION_TABLE)
     // Save the value of the state in the T-table if the ply was not pruned. Pruning results in an incorrect value
     // because the search is not complete. Also, the value is stored only if its quality is better than the quality
     // of the value in the table.
     if (!pruned)
         transpositionTable_->update(state->state_, state->value_, state->quality_);
-#endif // defined(FEATURE_TRANSPOSITION_TABLE)
 }
 
 void GameTree::generateStates(GameState const & s0, bool my_move, int depth, EvaluatedGameStateList & states)
@@ -433,7 +423,6 @@ void GameTree::generateStates(GameState const & s0, bool my_move, int depth, Eva
 
 void GameTree::evaluate(GameState const & state, int depth, float * pValue, int * pQuality)
 {
-#if defined(FEATURE_TRANSPOSITION_TABLE)
     // SEF optimization:
     //
     // Since any value of any state in the T-table has already been computed by search and/or SEF, it has a quality
@@ -447,7 +436,6 @@ void GameTree::evaluate(GameState const & state, int depth, float * pValue, int 
         // Use the value from the T-table
     }
     else
-#endif // if defined(FEATURE_TRANSPOSITION_TABLE)
     {
 #if defined(ANALYSIS_GAME_TREE)
         ++analysisData_.aEvaluationCounts[depth];
@@ -481,10 +469,8 @@ void GameTree::evaluate(GameState const & state, int depth, float * pValue, int 
 
 #endif  // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
 
-#if defined(FEATURE_TRANSPOSITION_TABLE)
         // Save the value of the state in the T-table
         transpositionTable_->update(state, *pValue, *pQuality);
-#endif
     }
 }
 

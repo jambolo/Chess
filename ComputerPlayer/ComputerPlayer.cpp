@@ -15,9 +15,7 @@ using json = nlohmann::json;
 ComputerPlayer::ComputerPlayer(Color color, int maxDepth)
     : Player(color)
     , maxDepth_(maxDepth)
-#if defined(FEATURE_TRANSPOSITION_TABLE)
     , transpositionTable_(new TranspositionTable)
-#endif // defined(FEATURE_TRANSPOSITION_TABLE)
 {
 }
 
@@ -29,16 +27,10 @@ GameState ComputerPlayer::myTurn(GameState const & s0)
 
     // Calculate the best move from here
 
-#if defined(FEATURE_TRANSPOSITION_TABLE)
     GameTree tree(transpositionTable_, maxDepth_);
-#else // defined(FEATURE_TRANSPOSITION_TABLE)
-    GameTree tree(maxDepth_);
-#endif // defined(FEATURE_TRANSPOSITION_TABLE)
 
     GameState new_state = tree.myBestMove(s0, myColor_);
-#if defined(FEATURE_TRANSPOSITION_TABLE)
     transpositionTable_->age();
-#endif
 
 #if defined(ANALYSIS_PLAYER)
 
