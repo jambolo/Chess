@@ -1,9 +1,9 @@
 #include "Bishop.h"
 
 #include "Board.h"
-#include "ChessTypes.h"
 #include "GameState.h"
 #include "Move.h"
+#include "Types.h"
 
 void Bishop::generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const
 {

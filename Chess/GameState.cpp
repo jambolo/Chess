@@ -1,15 +1,15 @@
 #include "GameState.h"
 
 #include "Board.h"
-#include "ChessTypes.h"
 #include "Move.h"
 #include "Piece.h"
+#include "Types.h"
 
 #include "ZHash/ZHash.h"
 
 #if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
-#include "ComputerPlayer/StaticEvaluator.h"
-#endif // defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
+#include "StaticEvaluator.h"
+#endif
 
 #include <Misc/exceptions.h>
 #include <Misc/Etc.h>
@@ -42,7 +42,7 @@ void GameState::initialize()
     whoseTurn_      = Color::WHITE;
     castleStatus_   = 0;
     fiftyMoveTimer_ = 0;
-    makeMove(Color::WHITE, Move::reset());
+    makeMove(Move::reset());
     inCheck_    = false;
     moveNumber_ = 1;
     zhash_      = ZHash(board_, whoseTurn_);
@@ -95,6 +95,51 @@ bool GameState::initializeFromFen(char const * fen)
     return true;
 }
 
+void GameState::generateResponses(std::vector<GamePlayer::GameState *> & responses) const
+{
+    int constexpr MAX_POSSIBLE_STATES = 147;
+
+    std::vector<GamePlayer::GameState *> rv;
+    rv.reserve(MAX_POSSIBLE_STATES);
+
+    // For each square on the board, if it contains a piece on the side whose turn it is, generate all the possible
+    // moves for it and add the resulting game states to responses list.
+    Position p(0, 0);
+    for (p.row = 0; p.row < Board::SIZE; p.row++)
+    {
+        for (p.column = 0; p.column < Board::SIZE; p.column++)
+        {
+            Piece const * piece = board_.pieceAt(p);
+
+            if (piece && (piece->color() == whoseTurn_))
+            {
+                Piece::MoveList moves;
+                piece->generatePossibleMoves(*this, p, moves);
+
+                // Convert the moves into new states and put the new states into the state list
+                for (auto const & move : moves)
+                {
+                    GameState * newState = new GameState(*this);
+                    newState->makeMove(move);
+
+#if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
+                    // Determine the new state's priority
+                    newState.priority_ = prioritize(newState, depth);
+#endif
+#if defined(ANALYSIS_GAME_TREE)
+                    if (depth < GamePlayer::GameTree::AnalysisData::MAX_DEPTH)
+                        ++analysisData_.aGeneratedStateCounts[depth];
+#endif
+
+                    // Save the new state
+                    rv.push_back(newState);
+                }
+            }
+        }
+    }
+    responses = std::move(rv);
+}
+
 bool GameState::castleIsAllowed(Color c) const
 {
     unsigned mask = (c == Color::WHITE) ? WHITE_CASTLE_UNAVAILABLE : BLACK_CASTLE_UNAVAILABLE;
@@ -124,8 +169,10 @@ ZHash GameState::zhash() const
     return zhash_;
 }
 
-void GameState::makeMove(Color color, Move const & move)
+void GameState::makeMove(Move const & move)
 {
+    Color color = whoseTurn_;
+
     // Save the move
     move_ = move;
 
@@ -138,16 +185,16 @@ void GameState::makeMove(Color color, Move const & move)
     // Castle is a special case move. Handle it separately
     else if (move.isKingSideCastle() || move.isQueenSideCastle())
     {
-        makeCastleMove(color, move);
+        makeCastleMove(move);
     }
 
     // Normal move
     else
     {
-        makeNormalMove(color, move);
+        makeNormalMove(move);
     }
 
-    if (color == Color::WHITE)
+    if (whoseTurn_ == Color::WHITE)
     {
         whoseTurn_ = Color::BLACK;
     }
@@ -179,7 +226,7 @@ std::string GameState::fen() const
     return result;
 }
 
-void GameState::makeNormalMove(Color color, Move const & move)
+void GameState::makeNormalMove(Move const & move)
 {
     Piece const * movedPiece = board_.pieceAt(move.from());
 
@@ -200,7 +247,7 @@ void GameState::makeNormalMove(Color color, Move const & move)
     Piece const * addedPiece;
 
     if (move.isPromotion())
-        addedPiece = promote(color, move.to());
+        addedPiece = promote(move.to());
     else
         addedPiece = NO_PIECE;
 
@@ -208,10 +255,10 @@ void GameState::makeNormalMove(Color color, Move const & move)
 
 #if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     CastleStatus oldStatus = castleStatus_;
-#endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
+#endif
 
     if (movedPiece->type() == PieceTypeId::KING)
-        castleStatus_ |= (color == Color::WHITE) ? WHITE_CASTLE_UNAVAILABLE : BLACK_CASTLE_UNAVAILABLE;
+        castleStatus_ |= (whoseTurn_ == Color::WHITE) ? WHITE_CASTLE_UNAVAILABLE : BLACK_CASTLE_UNAVAILABLE;
     else if (move.from() == Board::INITIAL_WHITE_ROOK_QUEENSIDE_POSITION ||
              move.to() == Board::INITIAL_WHITE_ROOK_QUEENSIDE_POSITION)
         castleStatus_ |= WHITE_QUEENSIDE_CASTLE_UNAVAILABLE;
@@ -225,27 +272,28 @@ void GameState::makeNormalMove(Color color, Move const & move)
 
 #if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     CastleStatus castleStatusChange = oldStatus ^ castleStatus_;
-#endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
+#endif
 
     // Update check status
     // @todo check for in check
 
 #if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     value_ += StaticEvaluator::incremental(move, castleStatusChange, movedPiece, &capturedPosition, capturedPiece, addedPiece);
-#endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
+#endif
 }
 
-void GameState::makeCastleMove(Color color, Move const & move)
+void GameState::makeCastleMove(Move const & move)
 {
 #if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     CastleStatus oldStatus = castleStatus_;
-#endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
+#endif
 
     // Move the king
 
     {
-        Move          kingsMove = move.isKingSideCastle() ? Move::kingSideCastleKing(color) : Move::queenSideCastleKing(color);
-        Piece const * king      = Piece::get(PieceTypeId::KING, color);
+        Move kingsMove = move.isKingSideCastle() ? Move::kingSideCastleKing(whoseTurn_) : Move::queenSideCastleKing(
+            whoseTurn_);
+        Piece const * king = Piece::get(PieceTypeId::KING, whoseTurn_);
         zhash_.move(king, kingsMove.from(), kingsMove.to());
         board_.movePiece(kingsMove.from(), kingsMove.to());
     }
@@ -253,14 +301,15 @@ void GameState::makeCastleMove(Color color, Move const & move)
     // Move the rook
 
     {
-        Move          rooksMove = move.isKingSideCastle() ? Move::kingSideCastleRook(color) : Move::queenSideCastleRook(color);
-        Piece const * rook      = Piece::get(PieceTypeId::ROOK, color);
+        Move rooksMove = move.isKingSideCastle() ? Move::kingSideCastleRook(whoseTurn_) : Move::queenSideCastleRook(
+            whoseTurn_);
+        Piece const * rook = Piece::get(PieceTypeId::ROOK, whoseTurn_);
         zhash_.move(rook, rooksMove.from(), rooksMove.to());
         board_.movePiece(rooksMove.from(), rooksMove.to());
     }
 
     // Update castle status
-    if (color == Color::WHITE)
+    if (whoseTurn_ == Color::WHITE)
     {
         castleStatus_ |= move.isKingSideCastle() ? WHITE_KINGSIDE_CASTLE : WHITE_QUEENSIDE_CASTLE;
         castleStatus_ |= WHITE_CASTLE_UNAVAILABLE;
@@ -273,17 +322,17 @@ void GameState::makeCastleMove(Color color, Move const & move)
 
 #if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     CastleStatus castleStatusChange = oldStatus ^ castleStatus_;
-#endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
+#endif
 
     // Update check status
     // @todo check for in check
 
 #if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     value_ += StaticEvaluator::incremental(move, castleStatusChange);
-#endif // defined( FEATURE_INCREMENTAL_STATIC_EVALUATION )
+#endif
 }
 
-Piece const * GameState::promote(Color color, Position const & position)
+Piece const * GameState::promote(Position const & position)
 {
     Piece const * pPiece = board_.pieceAt(position);
 
@@ -294,7 +343,7 @@ Piece const * GameState::promote(Color color, Position const & position)
 
     // Replace with a queen
 
-    Piece const * addedPiece = Piece::get(PieceTypeId::QUEEN, color); // @todo Not always promoted to a queen
+    Piece const * addedPiece = Piece::get(PieceTypeId::QUEEN, whoseTurn_); // @todo Not always promoted to a queen
 
     zhash_.add(addedPiece, position);
     board_.putPiece(addedPiece, position);

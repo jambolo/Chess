@@ -1,9 +1,10 @@
 #pragma once
 
-#if !defined(GameState_h__)
-#define GameState_h__
+#if !defined(CHESS_GAMESTATE_H)
+#define CHESS_GAMESTATE_H
 
 #include "Board.h"
+#include "GamePlayer/GameState.h"
 #include "Move.h"
 #include "ZHash/ZHash.h"
 #include <nlohmann/json.hpp>
@@ -13,7 +14,7 @@
 class Move;
 class Piece;
 
-class GameState
+class GameState : public GamePlayer::GameState
 {
 public:
 
@@ -33,6 +34,10 @@ public:
 
     bool initializeFromFen(char const * fen);
 
+    virtual uint64_t fingerprint() const override { return zhash_.value(); }
+    virtual void     generateResponses(std::vector<GamePlayer::GameState *> & responses) const override;
+    virtual PlayerId whoseTurn() const override { return (whoseTurn_ == Color::WHITE) ? PlayerId::FIRST : PlayerId::SECOND; }
+
     // Returns true if a castle is allowed
     bool castleIsAllowed(Color c) const;
 
@@ -49,7 +54,7 @@ public:
     ZHash zhash() const;
 
     // Updates the game state with the specified move
-    void makeMove(Color color, Move const & move);
+    void makeMove(Move const & move);
 
     // Returns the FEN string for the state
     std::string fen() const;
@@ -81,13 +86,13 @@ private:
     friend bool operator ==(GameState const & x, GameState const & y);
 
     // Updates the game state with a move (but not a castle)
-    void makeNormalMove(Color color, Move const & move);
+    void makeNormalMove(Move const & move);
 
     // Updates the game state with a castle move
-    void makeCastleMove(Color color, Move const & move);
+    void makeCastleMove(Move const & move);
 
     // Updates the game state with a pawn promotion (after moving). Returns the new piece.
-    Piece const * promote(Color color, Position const & position);
+    Piece const * promote(Position const & position);
 
     bool        whoseTurnFromFen(char const * start, char const * end);
     bool        castleStatusFromFen(char const * start, char const * end);
@@ -96,10 +101,6 @@ private:
     std::string castleStatusToFen() const;
 };
 
-// Equality operator
 bool operator ==(GameState const & x, GameState const & y);
 
-// List of game states
-using GameStateList = std::vector<GameState>;
-
-#endif // !defined(GameState_h__)
+#endif // !defined(CHESS_GAMESTATE_H)

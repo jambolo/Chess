@@ -18,5 +18,5 @@ target_include_directories(bitboard
     PUBLIC ${PUBLIC_INCLUDE_PATHS}
     PRIVATE ${PRIVATE_INCLUDE_PATHS}
 )
-target_link_libraries(bitboard game_state misc)
+target_link_libraries(bitboard chess misc)
 

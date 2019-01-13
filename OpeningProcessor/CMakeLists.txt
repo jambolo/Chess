@@ -10,7 +10,7 @@ set(ECO_INCLUDE_PATHS
 
 add_executable(process ${PROCESS_SOURCES})
 target_link_libraries(process
-    game_state
+    chess
     nlohmann_json::nlohmann_json
 )
 target_compile_definitions(process

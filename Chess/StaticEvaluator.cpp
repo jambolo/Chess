@@ -1,8 +1,8 @@
 #include "StaticEvaluator.h"
 
-#include "GameState/GameState.h"
-#include "GameState/Move.h"
-#include "GameState/Piece.h"
+#include "GameState.h"
+#include "Move.h"
+#include "Piece.h"
 
 #include <cassert>
 
@@ -85,10 +85,10 @@ float evaluate(GameState::CastleStatus castleStatus)
 }
 } // anonymous namespace
 
-// This function returns the value of the board *** BY COLOR ***.
-
-float StaticEvaluator::evaluate(GameState const & state)
+float StaticEvaluator::evaluate(GamePlayer::GameState const & state) const
 {
+    GameState const & s = static_cast<GameState const &>(state);
+
     // If both kings are present, checkmate_value will be 0, otherwise it will be -CHECKMATE_VALUE if the WHITE
     // king is missing, or CHECKMATE_VALUE if the BLACK king is missing.
     float totalCheckmateValue =  0.0f;
@@ -114,8 +114,8 @@ float StaticEvaluator::evaluate(GameState const & state)
     {
         for (int column = 0; column < Board::SIZE; ++column)
         {
-            Piece const * p = state.board_.pieceAt(row, column);
-            Position position{ row, column };
+            Piece const * p = s.board_.pieceAt(row, column);
+            Position      position{ row, column };
 
             if (p)
             {
@@ -140,7 +140,7 @@ float StaticEvaluator::evaluate(GameState const & state)
 
                 // Compute the mobility difference
                 {
-                    float mobilityValue = (float)p->countPossibleMoves(state, position);
+                    float mobilityValue = (float)p->countPossibleMoves(s, position);
                     if (color != Color::WHITE)
                         mobilityValue = -mobilityValue;
                     totalMobilityValue += mobilityValue;
@@ -156,7 +156,7 @@ float StaticEvaluator::evaluate(GameState const & state)
 
                 // Compute threat difference
                 {
-                    float threatValue = (float)p->countThreats(state, position);
+                    float threatValue = (float)p->countThreats(s, position);
                     if (color != Color::WHITE)
                         threatValue = -threatValue;
                     totalThreatValue += threatValue;
@@ -165,7 +165,7 @@ float StaticEvaluator::evaluate(GameState const & state)
         }
     }
 
-    float castleStatusValue = ::evaluate(state.castleStatus_);
+    float castleStatusValue = ::evaluate(s.castleStatus_);
 
     // Compute the overall value
 
@@ -192,7 +192,7 @@ float StaticEvaluator::evaluate(GameState const & state)
 
     value += (state.GetHashCode() & 0x7) - 4;
 
-#endif // defined( PROFILING )
+#endif
 
     return value;
 }
@@ -265,7 +265,7 @@ float StaticEvaluator::incremental(Move const &            move,
 
     value += (state.GetHashCode() & 0x7) - 4;
 
-#endif // defined( PROFILING )
+#endif
 
     return value;
 }

@@ -259,9 +259,7 @@ uint64_t const s_destinations[BitBoard::NUMBER_OF_PIECES][BitBoard::SIZE] =
 
 uint64_t s_blockedRowsAndColumns[BitBoard::SIZE][BitBoard::SIZE];
 uint64_t s_blockedDiagonals[BitBoard::SIZE][BitBoard::SIZE];
-
 } // anonymous namespace
-
 
 void BitBoard::flip()
 {
@@ -287,7 +285,6 @@ unsigned BitBoard::column(int c) const
     }
     return result;
 }
-
 
 BitBoard BitBoard::threatened(int type, int r, int c)
 {

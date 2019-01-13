@@ -96,7 +96,7 @@ void King::generatePossibleMoves(GameState const & state, Position const & from,
 
 int King::countPossibleMoves(GameState const & state, Position const & from) const
 {
-    int           count = 0;
+    int count = 0;
 
     // Normal moves
 
@@ -190,7 +190,7 @@ int King::countThreats(GameState const & state, Position const & from) const
 {
     Board const & board = state.board_;
     int           count = 0;
-    Position to = from;
+    Position      to    = from;
 
     // Up
 

@@ -3,8 +3,8 @@
 #if !defined(Move_h__)
 #define Move_h__
 
-#include "GameState/ChessTypes.h"
-#include "GameState/Position.h"
+#include "Chess/Position.h"
+#include "Chess/Types.h"
 #include <vector>
 
 class Piece;

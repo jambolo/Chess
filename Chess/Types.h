@@ -1,7 +1,7 @@
 #pragma once
 
-#if !defined(ChessTypes_h__)
-#define ChessTypes_h__
+#if !defined(CHESS_TYPES_H)
+#define CHESS_TYPES_H
 
 enum class Color
 {
@@ -60,4 +60,4 @@ static int constexpr BLACK_CASTLE_UNAVAILABLE           = BLACK_QUEENSIDE_CASTLE
 
 static int const NUMBER_OF_CASTLE_BITS = 8;
 
-#endif // !defined(ChessTypes_h__)
+#endif // !defined(CHESS_TYPES_H)

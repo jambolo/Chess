@@ -28,10 +28,10 @@ class BitBoard
 public:
 
     //! Number of squares on a bit board
-    static int constexpr SIZE               = 64;
+    static int constexpr SIZE = 64;
     static int constexpr SQUARES_PER_ROW    = 8;
     static int constexpr SQUARES_PER_COLUMN = 8;
-    
+
     enum Piece
     {
         INVALID = -1,
@@ -53,13 +53,13 @@ public:
 
     //! Sets the value of the specified square to 1
     void set(int r, int c) { board_ |= mask(r, c); }
-    
+
     //! Sets the value of the specified square to 0
     void clear(int r, int c) { board_ &= ~mask(r, c); }
-    
+
     //! Returns the value of the specified square
     int test(int r, int c) const { return int((board_ >> index(r, c)) & 1); }
-    
+
     //! Reflects the bitboard vertically (for dealing with white pawns)
     void flip();
 
@@ -143,7 +143,7 @@ private:
 
     // Returns the contents of the given row
     unsigned row(int r) const { return unsigned((board_ >> (SQUARES_PER_ROW * r)) & ((1 << SQUARES_PER_ROW) - 1)); }
-    
+
     // Returns the contents of the given column
     unsigned column(int c) const;
 

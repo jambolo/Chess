@@ -3,7 +3,7 @@
 #if !defined(Board_h__)
 #define Board_h__
 
-#include "GameState/ChessTypes.h"
+#include "Chess/Types.h"
 #include <string>
 
 class Piece;

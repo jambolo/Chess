@@ -5,7 +5,7 @@
 #include <sstream>
 #include <vector>
 
-using json     = nlohmann::json;
+using json = nlohmann::json;
 
 struct Move
 {
@@ -29,17 +29,17 @@ using MoveList = std::vector<Move>;
 
 void to_json(json & j, Move::Position const & p)
 {
-    j = { { "r", p.rank },  { "f", p.file } };
+    j = {{ "r", p.rank },  { "f", p.file } };
 }
 
 void to_json(json & j, Move const & m)
 {
-    j = { { "f", m.from },  { "t", m.to } };
+    j = {{ "f", m.from },  { "t", m.to } };
 }
 
 static MoveList extractMoves(std::string const & moves)
 {
-    std::istringstream movestream(moves);
+    std::istringstream       movestream(moves);
     std::vector<std::string> parsed
     {
         std::istream_iterator<std::string> { movestream },
@@ -48,7 +48,7 @@ static MoveList extractMoves(std::string const & moves)
     MoveList rv;
     for (auto const & p : parsed)
     {
-        rv.push_back(Move{ { '8' - p.at(1), p.at(0) - 'a' }, { '8' - p.at(3), p.at(2) - 'a' } });
+        rv.push_back(Move{{ '8' - p.at(1), p.at(0) - 'a' }, { '8' - p.at(3), p.at(2) - 'a' } });
     }
     return rv;
 }

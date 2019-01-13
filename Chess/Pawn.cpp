@@ -199,11 +199,11 @@ int Pawn::countThreats(GameState const & state, Position const & from) const
     Board const & board = state.board_;
 
     int direction = (color_ == Color::BLACK) ? (int)Direction::DOWN : (int)Direction::UP;
-    int count = 0;
+    int count     = 0;
 
     Position to;
 
-    to.row = from.row + direction;
+    to.row    = from.row + direction;
     to.column = from.column + (int)Direction::LEFT;
     if (board.isValidPosition(to) && board.pieceAt(to))
         ++count;

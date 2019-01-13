@@ -16,9 +16,9 @@
 
 #include "ZHash.h"
 
-#include "GameState/Board.h"
-#include "GameState/Piece.h"
-#include "GameState/Position.h"
+#include "Chess/Board.h"
+#include "Chess/Piece.h"
+#include "Chess/Position.h"
 
 #include "Misc/Random.h"
 

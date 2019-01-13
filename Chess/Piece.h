@@ -3,7 +3,7 @@
 #if !defined(Piece_h__)
 #define Piece_h__
 
-#include "GameState/ChessTypes.h"
+#include "Chess/Types.h"
 #include <vector>
 
 class CBitmap;

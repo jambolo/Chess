@@ -1,8 +1,8 @@
 #include "Move.h"
 
-#include "ChessTypes.h"
 #include "Move.h"
 #include "Piece.h"
+#include "Types.h"
 
 #include <cassert>
 #include <cstdlib>

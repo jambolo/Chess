@@ -19,4 +19,4 @@ target_include_directories(zhash
     PRIVATE ${PRIVATE_INCLUDE_PATHS}
 )
 
-target_link_libraries(zhash game_state misc)
+target_link_libraries(zhash chess misc)

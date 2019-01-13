@@ -1,6 +1,7 @@
 #include "ComputerPlayer.h"
 
-#include "Chess/ChessGameState.h"
+#include "Chess/Board.h"
+#include "Chess/GameState.h"
 #include "Chess/Piece.h"
 #include "Chess/Types.h"
 
@@ -24,7 +25,7 @@ static int      depth    = 7;
 
 int main(int argc, char ** argv)
 {
-    ChessGameState s0;
+    GameState s0;
 
     --argc;
     ++argv;
@@ -65,7 +66,7 @@ int main(int argc, char ** argv)
 #endif
 
     ComputerPlayer computer(s0.whoseTurn_, depth);
-    ChessGameState s1 = computer.myTurn(s0);
+    GameState      s1 = computer.myTurn(s0);
     printf("%s", s1.move_.notation(notation).c_str());
 
 #if !defined(NDEBUG)
