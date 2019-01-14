@@ -35,7 +35,7 @@ public:
     bool initializeFromFen(char const * fen);
 
     virtual uint64_t fingerprint() const override { return zhash_.value(); }
-    virtual void     generateResponses(std::vector<GamePlayer::GameState *> & responses) const override;
+    virtual void generateResponses(int depth, std::vector<GamePlayer::GameState *> & responses) const override;
     virtual PlayerId whoseTurn() const override { return (whoseTurn_ == Color::WHITE) ? PlayerId::FIRST : PlayerId::SECOND; }
 
     // Returns true if a castle is allowed

@@ -95,7 +95,7 @@ bool GameState::initializeFromFen(char const * fen)
     return true;
 }
 
-void GameState::generateResponses(std::vector<GamePlayer::GameState *> & responses) const
+void GameState::generateResponses(int depth, std::vector<GamePlayer::GameState *> & responses) const
 {
     int constexpr MAX_POSSIBLE_STATES = 147;
 
@@ -125,10 +125,6 @@ void GameState::generateResponses(std::vector<GamePlayer::GameState *> & respons
 #if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
                     // Determine the new state's priority
                     newState.priority_ = prioritize(newState, depth);
-#endif
-#if defined(ANALYSIS_GAME_TREE)
-                    if (depth < GamePlayer::GameTree::AnalysisData::MAX_DEPTH)
-                        ++analysisData_.aGeneratedStateCounts[depth];
 #endif
 
                     // Save the new state

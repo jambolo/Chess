@@ -7,3 +7,6 @@
 [submodule "OpeningProcessor/eco"]
 	path = OpeningProcessor/eco
 	url = https://github.com/niklasf/eco.git
+[submodule "GamePlayer"]
+	path = GamePlayer
+	url = https://github.com/jambolo/GamePlayer.git
