@@ -1,8 +1,7 @@
-#include "TranspositionTable.h"
+#include "GamePlayer/TranspositionTable.h"
 
-#include "Gamestate.h"
+#include "GamePlayer/Gamestate.h"
 
-// #include <Misc/Etc.h>
 #include <nlohmann/json.hpp>
 
 #include <cassert>

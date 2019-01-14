@@ -53,9 +53,10 @@ target_include_directories(chess
 )
 
 target_link_libraries(chess
-    zhash
+    game_player
     misc
     nlohmann_json::nlohmann_json
+    zhash
 )
 
 if(FEATURE_PRIORITIZED_MOVE_ORDERING)

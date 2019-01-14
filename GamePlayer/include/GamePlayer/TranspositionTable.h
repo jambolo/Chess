@@ -3,7 +3,9 @@
 #if !defined(GAMEPLAYER_TRANSPOSITIONTABLE_H)
 #define GAMEPLAYER_TRANSPOSITIONTABLE_H
 
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
 #include <nlohmann/json.hpp>
+#endif
 
 namespace GamePlayer
 {

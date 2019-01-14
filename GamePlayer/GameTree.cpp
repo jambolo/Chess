@@ -1,8 +1,8 @@
-#include "GameTree.h"
+#include "GamePlayer/GameTree.h"
 
-#include "GameState.h"
-#include "StaticEvaluator.h"
-#include "TranspositionTable.h"
+#include "GamePlayer/GameState.h"
+#include "GamePlayer/StaticEvaluator.h"
+#include "GamePlayer/TranspositionTable.h"
 
 // #include "Misc/Random.h"
 

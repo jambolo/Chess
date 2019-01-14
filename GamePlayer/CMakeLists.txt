@@ -29,12 +29,12 @@ message(STATUS "ANALYSIS_GAME_TREE                                 : ${ANALYSIS_
 message(STATUS "DEBUG_GAME_TREE_NODE_INFO                          : ${DEBUG_GAME_TREE_NODE_INFO}")
 
 set(SOURCES
-    GameState.h
     GameTree.cpp
-    GameTree.h
-    StaticEvaluator.h
+    include/GamePlayer/GameState.h
+    include/GamePlayer/GameTree.h
+    include/GamePlayer/StaticEvaluator.h
+    include/GamePlayer/TranspositionTable.h
     TranspositionTable.cpp
-    TranspositionTable.h
 )
 
 set(PRIVATE_INCLUDE_PATHS
@@ -42,7 +42,7 @@ set(PRIVATE_INCLUDE_PATHS
 )
 
 set(PUBLIC_INCLUDE_PATHS
-    ${CMAKE_SOURCE_DIR}
+    include
 )
 
 add_library(game_player ${SOURCES})

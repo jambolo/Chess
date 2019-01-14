@@ -5,7 +5,6 @@
 
 #include <memory>
 #include <vector>
-
 #if defined(ANALYSIS_GAME_TREE)
 #include <nlohmann/json.hpp>
 #endif
