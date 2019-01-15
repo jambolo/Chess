@@ -167,8 +167,6 @@ ZHash GameState::zhash() const
 
 void GameState::makeMove(Move const & move)
 {
-    Color color = whoseTurn_;
-
     // Save the move
     move_ = move;
 
