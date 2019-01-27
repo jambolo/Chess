@@ -13,10 +13,11 @@ set(PUBLIC_INCLUDE_PATHS
     ${CMAKE_SOURCE_DIR}
 )
 
-add_library(bitboard ${SOURCES})
-target_include_directories(bitboard
+add_library(BitBoard ${SOURCES})
+target_include_directories(BitBoard
     PUBLIC ${PUBLIC_INCLUDE_PATHS}
     PRIVATE ${PRIVATE_INCLUDE_PATHS}
 )
-target_link_libraries(bitboard chess misc)
+target_link_libraries(BitBoard Chess Misc)
 
+source_group(Sources FILES ${SOURCES})

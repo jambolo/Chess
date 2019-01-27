@@ -1,19 +1,19 @@
 cmake_minimum_required (VERSION 3.4)
 
-set(PROCESS_SOURCES
+set(PROCESS_ECO_SOURCES
     main.cpp
 )
 
-set(ECO_INCLUDE_PATHS
+set(PROCESS_ECO_INCLUDE_PATHS
     .
 )
 
-add_executable(process ${PROCESS_SOURCES})
-target_link_libraries(process
-    chess
+add_executable(process_eco ${PROCESS_ECO_SOURCES})
+target_link_libraries(process_eco
+    Chess
     nlohmann_json::nlohmann_json
 )
-target_compile_definitions(process
+target_compile_definitions(process_eco
     PRIVATE
         -DNOMINMAX
         -DWIN32_LEAN_AND_MEAN
@@ -22,4 +22,5 @@ target_compile_definitions(process
         -D_SECURE_SCL=0
         -D_SCL_SECURE_NO_WARNINGS
 )
-target_include_directories(process PRIVATE ${PROCESS_INCLUDE_PATHS})
+target_include_directories(process_eco PRIVATE ${PROCESS_ECO_INCLUDE_PATHS})
+source_group(Sources FILES ${PROCESS_ECO_SOURCES})

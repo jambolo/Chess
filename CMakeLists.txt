@@ -21,8 +21,8 @@ set(CHESS_PLAYER_INCLUDE_PATHS
 
 add_executable(chess_player ${CHESS_PLAYER_SOURCES})
 target_link_libraries(chess_player
-    chess
-    game_player
+    Chess
+    GamePlayer
     nlohmann_json::nlohmann_json
 )
 target_compile_definitions(chess_player
@@ -35,6 +35,8 @@ target_compile_definitions(chess_player
         -D_SCL_SECURE_NO_WARNINGS
 )
 target_include_directories(chess_player PRIVATE ${CHESS_PLAYER_INCLUDE_PATHS})
+
+source_group(Sources FILES ${CHESS_PLAYER_SOURCES})
 
 add_subdirectory(BitBoard)
 add_subdirectory(Chess)

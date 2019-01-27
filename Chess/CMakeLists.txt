@@ -46,27 +46,29 @@ set(PUBLIC_INCLUDE_PATHS
     ${CMAKE_SOURCE_DIR}
 )
 
-add_library(chess ${SOURCES})
-target_include_directories(chess
+add_library(Chess ${SOURCES})
+target_include_directories(Chess
     PUBLIC ${PUBLIC_INCLUDE_PATHS}
     PRIVATE ${PRIVATE_INCLUDE_PATHS}
 )
 
-target_link_libraries(chess
-    game_player
-    misc
+target_link_libraries(Chess
+    GamePlayer
+    Misc
     nlohmann_json::nlohmann_json
-    zhash
+    ZHash
 )
 
 if(FEATURE_PRIORITIZED_MOVE_ORDERING)
-    target_compile_definitions(chess PUBLIC FEATURE_PRIORITIZED_MOVE_ORDERING=1)
+    target_compile_definitions(Chess PUBLIC FEATURE_PRIORITIZED_MOVE_ORDERING=1)
 endif()
 
 if(FEATURE_INCREMENTAL_STATIC_EVALUATION)
-    target_compile_definitions(chess PUBLIC FEATURE_INCREMENTAL_STATIC_EVALUATION=1)
+    target_compile_definitions(Chess PUBLIC FEATURE_INCREMENTAL_STATIC_EVALUATION=1)
 endif()
 
 if(ANALYSIS_GAME_STATE)
-    target_compile_definitions(chess PUBLIC ANALYSIS_GAME_STATE=1)
+    target_compile_definitions(Chess PUBLIC ANALYSIS_GAME_STATE=1)
 endif()
+
+source_group(Sources FILES ${SOURCES})
