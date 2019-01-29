@@ -11,7 +11,7 @@
 #include "StaticEvaluator.h"
 #endif
 
-#include <Misc/exceptions.h>
+#include <Misc/Exceptions.h>
 #include <Misc/Etc.h>
 #include <nlohmann/json.hpp>
 #include <regex>

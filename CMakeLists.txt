@@ -7,6 +7,8 @@ option(BUILD_SHARED_LIBS       "Build libraries as DLLs"                    FALS
 #set(Chess_VERSION_MINOR 1)
 #configure_file("${PROJECT_SOURCE_DIR}/Version.h.in" "${PROJECT_BINARY_DIR}/Version.h")
 
+option(${PROJECT_NAME}_BUILD_TESTS "Build unit tests for ${PROJECT_NAME} if BUILD_TESTING is ON" FALSE)
+
 set(CHESS_PLAYER_SOURCES
     ComputerPlayer.cpp
     ComputerPlayer.h
@@ -38,6 +40,11 @@ target_include_directories(chess_player PRIVATE ${CHESS_PLAYER_INCLUDE_PATHS})
 
 source_group(Sources FILES ${CHESS_PLAYER_SOURCES})
 
+if(${PROJECT_NAME}_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(googletest)
+endif()
+
 add_subdirectory(BitBoard)
 add_subdirectory(Chess)
 add_subdirectory(GamePlayer)
@@ -45,3 +52,4 @@ add_subdirectory(json)
 add_subdirectory(Misc)
 add_subdirectory(OpeningProcessor)
 add_subdirectory(ZHash)
+

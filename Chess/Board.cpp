@@ -4,7 +4,7 @@
 #include "Piece.h"
 #include "Position.h"
 
-#include "Misc/exceptions.h"
+#include "Misc/Exceptions.h"
 //#include "Misc/Etc.h"
 
 #include <algorithm>

@@ -21,3 +21,8 @@ target_include_directories(BitBoard
 target_link_libraries(BitBoard Chess Misc)
 
 source_group(Sources FILES ${SOURCES})
+
+if(${PROJECT_NAME}_BUILD_TESTS)
+    add_subdirectory(test)
+endif()
+

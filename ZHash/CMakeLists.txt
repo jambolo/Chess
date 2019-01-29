@@ -21,3 +21,7 @@ target_include_directories(ZHash
 
 target_link_libraries(ZHash Chess Misc)
 source_group(Sources FILES ${SOURCES})
+
+if(${PROJECT_NAME}_BUILD_TESTS)
+    add_subdirectory(test)
+endif()

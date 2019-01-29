@@ -72,3 +72,8 @@ if(ANALYSIS_GAME_STATE)
 endif()
 
 source_group(Sources FILES ${SOURCES})
+
+if(${PROJECT_NAME}_BUILD_TESTS)
+    add_subdirectory(test)
+endif()
+
