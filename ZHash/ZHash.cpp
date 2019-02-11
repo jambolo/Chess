@@ -20,20 +20,10 @@
 #include "Chess/Piece.h"
 #include "Chess/Position.h"
 
-#include "Misc/Random.h"
-
 #include <cassert>
+#include <random>
 
 ZHash::ZValueTable const ZHash::zValueTable_;
-
-namespace
-{
-    uint64_t generateRandomZ(RandomMT & rng)
-    {
-        // Z is 63 bits and RandomMT is 32 bits so we have to concatenate two numbers together to make a Z value.
-        return ((uint64_t(rng()) << 32) | rng()) & 0x7fffffffffffffff;
-    }
-} // anonymous namespace
 
 ZHash::ZHash(Z z /* = EMPTY */)
     : value_(z)
@@ -128,7 +118,8 @@ bool ZHash::isUndefined() const
 
 ZHash::ZValueTable::ZValueTable()
 {
-    RandomMT rng(0);
+    std::mt19937_64 rng;
+    static_assert(sizeof(std::mt19937_64::result_type) == 8);
 
     // Generate piece values
 
@@ -140,7 +131,7 @@ ZHash::ZValueTable::ZValueTable()
             {
                 for (int m = 0; m < NUMBER_OF_PIECE_TYPES; ++m)
                 {
-                    pieceValues_[i][j][k][m] = generateRandomZ(rng);
+                    pieceValues_[i][j][k][m] = rng();
                 }
             }
         }
@@ -150,7 +141,7 @@ ZHash::ZValueTable::ZValueTable()
 
     for (auto & v : castleValues_)
     {
-        v = generateRandomZ(rng);
+        v = rng();
     }
 
     // Generate en passant values
@@ -159,17 +150,17 @@ ZHash::ZValueTable::ZValueTable()
     {
         for (int j = 0; j < Board::SIZE; ++j)
         {
-            enPassantValues_[i][j] = generateRandomZ(rng);
+            enPassantValues_[i][j] = rng();
         }
     }
 
     // Generate fifty-move rule value
 
-    fiftyValue_ = generateRandomZ(rng);
+    fiftyValue_ = rng();
 
     // Generate turn value
 
-    turnValue_ = generateRandomZ(rng);
+    turnValue_ = rng();
 }
 
 ZHash::Z ZHash::ZValueTable::pieceValue(int color, int type, int row, int column) const
