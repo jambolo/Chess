@@ -41,7 +41,8 @@ enum class Color;
 //!     4. En-passant possibility
 //!     5. Fifty-move rule
 //!     6. Number of moves (this is ignored because it is not useful and it interferes with transposition optimization)
-
+//!
+//! An important characteristic of a Zorbrist hash is that it is independent of the order of the changes made to reach the state.
 class ZHash
 {
 public:
@@ -55,16 +56,20 @@ public:
     //! The value of an empty board
     static Z constexpr EMPTY = 0;
 
-    // Constructor
-    explicit ZHash(Z z = EMPTY);
 
-    // Constructor
-    explicit ZHash(Board const & board,
-                   Color         turn,
-                   unsigned      castleStatus  = 0,
-                   Color         ePColor       = Color::INVALID,
-                   int           ePColumn      = -1,
-                   bool          fiftyMoveRule = false);
+    //! Constructor
+    explicit ZHash(Z z = EMPTY)
+        : value_(z)
+    {
+    }
+
+    //! Constructor
+    ZHash(Board const & board,
+          Color         turn,
+          unsigned      castleStatus  = 0,
+          Color         epColor       = Color::INVALID,
+          int           epColumn      = -1,
+          bool          fiftyMoveRule = false);
 
     //! Returns the current value.
     Z value() const { return value_; }
@@ -82,7 +87,7 @@ public:
     ZHash turn();
 
     //! Changes the ability to perform a castle. Returns the new value.
-    ZHash castle(unsigned mask);
+    ZHash castleAvailability(unsigned mask);
 
     //! Changes en passant status. Returns the new value.
     ZHash enPassant(Color color, int column);

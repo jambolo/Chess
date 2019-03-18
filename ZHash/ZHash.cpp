@@ -25,19 +25,14 @@
 
 ZHash::ZValueTable const ZHash::zValueTable_;
 
-ZHash::ZHash(Z z /* = EMPTY */)
-    : value_(z)
-{
-}
-
 ZHash::ZHash(Board const & board,
              Color         whoseTurn,
              unsigned      castleStatus /* = 0*/,
-             Color         ePColor /* = INVALID*/,
-             int           ePColumn /* = -1*/,
+             Color         epColor /* = INVALID*/,
+             int           epColumn /* = -1*/,
              bool          fiftyMoveRule /* = false */)
 {
-    value_ = 0;
+    value_ = EMPTY;
 
     for (int i = 0; i < Board::SIZE; ++i)
     {
@@ -53,10 +48,10 @@ ZHash::ZHash(Board const & board,
         turn();
 
     if (castleStatus != 0)
-        castle(castleStatus);
+        castleAvailability(castleStatus);
 
-    if ((ePColor != Color::INVALID) && (ePColumn >= 0))
-        enPassant(ePColor, ePColumn);
+    if ((epColor != Color::INVALID) && (epColumn >= 0))
+        enPassant(epColor, epColumn);
 
     if (fiftyMoveRule)
         fifty();
@@ -86,10 +81,10 @@ ZHash ZHash::turn()
     return *this;
 }
 
-ZHash ZHash::castle(unsigned mask)
+ZHash ZHash::castleAvailability(unsigned mask)
 {
-    assert(NUMBER_OF_CASTLE_BITS == 8);
-    assert(CASTLE_AVAILABILITY_MASK == 0xf0);
+    static_assert(NUMBER_OF_CASTLE_BITS == 8);
+    static_assert(CASTLE_AVAILABILITY_MASK == 0xf0);
     for (int i = 0; i < 4; ++i)
     {
         if (mask & (0x10 << i))
@@ -186,9 +181,4 @@ ZHash::Z ZHash::ZValueTable::fiftyValue() const
 ZHash::Z ZHash::ZValueTable::turnValue() const
 {
     return turnValue_;
-}
-
-bool operator ==(ZHash const & x, ZHash const & y)
-{
-    return x.value_ == y.value_;
 }
