@@ -105,12 +105,6 @@ ZHash ZHash::fifty()
     return *this;
 }
 
-bool ZHash::isUndefined() const
-{
-    // The value is undefined if the high order bit is set
-    return static_cast<int64_t>(value_) < 0;
-}
-
 ZHash::ZValueTable::ZValueTable()
 {
     std::mt19937_64 rng;
