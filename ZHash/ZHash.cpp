@@ -119,7 +119,7 @@ bool ZHash::isUndefined() const
 ZHash::ZValueTable::ZValueTable()
 {
     std::mt19937_64 rng;
-    static_assert(sizeof(std::mt19937_64::result_type) == 8);
+    static_assert(sizeof(std::mt19937_64::result_type) == 8, "The random number generator must generate 64 bits.");
 
     // Generate piece values
 
