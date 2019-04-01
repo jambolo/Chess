@@ -19,7 +19,7 @@ target_include_directories(ZHash
     PRIVATE ${PRIVATE_INCLUDE_PATHS}
 )
 
-target_link_libraries(ZHash Chess Misc)
+target_link_libraries(ZHash Chess Misc::Misc)
 source_group(Sources FILES ${SOURCES})
 
 if(${PROJECT_NAME}_BUILD_TESTS)

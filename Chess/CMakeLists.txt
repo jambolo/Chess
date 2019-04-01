@@ -52,9 +52,9 @@ target_include_directories(Chess
     PRIVATE ${PRIVATE_INCLUDE_PATHS}
 )
 
-target_link_libraries(Chess
+target_link_libraries(Chess PUBLIC
     GamePlayer
-    Misc
+    Misc::Misc
     nlohmann_json::nlohmann_json
     ZHash
 )

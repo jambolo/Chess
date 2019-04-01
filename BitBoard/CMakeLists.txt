@@ -18,11 +18,13 @@ target_include_directories(BitBoard
     PUBLIC ${PUBLIC_INCLUDE_PATHS}
     PRIVATE ${PRIVATE_INCLUDE_PATHS}
 )
-target_link_libraries(BitBoard Chess Misc)
+target_link_libraries(BitBoard PUBLIC
+    Chess
+    Misc::Misc
+)
 
 source_group(Sources FILES ${SOURCES})
 
 if(${PROJECT_NAME}_BUILD_TESTS)
     add_subdirectory(test)
 endif()
-

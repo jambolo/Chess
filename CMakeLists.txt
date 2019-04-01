@@ -8,6 +8,7 @@ project(ChessPlayer CXX)
 option(BUILD_SHARED_LIBS       "Build libraries as DLLs"                    FALSE)
 
 find_package(nlohmann_json REQUIRED)
+find_package(Misc REQUIRED)
 
 set(CHESS_PLAYER_INCLUDE_PATHS
     .
@@ -24,7 +25,7 @@ source_group(Sources FILES ${CHESS_PLAYER_SOURCES})
 
 add_executable(chess_player ${CHESS_PLAYER_SOURCES})
 target_include_directories(chess_player PRIVATE ${CHESS_PLAYER_INCLUDE_PATHS})
-target_link_libraries(chess_player PRIVATE
+target_link_libraries(chess_player PUBLIC
     Chess
     GamePlayer
     nlohmann_json::nlohmann_json
@@ -42,7 +43,5 @@ target_compile_definitions(chess_player
 add_subdirectory(BitBoard)
 add_subdirectory(Chess)
 add_subdirectory(GamePlayer)
-add_subdirectory(Misc)
 add_subdirectory(OpeningProcessor)
 add_subdirectory(ZHash)
-

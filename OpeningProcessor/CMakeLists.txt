@@ -9,7 +9,7 @@ set(PROCESS_ECO_INCLUDE_PATHS
 )
 
 add_executable(process_eco ${PROCESS_ECO_SOURCES})
-target_link_libraries(process_eco
+target_link_libraries(process_eco PUBLIC
     Chess
     nlohmann_json::nlohmann_json
 )
