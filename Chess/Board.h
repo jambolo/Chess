@@ -1,7 +1,7 @@
-#pragma once
+#if !defined(CHESS_BOARD)
+#define CHESS_BOARD
 
-#if !defined(Board_h__)
-#define Board_h__
+#pragma once
 
 #include "Chess/Types.h"
 #include <string>
@@ -76,4 +76,4 @@ private:
 // Returns true if the other board is the same as this one
 bool operator ==(Board const & x, Board const & y);
 
-#endif // !defined(Board_h__)
+#endif // !defined(CHESS_BOARD)

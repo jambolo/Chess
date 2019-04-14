@@ -1,14 +1,14 @@
 cmake_minimum_required (VERSION 3.10)
-project(ChessPlayer CXX)
+project(ChessPlayer VERSION 1.0.0 LANGUAGES CXX)
 
-#set(Chess_VERSION_MAJOR 0)
-#set(Chess_VERSION_MINOR 1)
-#configure_file("${PROJECT_SOURCE_DIR}/Version.h.in" "${PROJECT_BINARY_DIR}/Version.h")
 
-option(BUILD_SHARED_LIBS       "Build libraries as DLLs"                    FALSE)
+option(BUILD_SHARED_LIBS "Build libraries as DLLs" FALSE)
 
-find_package(nlohmann_json REQUIRED)
-find_package(Misc REQUIRED)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    find_package(nlohmann_json REQUIRED)
+    find_package(Misc REQUIRED)
+#    find_package(GamePlayer REQUIRED)
+endif()
 
 set(CHESS_PLAYER_INCLUDE_PATHS
     .
@@ -39,6 +39,8 @@ target_compile_definitions(chess_player
         -D_SECURE_SCL=0
         -D_SCL_SECURE_NO_WARNINGS
 )
+
+#configure_file("${PROJECT_SOURCE_DIR}/Version.h.in" "${PROJECT_BINARY_DIR}/Version.h")
 
 add_subdirectory(BitBoard)
 add_subdirectory(Chess)

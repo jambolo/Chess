@@ -1,7 +1,7 @@
-#pragma once
+#if !defined(CHESS_PIECE_H)
+#define CHESS_PIECE_H
 
-#if !defined(Piece_h__)
-#define Piece_h__
+#pragma once
 
 #include "Chess/Types.h"
 #include <vector>
@@ -84,4 +84,4 @@ inline Piece const * Piece::get(PieceTypeId id, Color color)
     return (id != PieceTypeId::INVALID) ? pieces_[1 + (int)color * NUMBER_OF_PIECE_TYPES + (int)id] : NO_PIECE;
 }
 
-#endif // !defined(Piece_h__)
+#endif // !defined(CHESS_PIECE_H)

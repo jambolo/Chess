@@ -1,7 +1,7 @@
-#pragma once
+#if !defined(CHESS_MOVE_H)
+#define CHESS_MOVE_H
 
-#if !defined(Move_h__)
-#define Move_h__
+#pragma once
 
 #include "Chess/Position.h"
 #include "Chess/Types.h"
@@ -142,4 +142,4 @@ private:
     Special special_;       // Kind of move
 };
 
-#endif // !defined(Move_h__)
+#endif // !defined(CHESS_MOVE_H)

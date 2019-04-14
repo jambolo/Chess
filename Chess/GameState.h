@@ -1,7 +1,7 @@
-#pragma once
-
 #if !defined(CHESS_GAMESTATE_H)
 #define CHESS_GAMESTATE_H
+
+#pragma once
 
 #include "Board.h"
 #include "GamePlayer/GameState.h"
@@ -22,52 +22,58 @@ public:
 
     GameState() = default;
     GameState(Board const & board,
-              Color         whoseTurn_,
+              Color         who,
               CastleStatus  castleStatus,
               int           fiftyMoveTimer,
               Move const &  move,
               bool          inCheck,
               int           moveNumber);
 
-    // Resets the game
+    //! Resets the game
     void initialize();
 
+    //! Resets the game to the state specified by the FEN string
     bool initializeFromFen(char const * fen);
 
-    virtual uint64_t fingerprint() const override { return zhash_.value(); }
-    virtual void generateResponses(int depth, std::vector<GamePlayer::GameState *> & responses) const override;
-    virtual PlayerId whoseTurn() const override { return (whoseTurn_ == Color::WHITE) ? PlayerId::FIRST : PlayerId::SECOND; }
+    //!@{
+    //! @name Overrides Gameplayer::GameState
 
-    // Returns true if a castle is allowed
+    uint64_t fingerprint() const override { return zhash_.value(); }
+    void generateResponses(int depth, std::vector<GamePlayer::GameState *> & responses) const override;
+    PlayerId whoseTurn() const override   { return (whoseTurn_ == Color::WHITE) ? PlayerId::FIRST : PlayerId::SECOND; }
+
+    //!@}
+
+    //! Returns true if a castle is allowed
     bool castleIsAllowed(Color c) const;
 
-    // Returns true if a king-side castle is allowed
+    //! Returns true if a king-side castle is allowed
     bool kingSideCastleIsAllowed(Color c) const;
 
-    // Returns true if a queen-side castle is allowed
+    //! Returns true if a queen-side castle is allowed
     bool queenSideCastleIsAllowed(Color c) const;
 
-    // Returns true if a piece of the specified color can occupy the position
+    //! Returns true if a piece of the specified color can occupy the position
     bool canBeOccupied(Position const & p, Color myColor) const;
 
-    // Returns the Z hash for this state
+    //! Returns the Z hash for this state
     ZHash zhash() const;
 
-    // Updates the game state with the specified move
+    //! Updates the game state with the specified move
     void makeMove(Move const & move);
 
-    // Returns the FEN string for the state
+    //! Returns the FEN string for the state
     std::string fen() const;
 
-    Board board_;               // The board
-    Color whoseTurn_;           // Whose turn
-    CastleStatus castleStatus_; // Which side has castled and which castles are still possible
-    int fiftyMoveTimer_;        // Fifty move rule countdown
-    Position enPassant_;        // En passant target if any
-    Move move_;                 // The move that resulted in this state
-    bool inCheck_;              // True if the king is in check
-    int moveNumber_;            // Move number
-    ZHash zhash_;               // Zobrist hash for this state
+    Board board_;               //!< The board
+    Color whoseTurn_;           //!< Whose turn
+    CastleStatus castleStatus_; //!< Which side has castled and which castles are still possible
+    int fiftyMoveTimer_;        //!< Fifty move rule countdown
+    Position enPassant_;        //!< En passant target if any
+    Move move_;                 //!< The move that resulted in this state
+    bool inCheck_;              //!< True if the king is in check
+    int moveNumber_;            //!< Move number
+    ZHash zhash_;               //!< Zobrist hash for this state
 
 #if defined(ANALYSIS_GAME_STATE)
     struct AnalysisData

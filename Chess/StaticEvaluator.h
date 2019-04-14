@@ -1,7 +1,7 @@
-#pragma once
-
 #if !defined(CHESS_STATICEVALUATOR_H)
 #define CHESS_STATICEVALUATOR_H
+
+#pragma once
 
 #include "GamePlayer/StaticEvaluator.h"
 
@@ -20,9 +20,14 @@ public:
     // The absolute value of threshold at which the evaluator recommends resignation (down by 1 of each major piece)
     static float constexpr RESIGNATION_THRESHOLD = 20000.0f;
 
-    virtual float evaluate(GamePlayer::GameState const & state) const override;
-    virtual float firstPlayerWins() const override  { return CHECKMATE_VALUE; }
-    virtual float secondPlayerWins() const override { return -CHECKMATE_VALUE; }
+    //!@{
+    //! @name Overrides GamePlayer::StaticEvaluator
+
+    float evaluate(GamePlayer::GameState const & state) const override;
+    float firstPlayerWins() const override  { return CHECKMATE_VALUE; }
+    float secondPlayerWins() const override { return -CHECKMATE_VALUE; }
+
+    //!@}
 
 #if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
     // Returns a value for the game state based on the move and its current value

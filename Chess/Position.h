@@ -1,7 +1,7 @@
-#pragma once
+#if !defined(CHESS_POSITION_H)
+#define CHESS_POSITION_H
 
-#if !defined(Position_h__)
-#define Position_h__
+#pragma once
 
 #include <string>
 
@@ -33,4 +33,4 @@ inline bool operator ==(Position const & a, Position const & b)
     return a.row == b.row && a.column == b.column;
 }
 
-#endif // !defined(Position_h__)
+#endif // !defined(CHESS_POSITION_H)

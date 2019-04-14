@@ -1,7 +1,7 @@
-#pragma once
+#if !defined(CHESS_PAWN_H)
+#define CHESS_PAWN_H
 
-#if !defined(Pawn_h__)
-#define Pawn_h__
+#pragma once
 
 #include "Piece.h"
 
@@ -14,20 +14,25 @@ public:
 
     explicit Pawn(Color c) : Piece(PieceTypeId::PAWN, c) {}
 
+    //!@{
+    //! @name Overrides Piece
+
     // Generates all legal moves for this piece
-    virtual void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const override;
+    void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const override;
 
     // Counts the number of legal moves for this piece
-    virtual int countPossibleMoves(GameState const & state, Position const & from) const override;
+    int countPossibleMoves(GameState const & state, Position const & from) const override;
 
     // Counts the number of legal moves for this piece
-    virtual int countThreats(GameState const & state, Position const & from) const override;
+    int countThreats(GameState const & state, Position const & from) const override;
 
     // Returns true if the move is valid
-    virtual bool isValidMove(GameState const & state, Move const & move) const override;
+    bool isValidMove(GameState const & state, Move const & move) const override;
+
+    //!@}
 
 private:
     static int constexpr MAX_POSSIBLE_MOVES = 6; // The maximum number of possible moves for a pawn
 };
 
-#endif // !defined(Pawn_h__)
+#endif // !defined(CHESS_PAWN_H)

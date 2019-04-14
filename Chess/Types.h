@@ -1,7 +1,7 @@
-#pragma once
-
 #if !defined(CHESS_TYPES_H)
 #define CHESS_TYPES_H
+
+#pragma once
 
 enum class Color
 {

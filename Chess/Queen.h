@@ -1,7 +1,7 @@
-#pragma once
+#if !defined(CHESS_QUEEN_H)
+#define CHESS_QUEEN_H
 
-#if !defined(Queen_h__)
-#define Queen_h__
+#pragma once
 
 #include "Piece.h"
 
@@ -10,6 +10,9 @@ class Queen : public Piece
 public:
 
     explicit Queen(Color c) : Piece(PieceTypeId::QUEEN, c) {}
+
+    //!@{
+    //! @name Overrides Piece
 
     // Generates all legal moves for this piece
     virtual void generatePossibleMoves(GameState const & state, Position const & from, MoveList & moves) const override;
@@ -23,8 +26,10 @@ public:
     // Returns true if the move is valid
     virtual bool isValidMove(GameState const & state, Move const & move) const override;
 
+    //!@}
+
 private:
     static int constexpr MAX_POSSIBLE_MOVES = 28; // The maximum number of possible moves for a queen
 };
 
-#endif // !defined(Queen_h__)
+#endif // !defined(CHESS_QUEEN_H)
