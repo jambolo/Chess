@@ -11,28 +11,28 @@
 #include "StaticEvaluator.h"
 #endif
 
-#include <Misc/Exceptions.h>
 #include <Misc/Etc.h>
+#include <Misc/Exceptions.h>
 #include <nlohmann/json.hpp>
 #include <regex>
 
 using json = nlohmann::json;
 
 GameState::GameState(Board const & board,
-                     Color         whoseTurn,
+                     Color         who,
                      CastleStatus  castleStatus,
                      int           fiftyMoveTimer,
                      Move const &  move,
                      bool          inCheck,
                      int           moveNumber)
     : board_(board)
-    , whoseTurn_(whoseTurn)
+    , whoseTurn_(who)
     , castleStatus_(castleStatus)
     , fiftyMoveTimer_(fiftyMoveTimer)
     , move_(move)
     , inCheck_(inCheck)
     , moveNumber_(moveNumber)
-    , zhash_(board, whoseTurn)
+    , zhash_(board, who)
 {
 }
 
@@ -93,47 +93,6 @@ bool GameState::initializeFromFen(char const * fen)
     zhash_   = ZHash(board_, whoseTurn_);
 
     return true;
-}
-
-void GameState::generateResponses(int depth, std::vector<GamePlayer::GameState *> & responses) const
-{
-    int constexpr MAX_POSSIBLE_STATES = 147;
-
-    std::vector<GamePlayer::GameState *> rv;
-    rv.reserve(MAX_POSSIBLE_STATES);
-
-    // For each square on the board, if it contains a piece on the side whose turn it is, generate all the possible
-    // moves for it and add the resulting game states to responses list.
-    Position p(0, 0);
-    for (p.row = 0; p.row < Board::SIZE; p.row++)
-    {
-        for (p.column = 0; p.column < Board::SIZE; p.column++)
-        {
-            Piece const * piece = board_.pieceAt(p);
-
-            if (piece && (piece->color() == whoseTurn_))
-            {
-                Piece::MoveList moves;
-                piece->generatePossibleMoves(*this, p, moves);
-
-                // Convert the moves into new states and put the new states into the state list
-                for (auto const & move : moves)
-                {
-                    GameState * newState = new GameState(*this);
-                    newState->makeMove(move);
-
-#if defined(FEATURE_PRIORITIZED_MOVE_ORDERING)
-                    // Determine the new state's priority
-                    newState.priority_ = prioritize(newState, depth);
-#endif
-
-                    // Save the new state
-                    rv.push_back(newState);
-                }
-            }
-        }
-    }
-    responses = std::move(rv);
 }
 
 bool GameState::castleIsAllowed(Color c) const

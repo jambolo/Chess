@@ -39,7 +39,6 @@ public:
     //! @name Overrides Gameplayer::GameState
 
     uint64_t fingerprint() const override { return zhash_.value(); }
-    void generateResponses(int depth, std::vector<GamePlayer::GameState *> & responses) const override;
     PlayerId whoseTurn() const override   { return (whoseTurn_ == Color::WHITE) ? PlayerId::FIRST : PlayerId::SECOND; }
 
     //!@}

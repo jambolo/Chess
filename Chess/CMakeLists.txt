@@ -23,6 +23,8 @@ set(SOURCES
     Knight.h
     Move.cpp
     Move.h
+    ResponseGenerator.cpp
+    ResponseGenerator.h
     Pawn.cpp
     Pawn.h
     Piece.cpp
