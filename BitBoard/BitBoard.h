@@ -27,10 +27,12 @@ class BitBoard
 {
 public:
 
-    //! Number of squares on a bit board
-    static int constexpr SIZE = 64;
     static int constexpr SQUARES_PER_ROW    = 8;
     static int constexpr SQUARES_PER_COLUMN = 8;
+    static int constexpr SIZE               = SQUARES_PER_ROW * SQUARES_PER_COLUMN;
+    static unsigned constexpr ROW_MASK      = (1 << SQUARES_PER_ROW) - 1;
+
+
 
     enum Piece
     {
@@ -95,7 +97,7 @@ public:
     //! @note	En passant is included.
     //! @note   Assumes playing black (which only matters for pawns)
 
-    static BitBoard threatened(int type, int r, int c, BitBoard friends, BitBoard foes);
+    static BitBoard threatened(int type, int r, int c, const BitBoard& friends, const BitBoard& foes);
 
     //! Returns a BitBoard showing all squares that a piece at a position can move to, assuming it isn't blocked.
     //!
@@ -131,7 +133,7 @@ public:
     //! @note   Castling is not considered
     //! @note   Assumes playing black (which only matters for pawns)
 
-    static BitBoard destinations(int type, int r, int c, BitBoard friends, BitBoard foes);
+    static BitBoard destinations(int type, int r, int c, const BitBoard& friends, const BitBoard& foes);
 
 private:
 
@@ -141,19 +143,14 @@ private:
     // Returns the row and column for the given index
     static void rowAndColumn(int index, int & r, int & c) { r = index / SQUARES_PER_ROW; c = index % SQUARES_PER_ROW; }
 
+    // Returns a mask for the square at the given row and column
+    static uint64_t mask(int r, int c) { return (uint64_t)1 << index(r, c); }
+
     // Returns the contents of the given row
-    unsigned row(int r) const { return unsigned((board_ >> (SQUARES_PER_ROW * r)) & ((1 << SQUARES_PER_ROW) - 1)); }
+    unsigned row(int r) const { return unsigned((board_ >> (SQUARES_PER_ROW * r)) & ROW_MASK); }
 
     // Returns the contents of the given column
     unsigned column(int c) const;
-
-    // Returns the contents of the diagonal along pi/8
-    unsigned diagonal1(int r, int c) const;
-
-    // Returns the contents of the diagonal along 3*pi/8
-    unsigned diagonal3(int r, int c) const;
-
-    static uint64_t mask(int r, int c) { return (uint64_t)1 << index(r, c); }
 
     uint64_t board_;
 };

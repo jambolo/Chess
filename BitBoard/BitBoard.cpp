@@ -20,6 +20,8 @@
 
 namespace
 {
+
+// Precomputed tables of threatened squares for each piece on an empty board
 uint64_t const s_threatened[BitBoard::NUMBER_OF_PIECES][BitBoard::SIZE] =
 {
     // KING
@@ -138,7 +140,8 @@ uint64_t const s_threatened[BitBoard::NUMBER_OF_PIECES][BitBoard::SIZE] =
     }
 };
 
-// NOTE: s_destinations[] is the same as s_threatened[], except for pawns
+// Precomputed tables of destination squares for each piece on an empty board
+// NOTE: s_destinations[] should be the same as s_threatened[], except for pawns
 uint64_t const s_destinations[BitBoard::NUMBER_OF_PIECES][BitBoard::SIZE] =
 {
     // KING
@@ -257,8 +260,8 @@ uint64_t const s_destinations[BitBoard::NUMBER_OF_PIECES][BitBoard::SIZE] =
     }
 };
 
-uint64_t s_blockedRowsAndColumns[BitBoard::SIZE][BitBoard::SIZE];
-uint64_t s_blockedDiagonals[BitBoard::SIZE][BitBoard::SIZE];
+uint64_t s_blockedRowsAndColumns[BitBoard::SIZE][BitBoard::SIZE];   //! BUG: Uninitialized
+uint64_t s_blockedDiagonals[BitBoard::SIZE][BitBoard::SIZE];        //! BUG: Uninitialized
 } // anonymous namespace
 
 void BitBoard::flip()
@@ -278,10 +281,10 @@ unsigned BitBoard::column(int c) const
 {
     unsigned result = 0;
     uint64_t temp   = board_ >> c;
-    for (unsigned r = 1; r < 0x100; r <<= 1)
+    for (unsigned r = 1; r < (1 << SQUARES_PER_COLUMN); r <<= 1)
     {
-        result |= unsigned(temp & 0xff) & r;
-        temp  >>= 7;
+        result |= unsigned(temp & ROW_MASK) & r;
+        temp  >>= SQUARES_PER_ROW;
     }
     return result;
 }
@@ -296,7 +299,7 @@ BitBoard BitBoard::threatened(int type, int r, int c)
     return BitBoard(s_threatened[type][from]);
 }
 
-BitBoard BitBoard::threatened(int type, int r, int c, BitBoard friends, BitBoard foes)
+BitBoard BitBoard::threatened(int type, int r, int c, const BitBoard& friends, const BitBoard& foes)
 {
     assert(type >= KING && type <= PAWN);
     assert(r >= 0 && r < SQUARES_PER_ROW);
@@ -305,15 +308,14 @@ BitBoard BitBoard::threatened(int type, int r, int c, BitBoard friends, BitBoard
     int from = index(r, c);
 
     // First get the uninhibited movement
-
     uint64_t rv = s_threatened[type][from];
 
     // Remove blocked squares (for certain pieces)
-
     uint64_t blockers = uint64_t(friends) | uint64_t(foes);
 
-    if (type == QUEEN)
+    switch (type)
     {
+    case QUEEN:
         for (int i = 0; i < SIZE; ++i)
         {
             if (blockers & 1)
@@ -323,25 +325,29 @@ BitBoard BitBoard::threatened(int type, int r, int c, BitBoard friends, BitBoard
             }
             blockers >>= 1;
         }
-    }
-    else if (type == ROOK)
-    {
+        break;
+    case ROOK:
         for (int i = 0; i < SIZE; ++i)
         {
             if (blockers & 1)
                 rv &= ~s_blockedRowsAndColumns[from][i];
             blockers >>= 1;
         }
-    }
-    else if (type == BISHOP)
-    {
+        break;
+    case BISHOP:
         for (int i = 0; i < SIZE; ++i)
         {
             if (blockers & 1)
                 rv &= ~s_blockedDiagonals[from][i];
             blockers >>= 1;
         }
+        break;
+    default:
+        break;
     }
+
+    // Remove squares occupied by friends
+    rv &= ~uint64_t(friends);
 
     return BitBoard(rv);
 }
@@ -357,7 +363,7 @@ BitBoard BitBoard::destinations(int type, int r, int c)
     return BitBoard(s_destinations[type][from]);
 }
 
-BitBoard BitBoard::destinations(int type, int r, int c, BitBoard friends, BitBoard foes)
+BitBoard BitBoard::destinations(int type, int r, int c, const BitBoard& friends, const BitBoard& foes)
 {
     assert(type >= KING && type <= PAWN);
     assert(r >= 0 && r < SQUARES_PER_ROW);
@@ -366,15 +372,14 @@ BitBoard BitBoard::destinations(int type, int r, int c, BitBoard friends, BitBoa
     int from = index(r, c);
 
     // First get the uninhibited movement
-
     uint64_t rv =  s_destinations[type][from];
 
     // Remove blocked squares (for certain pieces)
-
     uint64_t blockers = uint64_t(friends) | uint64_t(foes);
 
-    if (type == QUEEN)
+    switch (type)
     {
+    case QUEEN:
         for (int i = 0; i < SIZE; ++i)
         {
             if (blockers & 1)
@@ -384,25 +389,30 @@ BitBoard BitBoard::destinations(int type, int r, int c, BitBoard friends, BitBoa
             }
             blockers >>= 1;
         }
-    }
-    else if (type == ROOK || type == PAWN)
-    {
+        break;
+    case ROOK:
+    case PAWN:
         for (int i = 0; i < SIZE; ++i)
         {
             if (blockers & 1)
                 rv &= ~s_blockedRowsAndColumns[from][i];
             blockers >>= 1;
         }
-    }
-    else if (type == BISHOP)
-    {
+        break;
+    case BISHOP:
         for (int i = 0; i < SIZE; ++i)
         {
             if (blockers & 1)
                 rv &= ~s_blockedDiagonals[from][i];
             blockers >>= 1;
         }
+        break;
+    default:
+        break;
     }
+
+    // Remove squares occupied by friends
+    rv &= ~uint64_t(friends);
 
     return BitBoard(rv);
 }

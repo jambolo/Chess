@@ -74,26 +74,26 @@ public:
     //! Returns the current value.
     Z value() const { return value_; }
 
-    //! Adds a piece. Returns the new value
-    ZHash add(Piece const * piece, Position const & position);
+    //! Adds a piece. Returns a reference to itself
+    ZHash & add(Piece const * piece, Position const & position);
 
-    //! Removes a piece. Returns the new value.
-    ZHash remove(Piece const * piece, Position const & position);
+    //! Removes a piece. Returns a reference to itself.
+    ZHash & remove(Piece const * piece, Position const & position);
 
     //! Removes a piece at the 'from' position and adds it to the 'to' position
-    ZHash move(Piece const * piece, Position const & from, Position const & to);
+    ZHash & move(Piece const * piece, Position const & from, Position const & to);
 
-    //! Changes whose turn. Returns the new value.
-    ZHash turn();
+    //! Changes whose turn. Returns a reference to itself.
+    ZHash & turn();
 
-    //! Changes the ability to perform a castle. Returns the new value.
-    ZHash castleAvailability(unsigned mask);
+    //! Changes the ability to perform a castle. Returns a reference to itself.
+    ZHash & castleAvailability(unsigned mask);
 
-    //! Changes en passant status. Returns the new value.
-    ZHash enPassant(Color color, int column);
+    //! Changes en passant status. Returns a reference to itself.
+    ZHash & enPassant(Color color, int column);
 
     //! Changes the state of the fifty-move rule (it either now applies to the next move or it doesn't)
-    ZHash fifty();
+    ZHash & fifty();
 
     // Returns true if the value is undefined (i.e. not a legal Z value)
     bool isUndefined() const { return value_ == UNDEFINED; }

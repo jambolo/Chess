@@ -78,7 +78,7 @@ nlohmann::json ComputerPlayer::AnalysisData::toJson() const
 #if defined(ANALYSIS_GAME_TREE)
         , { "gameTree", gameTreeAnalysisData.toJson() }
 #endif
-#if defined(ANALYSIS_GAME_TREE)
+#if defined(ANALYSIS_TRANSPOSITION_TABLE)
         , { "transpositionTable", ttAnalysisData.toJson() }
 #endif
     };

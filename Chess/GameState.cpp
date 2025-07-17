@@ -32,7 +32,7 @@ GameState::GameState(Board const & board,
     , move_(move)
     , inCheck_(inCheck)
     , moveNumber_(moveNumber)
-    , zhash_(board, who)
+    , zhash_(board, who, castleStatus)  // @todo this is not correct because en passant and the fifty-move timer are part of the state, too
 {
 }
 
@@ -74,7 +74,7 @@ bool GameState::initializeFromFen(char const * fen)
     // Extract the en passant target square
     Position enpassant;
     end = strchr(start, ' ');
-    if (!end && !enpassant.initializeFromFen(start, end))
+    if (!end || !enpassant.initializeFromFen(start, end))
         return false;
     start = end + 1;
 
