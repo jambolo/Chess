@@ -46,9 +46,7 @@ public:
     };
     static int constexpr NUMBER_OF_PIECES = PAWN - KING + 1;
 
-    BitBoard() = default;
-
-    explicit BitBoard(uint64_t i) : board_(i) {}
+    explicit BitBoard(uint64_t i = 0) : board_(i) {}
 
     //! Converts the bitboard to a uint64_t
     operator uint64_t() const { return board_; }
