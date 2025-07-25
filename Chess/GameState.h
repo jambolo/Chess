@@ -6,7 +6,7 @@
 #include "Board.h"
 #include "GamePlayer/GameState.h"
 #include "Move.h"
-#include "ZHash/ZHash.h"
+#include "ZHash.h"
 #include <nlohmann/json.hpp>
 #include <queue>
 #include <vector>

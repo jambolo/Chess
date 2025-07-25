@@ -16,9 +16,9 @@
 
 #include "ZHash.h"
 
-#include "Chess/Board.h"
-#include "Chess/Piece.h"
-#include "Chess/Position.h"
+#include "Board.h"
+#include "Piece.h"
+#include "Position.h"
 
 #include <cassert>
 #include <random>

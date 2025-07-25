@@ -1,9 +1,9 @@
 #include "gtest/gtest.h"
-#include "ZHash/ZHash.h"
 #include "Chess/Board.h"
 #include "Chess/Piece.h"
 #include "Chess/Position.h"
 #include "Chess/Types.h"
+#include "Chess/ZHash.h"
 
 TEST(ZHashTest, Constructor)
 {

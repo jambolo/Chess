@@ -4,8 +4,7 @@
 #include "Move.h"
 #include "Piece.h"
 #include "Types.h"
-
-#include "ZHash/ZHash.h"
+#include "ZHash.h"
 
 #if defined(FEATURE_INCREMENTAL_STATIC_EVALUATION)
 #include "StaticEvaluator.h"

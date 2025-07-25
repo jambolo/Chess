@@ -1,47 +1,60 @@
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required(VERSION 3.21)
 
-set(SOURCES
-    BitBoard.cpp
-    BitBoard.h
+add_library(BitBoard)
+
+set_target_properties(BitBoard PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
 )
 
-set(PRIVATE_INCLUDE_PATHS
-    .
+target_sources(BitBoard
+    PRIVATE
+        BitBoard.cpp
+    PUBLIC
+        FILE_SET HEADERS 
+        BASE_DIRS ${CMAKE_SOURCE_DIR}
+        FILES BitBoard.h
 )
 
-set(PUBLIC_INCLUDE_PATHS
-    ${CMAKE_SOURCE_DIR}
-)
-
-add_library(BitBoard ${SOURCES})
 target_include_directories(BitBoard
-    PUBLIC ${PUBLIC_INCLUDE_PATHS}
-    PRIVATE ${PRIVATE_INCLUDE_PATHS}
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>
+        $<INSTALL_INTERFACE:include>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
 )
-target_link_libraries(BitBoard PUBLIC
-    Chess
+
+target_link_libraries(BitBoard 
+    PUBLIC
     Misc::Misc
 )
 
-source_group(Sources FILES ${SOURCES})
+add_library(BitBoard::BitBoard ALIAS BitBoard)
 
+# Source grouping for IDEs
+get_target_property(BITBOARD_SOURCES BitBoard SOURCES)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${BITBOARD_SOURCES})
 
 #########################################################################
 # Documentation                                                         #
 #########################################################################
 
-set(${PROJECT_NAME}_DOXYGEN_OUTPUT_DIRECTORY "" CACHE PATH "Doxygen output directory (empty to disable)")
-if(${PROJECT_NAME}_DOXYGEN_OUTPUT_DIRECTORY)
-    find_package(Doxygen)
+option(BITBOARD_BUILD_DOCS "Build BitBoard documentation" OFF)
+
+if(BITBOARD_BUILD_DOCS)
+    find_package(Doxygen QUIET)
     if(DOXYGEN_FOUND)
-        set(DOXYGEN_OUTPUT_DIRECTORY ${${PROJECT_NAME}_DOXYGEN_OUTPUT_DIRECTORY})
-        configure_file(Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)
-        add_custom_target(doxygen ALL ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/Doxyfile
-            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-            COMMENT "Generating API documentation with Doxygen" VERBATIM
-            SOURCES ${PROJECT_BINARY_DIR}/Doxyfile
+        set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs)
+        configure_file(Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+        add_custom_target(BitBoard_docs 
+            ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            COMMENT "Generating BitBoard API documentation with Doxygen"
+            VERBATIM
+            SOURCES ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         )
-    endif(DOXYGEN_FOUND)
+    endif()
 endif()
 
 #########################################################################

@@ -19,8 +19,8 @@
 #if !defined(ZHash_h__)
 #define ZHash_h__
 
-#include "Chess/Board.h"
-#include "Chess/Types.h"
+#include "Board.h"
+#include "Types.h"
 #include <cstdint>
 
 class Piece;

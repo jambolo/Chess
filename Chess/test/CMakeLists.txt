@@ -1,30 +1,34 @@
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required(VERSION 3.21)
 
-set(GTEST_ROOT "" CACHE PATH "Location of GTest")
-find_package(GTest REQUIRED)
+find_package(GTest REQUIRED CONFIG)
 include(GoogleTest)
 
-add_definitions(
-    -DNOMINMAX
-    -DWIN32_LEAN_AND_MEAN
-    -DVC_EXTRALEAN
-    -D_CRT_SECURE_NO_WARNINGS
-    -D_SECURE_SCL=0
-    -D_SCL_SECURE_NO_WARNINGS
-)
+# Function to create test executables
+function(add_test test_name source_file)
+    add_executable(${test_name} ${source_file})
+    set_target_properties(${test_name} PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF
+    )
+    target_link_libraries(${test_name} 
+        PRIVATE 
+            Chess::Chess
+            GTest::gtest
+            GTest::gtest_main
+    )
+    gtest_discover_tests(${test_name})
+    message(STATUS "Added test executable: ${test_name}")
+endfunction()
 
 set(SOURCES
-    test-Placeholder.cpp
+    test-ZHash.cpp
 )
 
 message(STATUS "Building tests for Chess")
 
-foreach(FILE ${SOURCES})
-    get_filename_component(TEST ${FILE} NAME_WE)
-    set(TEST_EXE "Chess_${TEST}")
-    add_executable(${TEST_EXE} ${FILE})
-    target_link_libraries(${TEST_EXE} PRIVATE Chess GTest::GTest GTest::Main)
-    gtest_discover_tests(${TEST_EXE})
-    target_compile_features(${TEST_EXE} PRIVATE cxx_std_17)
-    set_target_properties(${TEST_EXE} PROPERTIES CXX_EXTENSIONS OFF)
+# Create test executables
+foreach(SOURCE ${SOURCES})
+    get_filename_component(TEST_NAME ${SOURCE} NAME_WE)
+    add_test("Chess_${TEST_NAME}" ${SOURCE})
 endforeach()
