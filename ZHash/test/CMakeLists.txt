@@ -17,10 +17,13 @@ set(SOURCES
     test-ZHash.cpp
 )
 
+message(STATUS "Building tests for ZHash")
+
 foreach(FILE ${SOURCES})
     get_filename_component(TEST ${FILE} NAME_WE)
-    set(TEST_EXE "${PROJECT_NAME}_${TEST}")
+    set(TEST_EXE "ZHash_${TEST}")
     add_executable(${TEST_EXE} ${FILE})
+    message(STATUS "Adding test executable: ${TEST_EXE}")
     target_link_libraries(${TEST_EXE} PRIVATE ZHash GTest::GTest GTest::Main)
     gtest_discover_tests(${TEST_EXE})
     target_compile_features(${TEST_EXE} PRIVATE cxx_std_17)

@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.4)
+cmake_minimum_required (VERSION 3.10)
 
 set(SOURCES
     ZHash.cpp
@@ -49,10 +49,6 @@ endif()
 # Testing                                                               #
 #########################################################################
 
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    include(CTest)
-    message(STATUS "Testing is enabled. Turn on BUILD_TESTING to build tests.")
-    if(BUILD_TESTING)
-        add_subdirectory(test)
-    endif()
+if(BUILD_TESTING)
+    add_subdirectory(test)
 endif()

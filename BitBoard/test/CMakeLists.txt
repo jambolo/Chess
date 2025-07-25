@@ -14,13 +14,16 @@ add_definitions(
 )
 
 set(SOURCES
-    test-Bitboard.cpp
+    test-BitBoard.cpp
 )
+
+message(STATUS "Building tests for BitBoard")
 
 foreach(FILE ${SOURCES})
     get_filename_component(TEST ${FILE} NAME_WE)
-    set(TEST_EXE "${PROJECT_NAME}_${TEST}")
+    set(TEST_EXE "BitBoard_${TEST}")
     add_executable(${TEST_EXE} ${FILE})
+    message(STATUS "Adding test executable: ${TEST_EXE}")
     target_link_libraries(${TEST_EXE} PRIVATE BitBoard GTest::GTest GTest::Main)
     gtest_discover_tests(${TEST_EXE})
     target_compile_features(${TEST_EXE} PRIVATE cxx_std_17)

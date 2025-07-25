@@ -118,9 +118,3 @@ TEST(BitBoardTest, Destinations_blockers)
     EXPECT_EQ(queenDest.test(3, 4), 0);
 #endif
 }
-
-int main(int argc, char **argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

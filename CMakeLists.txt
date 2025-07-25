@@ -42,6 +42,18 @@ target_compile_definitions(chess_player
 
 #configure_file("${PROJECT_SOURCE_DIR}/Version.h.in" "${PROJECT_BINARY_DIR}/Version.h")
 
+#########################################################################
+# Testing                                                               #
+#########################################################################
+
+include(CTest)
+enable_testing()
+message(STATUS "Testing is enabled. Turn on BUILD_TESTING to build tests.")
+
+#########################################################################
+# Libraries                                                             #
+#########################################################################
+
 add_subdirectory(BitBoard)
 add_subdirectory(Chess)
 add_subdirectory(GamePlayer)
