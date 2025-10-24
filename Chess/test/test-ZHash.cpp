@@ -5,7 +5,10 @@
 #include "Chess/Types.h"
 #include "Chess/ZHash.h"
 
-TEST(ZHashTest, Constructor)
+namespace Chess
+{
+
+TEST(ZHash, Constructor)
 {
     ZHash hash_default;
     EXPECT_EQ(hash_default.value(), ZHash::EMPTY);
@@ -15,7 +18,7 @@ TEST(ZHashTest, Constructor)
     EXPECT_EQ(hash_value.value(), 12345);
 }
 
-TEST(ZHashTest, Constructor_board)
+TEST(ZHash, Constructor_board)
 {
     // I don't have a good way to test this because the values are random. Just test that it is not empty.
     Board board;
@@ -24,7 +27,7 @@ TEST(ZHashTest, Constructor_board)
     EXPECT_NE(hash.value(), ZHash::EMPTY);
 }
 
-TEST(ZHashTest, Add_Remove)
+TEST(ZHash, Add_Remove)
 {
     ZHash hash;
     Piece const * whiteQueen = Piece::get(PieceTypeId::QUEEN, Color::WHITE);
@@ -54,7 +57,7 @@ TEST(ZHashTest, Add_Remove)
     EXPECT_EQ(hash.value(), ZHash::EMPTY);
 }
 
-TEST(ZHashTest, Move)
+TEST(ZHash, Move)
 {
     ZHash hash;
     Piece const * blackRook = Piece::get(PieceTypeId::ROOK, Color::BLACK);
@@ -67,7 +70,7 @@ TEST(ZHashTest, Move)
     EXPECT_NE(hash.value(), ZHash::EMPTY);
 }
 
-TEST(ZHashTest, Turn)
+TEST(ZHash, Turn)
 {
     Board board;
     board.initialize();
@@ -81,7 +84,7 @@ TEST(ZHashTest, Turn)
     EXPECT_NE(hash.value(), ZHash::EMPTY);
 }
 
-TEST(ZHashTest, CastleAvailability)
+TEST(ZHash, CastleAvailability)
 {
     Board board;
     board.initialize();
@@ -124,7 +127,7 @@ TEST(ZHashTest, CastleAvailability)
     EXPECT_EQ(hash.value(), v1);
 }
 
-TEST(ZHashTest, EnPassant)
+TEST(ZHash, EnPassant)
 {
     Board board;
     board.initialize();
@@ -147,7 +150,7 @@ TEST(ZHashTest, EnPassant)
     EXPECT_EQ(hash.value(), v1);
 }
 
-TEST(ZHashTest, Fifty)
+TEST(ZHash, Fifty)
 {
     Board board;
     board.initialize();
@@ -159,3 +162,5 @@ TEST(ZHashTest, Fifty)
     hash.fifty();
     EXPECT_EQ(hash.value(), v1);
 }
+
+} // namespace Chess
